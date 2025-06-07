@@ -89,22 +89,40 @@ if submit:
 
     # Chamada à IA com tratamento de erros de rede
 
+    # Chamada à IA com tratamento de URL inválida, conexão e timeout
     st.markdown("**Relatório MedStudentAI**")
     with st.spinner("MedStudentAI está gerando o relatório..."):
-        openrouter_url = st.secrets.get("OPENROUTER_URL", "")
-        api_key = st.secrets.get("OPENROUTER_API_KEY", "")
-        model = st.secrets.get("MODEL", "")
-        headers = {"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"}
-        body = {"model": model, "messages": [{"role": "system", "content": system_prompt}]}
+        # Carrega e valida o URL
+        openrouter_url = st.secrets.get("OPENROUTER_URL", "").strip()
+        if openrouter_url and not openrouter_url.startswith(("http://", "https://")):
+            openrouter_url = "https://" + openrouter_url
+
+        api_key = st.secrets.get("OPENROUTER_API_KEY", "").strip()
+        model   = st.secrets.get("MODEL", "").strip()
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        body = {
+            "model": model,
+            "messages": [
+                {"role": "system", "content": system_prompt}
+            ]
+        }
+
         try:
             resp = requests.post(openrouter_url, headers=headers, json=body, timeout=10)
             resp.raise_for_status()
             ai_report = resp.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+        except requests.exceptions.InvalidURL:
+            ai_report = "URL inválida: verifique o OPENROUTER_URL em secrets.toml."
         except requests.exceptions.ConnectionError:
             ai_report = "Não foi possível conectar ao servidor de IA. Verifique sua conexão e as configurações em secrets.toml."
         except requests.exceptions.Timeout:
             ai_report = "A requisição ao servidor de IA expirou. Tente novamente mais tarde."
         except Exception as e:
             ai_report = f"Erro ao gerar relatório de IA: {e}"
+
     st.markdown(ai_report)
 
