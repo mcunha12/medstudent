@@ -1,0 +1,299 @@
+[
+  {
+    "enunciado": "Identifique os cinco parâmetros que determinam o perfil biofísico fetal e o que indica sofrimento fetal crônico.",
+    "alternativas": {
+      "A": "Movimentos respiratórios, tônus, frequência cardíaca, movimentos corpóreos e Doppler de artéria umbilical, sendo que o tônus, quando alterado, sugere sofrimento fetal crônico.",
+      "B": "Movimentos respiratórios, tônus, frequência cardíaca, movimentos corpóreos e índice de líquido amniótico, sendo que o volume do líquido amniótico, quando alterado, sugere sofrimento fetal crônico.",
+      "C": "Movimentos respiratórios, tônus, frequência cardíaca, movimentos corpóreos e Doppler de artéria umbilical, sendo que os movimentos respiratórios, quando alterados, sugerem sofrimento fetal crônico.",
+      "D": "Movimentos respiratórios, tônus, frequência cardíaca, movimentos corpóreos e índice de líquido amniótico, sendo que o tônus, quando alterado, sugere sofrimento fetal crônico."
+    },
+    "explicacao": "O perfil biofísico fetal inclui movimentos respiratórios, movimentos corpóreos, tônus, reatividade cardíaca e volume de líquido amniótico; a redução do líquido amniótico sugere sofrimento crônico.",
+    "competencia": "Perfil biofísico fetal – obstetrícia"
+  },
+  {
+    "enunciado": "Identifique a pontuação do perfil biofísico fetal, nesse caso.",
+    "alternativas": {
+      "A": "4",
+      "B": "6",
+      "C": "8",
+      "D": "10"
+    },
+    "explicacao": "Com todos os parâmetros (movimentos, tônus, reatividade e líquido) normais, a pontuação atinge 8 pontos neste caso.",
+    "competencia": "Avaliação do perfil biofísico fetal"
+  },
+  {
+    "enunciado": "A conduta indicada nesse caso, considerando o benefício para o feto, é:",
+    "alternativas": {
+      "A": "Administrar ocitocina, para melhorar a ritmicidade das contrações uterinas.",
+      "B": "Prescrever misoprostol para melhor preparação do colo.",
+      "C": "Realizar parto cesariano.",
+      "D": "Repetir a cardiotocografia, após oferta venosa de glicose."
+    },
+    "explicacao": "Diante de traço cardiotócnico nao institúionalmente reativo, administra-se glicose materna e repete‐se o exame para confirmar reatividade fetal.",
+    "competencia": "Conduta diante de CTG não reativo"
+  },
+  {
+    "enunciado": "Diante dos dados apresentados, essa gestação é classificada como:",
+    "alternativas": {
+      "A": "Gemelar monocoriônica e monoamniótica.",
+      "B": "Gemelar monocoriônica e diamniótica.",
+      "C": "Gemelar dicoriônica e monoamniótica.",
+      "D": "Gemelar dicoriônica e diamniótica."
+    },
+    "explicacao": "O “sinal do T” indica placenta única (monocoriônica) com duas cavidades amnióticas (diamniótica).",
+    "competencia": "Classificação de gestação gemelar"
+  },
+  {
+    "enunciado": "Com base no achado ultrassonográfico, é correto afirmar:",
+    "alternativas": {
+      "A": "Os gêmeos são univitelínicos e com certeza são idênticos.",
+      "B": "Os gêmeos são bivitellínicos e podem ou não ser idênticos.",
+      "C": "Os gêmeos com certeza não são idênticos.",
+      "D": "Os gêmeos são univitelínicos e podem ou não ser idênticos."
+    },
+    "explicacao": "Em gestação monocoriônica diamniótica, há um só saco vitelínico inicial e os gêmeos são monozóticos, portanto idênticos.",
+    "competencia": "Interpretação de sinais de gemelaridade"
+  },
+  {
+    "enunciado": "Se fosse visualizado no exame, ao invés do “sinal do T”, o “sinal de lambda”, a paciente estaria diante de uma gestação gemelar:",
+    "alternativas": {
+      "A": "Monocoriônica e monoamniótica.",
+      "B": "Monocoriônica e diamniótica.",
+      "C": "Dicoriônica e monoamniótica.",
+      "D": "Dicoriônica e diamniótica."
+    },
+    "explicacao": "O “sinal de lambda” correlaciona‐se com placenta dupla (dicoriônica) e duas cavidades amnióticas (diamniótica).",
+    "competencia": "Classificação de gestação gemelar"
+  },
+  {
+    "enunciado": "Diante dos dados apresentados, identifique a topografia desse prolapso.",
+    "alternativas": {
+      "A": "Prolapso de parede vaginal anterior e posterior.",
+      "B": "Prolapso uterino e prolapse de parede vaginal posterior.",
+      "C": "Prolapso de parede vaginal anterior e prolapso uterino.",
+      "D": "Prolapso de parede vaginal posterior, apenas."
+    },
+    "explicacao": "Pontos Aa e Ba positivos indicam prolapso da parede anterior e C positivo indica prolapso uterino, enquanto a parede posterior está preservada.",
+    "competencia": "Avaliação de prolapso genital – POP-Q"
+  },
+  {
+    "enunciado": "O estadiamento da distopia genital do caso, de acordo com a classificação de POP-Q, é:",
+    "alternativas": {
+      "A": "I",
+      "B": "II",
+      "C": "III",
+      "D": "IV"
+    },
+    "explicacao": "Com Ba > +1 cm além do hímen e C a +6 cm, caracteriza‐se estadiamento III na escala POP-Q.",
+    "competencia": "Estadiamento de prolapsos – POP-Q"
+  },
+  {
+    "enunciado": "A cirurgia mais indicada, nesse caso, é a correção específica da:",
+    "alternativas": {
+      "A": "Parede anterior: colporrafia anterior e histerectomia vaginal com fixação do ligamento sacroespinal.",
+      "B": "Parede posterior: colporrafia posterior e histerectomia vaginal com fixação do ligamento sacroespinal.",
+      "C": "Parede posterior e parede anterior: colporrafia posterior e colporrafia anterior.",
+      "D": "Parede posterior: colporrafia posterior, sem necessidade de histerectomia."
+    },
+    "explicacao": "Como só há prolapso da parede anterior e uterino, faz‐se colporrafia anterior e histerectomia com suspensão sacroespinal.",
+    "competencia": "Cirurgia de correção de prolapso genital"
+  },
+  {
+    "enunciado": "Sobre a mastalgia, e sua periodicidade, é correto afirmar:",
+    "alternativas": {
+      "A": "A mastalgia cíclica é frequente e está associada aos carcinomas lobulares.",
+      "B": "A mastalgia cíclica é caracterizada por dor associada ao ingurgitamento das mamas fora do período pré-menstrual.",
+      "C": "A mastalgia acíclica está associada a desconforto localizado em ponto específico e pode ter irradiação para ombro ou axila.",
+      "D": "A mastalgia acíclica deve ser tratada com diuréticos e anti-inflamatórios para melhora do ingurgitamento."
+    },
+    "explicacao": "A dor não cíclica costuma ser focal, unilateral e irradiar para ombro ou axila, ao contrário da cíclica.",
+    "competencia": "Clínica da mastalgia"
+  },
+  {
+    "enunciado": "O provável diagnóstico e classificação de BI-RADS, nesse caso, é:",
+    "alternativas": {
+      "A": "Cisto simples mamário, BI-RADS 2.",
+      "B": "Cisto complexo mamário, BI-RADS 3.",
+      "C": "Cisto mamário suspeito, BI-RADS 0.",
+      "D": "Cisto simples mamário, BI-RADS 1."
+    },
+    "explicacao": "Lesão anecóica, margens regulares e reforço acústico posterior definem cisto simples (BI-RADS 2).",
+    "competencia": "Classificação BI-RADS – imagem mamária"
+  },
+  {
+    "enunciado": "Identifique a conduta diagnóstica indicada.",
+    "alternativas": {
+      "A": "Punção com agulha fina.",
+      "B": "Punção com agulha grossa ou “core biopsy”.",
+      "C": "Mamotomia com biópsia a céu aberto.",
+      "D": "Acompanhamento com ultrassonografia de mama."
+    },
+    "explicacao": "Em cisto simples, faz‐se punção aspirativa para diagnóstico e alívio de sintomas.",
+    "competencia": "Conduta em lesões císticas mamárias"
+  },
+  {
+    "enunciado": "Sobre o resultado do laudo é correto o que afirma?",
+    "alternativas": {
+      "A": "O laudo está incorreto pois, por se tratar de mamas densas, a classificação deveria ser BI-RADS 0.",
+      "B": "O laudo está correto e BI-RADS 2 indica um achado benigno, ou seja, um risco de malignidade maior que 0%, porém menor que 2%.",
+      "C": "O laudo está correto e BI-RADS 2 indica um achado benigno, ou seja, um risco de malignidade de 0%.",
+      "D": "O laudo está incorreto pois, por se tratar de mamas densas e apresentar calcificações, a classificação deveria ser BI-RADS 3."
+    },
+    "explicacao": "BI-RADS 2 corresponde a achado benigno com risco de malignidade essencialmente zero.",
+    "competencia": "Interpretação de BI-RADS"
+  },
+  {
+    "enunciado": "Quanto à conduta diagnóstica, pode-se afirmar que:",
+    "alternativas": {
+      "A": "A complementação que, provavelmente, foi realizada para melhor visualização das calcificações foi a técnica de agulhamento.",
+      "B": "Por ter mamas densas, a paciente vai necessitar de complementação do exame com compressão e magnificação.",
+      "C": "Para melhor visualização das calcificações está indicada a complementação com ultrassonografia mamária.",
+      "D": "Provavelmente foi utilizada a técnica de Eklund para melhor posicionamento das mamas no mamógrafo."
+    },
+    "explicacao": "Em pacientes com mamas densas, usa-se compressão e magnificação para detalhar microcalcificações.",
+    "competencia": "Técnicas de imagem mamográfica"
+  },
+  {
+    "enunciado": "Quanto aos determinantes genéticos do câncer de mama, é correto afirmar:",
+    "alternativas": {
+      "A": "Na paciente com história familiar de câncer de mama com alto risco, o rastreamento mamográfico é iniciado precocemente a partir dos 18 anos.",
+      "B": "A síndrome de Li-Fraumeni está associada a mutações nos genes BRCA 1 e 2 e ao desenvolvimento de sarcomas, além do câncer de mama.",
+      "C": "A principal mutação associada ao câncer de mama tem hereditariedade autossômica dominante.",
+      "D": "A mutação do gene p53 é fator de proteção para o câncer de mama na vigência de outras mutações."
+    },
+    "explicacao": "Mutações em BRCA1/2 transmitem-se em padrão autossômico dominante e aumentam a predisposição.",
+    "competencia": "Genética do câncer de mama"
+  },
+  {
+    "enunciado": "São achados radiológicos considerados benignos na mamografia:",
+    "alternativas": {
+      "A": "Nódulo circunscrito e palpável.",
+      "B": "Calcificações em casca de ovo.",
+      "C": "Assimetria focal que regride, parcialmente, com a técnica de compressão.",
+      "D": "Nódulo circunscrito, impalpável e não calcificado."
+    },
+    "explicacao": "Calcificações em anel ou “casca de ovo” são típicas de achados benignos.",
+    "competencia": "Interpretação de mamografia"
+  },
+  {
+    "enunciado": "A melhor conduta nesse caso é:",
+    "alternativas": {
+      "A": "Seguimento semestral.",
+      "B": "Punção por agulha fina (PAAF).",
+      "C": "Biópsia guiada por ultrassom.",
+      "D": "Biópsia guiada por mamografia."
+    },
+    "explicacao": "Em achado BI-RADS 2, realiza-se apenas seguimento semestral.",
+    "competencia": "Manejo de lesões benignas mamográficas"
+  },
+  {
+    "enunciado": "Sobre o derrame, ou descarga papilar, é correto afirmar:",
+    "alternativas": {
+      "A": "Caso a descarga fosse uniductal e transparente, achado que possui maior prevalência nas pacientes com ectasia ductal, a conduta deveria ser expectante.",
+      "B": "Caso a secreção fosse multicolorida, deveria ser feita a citologia da secreção para assim afastar neoplasia maligna.",
+      "C": "Na vigência de secreção sanguinolenta deve ser realizada citologia oncótica, e nos casos positivos para malignidade está indicada exérese de ductos principais.",
+      "D": "A galactorreia que cursa sem aumento de prolactina é vinculada a medicações supressoras da dopamina, na maioria das vezes."
+    },
+    "explicacao": "Secreção uniductal, serosa ou transparente sugere ectasia ductal e pode ser acompanhada de forma conservadora.",
+    "competencia": "Avaliação de descarga mamilar"
+  },
+  {
+    "enunciado": "Diante do relato do caso é correto afirmar:",
+    "alternativas": {
+      "A": "A medicação mais indicada nesse momento é a metformina associada à espironolactona.",
+      "B": "A primeira opção terapêutica é a modificação de estilo de vida com perda ponderal e atividade física.",
+      "C": "Como a paciente já está tentando engravidar há 1 ano, sem sucesso, a primeira opção terapêutica é metformina e citrato de clomifeno para induzir a ovulação.",
+      "D": "O tratamento mais adequado, nesse momento, é a administração de estradiol por 10 dias para induzir uma menstruação."
+    },
+    "explicacao": "No SOP, intervenções iniciais são dieta e exercício para reduzir resistência insulínica e restaurar ovulação.",
+    "competencia": "Manejo de síndrome dos ovários policísticos"
+  },
+  {
+    "enunciado": "Diante da principal suspeita diagnóstica, indique os resultados esperados dos exames laboratoriais.",
+    "alternativas": {
+      "A": "É esperado um aumento dos níveis de FSH e queda dos níveis de LH, gerando uma proporção > 2.",
+      "B": "É esperado um aumento dos níveis de LH e queda dos níveis de FSH, gerando uma proporção > 2.",
+      "C": "Nesses casos, normalmente o LH e FSH estão em níveis semelhantes e elevados.",
+      "D": "Nesses casos, normalmente o LH e FSH estão em níveis semelhantes e suprimidos."
+    },
+    "explicacao": "Na SOP, o LH aumenta em relação ao FSH, resultando em razão LH/FSH > 2.",
+    "competencia": "Diagnóstico laboratorial de SOP"
+  },
+  {
+    "enunciado": "Identifique, nesse caso, o exame que pode auxiliar no diagnóstico diferencial.",
+    "alternativas": {
+      "A": "Dosagem de SHBG.",
+      "B": "Curva de estímulo de FSH/LH após GnRH.",
+      "C": "Dosagem de progesterona.",
+      "D": "Dosagem de 17-hidroxiprogesterona (17OHP)."
+    },
+    "explicacao": "A dosagem de 17OHP ajuda a excluir hiperplasia adrenal congênita no diagnóstico diferencial de SOP.",
+    "competencia": "Exames no diagnóstico diferencial de SOP"
+  },
+  {
+    "enunciado": "Considerando o diagnóstico de mastite puerperal, a conduta indicada é:",
+    "alternativas": {
+      "A": "Suspender a amamentação em ambas as mamas, nesse momento.",
+      "B": "Suspender a amamentação somente na mama infectada.",
+      "C": "Não suspender a amamentação no momento. Caso apresente abscesso em uma das mamas a suspensão deverá ser indicada em ambas.",
+      "D": "Não suspender a amamentação no momento. Caso apresente abscesso a suspensão da amamentação poderá ocorrer na mama afetada."
+    },
+    "explicacao": "Manter aleitamento em ambos os seios; se houver abscesso, suspende-se apenas na mama afetada.",
+    "competencia": "Manejo de mastite puerperal"
+  },
+  {
+    "enunciado": "Quanto ao tratamento nesse caso, é correto o que se afirma em:",
+    "alternativas": {
+      "A": "Como medicar pode inviabilizar a manutenção do aleitamento, a paciente deverá ser orientada a fazer compressa morna e ordenha.",
+      "B": "Usar anti-inflamatórios e evitar compressa morna, pois aumenta o fluxo de leite. Não há indicação de uso de antibiótico no momento, já que não há abscesso.",
+      "C": "Usar cefalexina e cabergolina, associadas à ordenha, evitando compressas mornas e o uso de anti-inflamatórios.",
+      "D": "Deverá ser prescrito cefalexina e anti-inflamatório associado ao esvaziamento da mama afetada. Não há indicação de uso de cabergolina."
+    },
+    "explicacao": "Tratamento de mastite sem abscesso inclui antibioticoterapia (cefalexina), anti-inflamatório e esvaziamento mamário.",
+    "competencia": "Tratamento de mastite puerperal"
+  },
+  {
+    "enunciado": "Uma complicação tardia, que pode se instalar após episódio de mastite puerperal, é a mastite crônica. O tratamento mais eficaz para essa complicação é:",
+    "alternativas": {
+      "A": "Cefalexina diária em baixa dose por uso prolongado, 1 a 3 meses.",
+      "B": "Ressecção completa do sistema ductal afetado.",
+      "C": "Drenagem cirúrgica da loja do abscesso.",
+      "D": "Punção do abscesso guiada por ultrassom."
+    },
+    "explicacao": "Na mastite crônica idiopática, a exérese do sistema ductal envolvido é a abordagem mais eficaz.",
+    "competencia": "Tratamento cirúrgico de mastite crônica"
+  },
+  {
+    "enunciado": "Identifique a causa mais frequente de sangramento pós-menopausa:",
+    "alternativas": {
+      "A": "Pólipo endometrial.",
+      "B": "Mioma submucoso.",
+      "C": "Câncer de endométrio.",
+      "D": "Atrofia endometrial."
+    },
+    "explicacao": "A atrofia do endométrio é a principal causa de sangramento pós-menopausa.",
+    "competencia": "Etiologia de sangramento pós-menopausa"
+  },
+  {
+    "enunciado": "Diante do resultado da ultrassonografia transvaginal é correto afirmar:",
+    "alternativas": {
+      "A": "A ultrassonografia transvaginal está normal e a conduta deve ser expectante.",
+      "B": "A paciente deverá ser submetida à histeroscopia com biópsia endometrial, mesmo com a ultrassonografia sem alterações.",
+      "C": "A ultrassonografia evidencia um endométrio espessado e a conduta deverá ser realização de biópsia endometrial.",
+      "D": "A ultrassonografia transvaginal está normal e, provavelmente, a paciente apresenta um sangramento uterino anormal de causa ovariana e devem ser solicitados exames laboratoriais para melhor avaliação."
+    },
+    "explicacao": "Com espessura endometrial > 5 mm em paciente pós-menopausa com sangramento, indica-se biópsia endometrial.",
+    "competencia": "Avaliação do endométrio pós-menopausa"
+  },
+  {
+    "enunciado": "São fatores de risco para câncer de endométrio nessa paciente, exceto:",
+    "alternativas": {
+      "A": "Apresentar IMC: 30 kg/m².",
+      "B": "Ter tido menarca aos 9 anos.",
+      "C": "Ter tido três gestações.",
+      "D": "Ser hipertensa."
+    },
+    "explicacao": "A multiparidade protege contra câncer de endométrio ao reduzir a exposição estrogênica.",
+    "competencia": "Fatores de risco para câncer de endométrio"
+  }
+]

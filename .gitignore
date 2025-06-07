@@ -1,0 +1,14 @@
+# Python e IDE
+__pycache__/
+*.py[cod]
+.idea/
+.vscode/
+
+# Streamlit secrets e caches
+.streamlit/secrets.toml
+__pycache__/
+*.log
+
+# Ambientes virtuais
+venv/
+.env/
