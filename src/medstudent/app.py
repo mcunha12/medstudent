@@ -1,25 +1,9 @@
 import streamlit as st
-from pathlib import Path
 import importlib.util
+from pathlib import Path
 
 # Configuração da página
 st.set_page_config(page_title="MedStudentAI", layout="wide", page_icon="🏠")
-
-# Carrega módulo Python a partir de caminho
-
-def load_module(name: str, path: Path):
-    spec = importlib.util.spec_from_file_location(name, str(path))
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
-
-# Localização dos arquivos de feature
-dir_pages = Path(__file__).resolve().parent / "pages"
-simulado_file = dir_pages / "1_Simulado.py"
-posologia_file = dir_pages / "2_Posologia.py"
-
-# Navegação lateral
-tab = st.sidebar.selectbox("Selecione uma funcionalidade:", ["Home", "Simulado", "Posologia"])
 
 # CSS global para a home
 st.markdown(
@@ -33,36 +17,54 @@ st.markdown(
     </style>
     """, unsafe_allow_html=True)
 
+# Carrega módulo Python dinamicamente a partir de um arquivo
+
+def load_module(path: Path, name: str):
+    spec = importlib.util.spec_from_file_location(name, str(path))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+# Define caminhos
+BASE_DIR = Path(__file__).resolve().parent
+PAGES_DIR = BASE_DIR / "pages"
+SIMULADO_PATH = PAGES_DIR / "1_Simulado.py"
+POSOLOGIA_PATH = PAGES_DIR / "2_Posologia.py"
+
+# Navegação lateral
+tab = st.sidebar.selectbox("Selecione uma funcionalidade:", ["Home", "Simulado", "Posologia"])
+
 if tab == "Home":
     st.markdown("<div style='max-width:600px; margin:auto;'>", unsafe_allow_html=True)
     st.markdown("<p class='home-title'>Bem-vindo ao MedStudentAI</p>", unsafe_allow_html=True)
     st.markdown("<p class='home-subtitle'>Escolha uma ferramenta no menu lateral para começar:</p>", unsafe_allow_html=True)
-    
     st.markdown(
-        "<div class='feature-card'>"
-        "<h3>📝 Simulado Dinâmico</h3>"
-        "<p>Gere questões de múltipla escolha e receba feedback imediato com explicações.</p>"
-        "</div>",
+        "<div class='feature-card'><h3>📝 Simulado Dinâmico</h3>"
+        "<p>Gere questões de múltipla escolha e receba feedback imediato com explicações.</p></div>",
         unsafe_allow_html=True
     )
     st.markdown(
-        "<div class='feature-card'>"
-        "<h3>💊 Calculadora de Posologia</h3>"
-        "<p>Calcule doses e receba insights clínicos baseados nos dados do paciente.</p>"
-        "</div>",
+        "<div class='feature-card'><h3>💊 Calculadora de Posologia</h3>"
+        "<p>Calcule doses e receba insights clínicos baseados nos dados do paciente.</p></div>",
         unsafe_allow_html=True
     )
 
 elif tab == "Simulado":
-    if simulado_file.exists():
-        sim_mod = load_module("simulado", simulado_file)
-        sim_mod.main()
+    if SIMULADO_PATH.exists():
+        sim_mod = load_module(SIMULADO_PATH, "simulado")
+        if hasattr(sim_mod, 'main'):
+            sim_mod.main()
+        else:
+            st.error("Função main() não encontrada em 1_Simulado.py")
     else:
-        st.error("Arquivo de simulado não encontrado em pages/1_Simulado.py")
+        st.error("Arquivo 1_Simulado.py não encontrado.")
 
 elif tab == "Posologia":
-    if posologia_file.exists():
-        pos_mod = load_module("posologia", posologia_file)
-        pos_mod.main()
+    if POSOLOGIA_PATH.exists():
+        pos_mod = load_module(POSOLOGIA_PATH, "posologia")
+        if hasattr(pos_mod, 'main'):
+            pos_mod.main()
+        else:
+            st.error("Função main() não encontrada em 2_Posologia.py")
     else:
-        st.error("Arquivo de posologia não encontrado em pages/2_Posologia.py")
+        st.error("Arquivo 2_Posologia.py não encontrado.")
