@@ -1,45 +1,68 @@
 import streamlit as st
+from pathlib import Path
+import importlib.util
 
 # Configuração da página
 st.set_page_config(page_title="MedStudentAI", layout="wide", page_icon="🏠")
+
+# Carrega módulo Python a partir de caminho
+
+def load_module(name: str, path: Path):
+    spec = importlib.util.spec_from_file_location(name, str(path))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+# Localização dos arquivos de feature
+dir_pages = Path(__file__).resolve().parent / "pages"
+simulado_file = dir_pages / "1_Simulado.py"
+posologia_file = dir_pages / "2_Posologia.py"
+
+# Navegação lateral
+tab = st.sidebar.selectbox("Selecione uma funcionalidade:", ["Home", "Simulado", "Posologia"])
 
 # CSS global para a home
 st.markdown(
     """
     <style>
-      .welcome-container { display: flex; flex-direction: column; align-items: center; padding: 2rem; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen; color: #1C1C1E; }
-      .feature-card { background: #FFF; border-radius: 16px; padding: 24px; margin: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.05); width: 80%; max-width: 400px; }
-      .feature-card h2 { font-size: 22px; margin-bottom: 8px; }
-      .feature-card p { font-size: 16px; color: #636366; margin-bottom: 0; }
+      .home-title { font-size:32px; font-weight:600; color:#1C1C1E; margin-top:1rem; }
+      .home-subtitle { font-size:18px; color:#636366; margin-bottom:2rem; }
+      .feature-card { background:#FFF; border-radius:12px; padding:24px; margin:12px 0; box-shadow:0 4px 12px rgba(0,0,0,0.05); }
+      .feature-card h3 { margin:0; font-size:20px; }
+      .feature-card p { margin:8px 0 0; color:#636366; }
     </style>
-    """,
-    unsafe_allow_html=True
-)
+    """, unsafe_allow_html=True)
 
-# Conteúdo da Home
-st.markdown("<div class='welcome-container'>", unsafe_allow_html=True)
+if tab == "Home":
+    st.markdown("<div style='max-width:600px; margin:auto;'>", unsafe_allow_html=True)
+    st.markdown("<p class='home-title'>Bem-vindo ao MedStudentAI</p>", unsafe_allow_html=True)
+    st.markdown("<p class='home-subtitle'>Escolha uma ferramenta no menu lateral para começar:</p>", unsafe_allow_html=True)
+    
+    st.markdown(
+        "<div class='feature-card'>"
+        "<h3>📝 Simulado Dinâmico</h3>"
+        "<p>Gere questões de múltipla escolha e receba feedback imediato com explicações.</p>"
+        "</div>",
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        "<div class='feature-card'>"
+        "<h3>💊 Calculadora de Posologia</h3>"
+        "<p>Calcule doses e receba insights clínicos baseados nos dados do paciente.</p>"
+        "</div>",
+        unsafe_allow_html=True
+    )
 
-st.markdown("<h1>Bem-vindo ao MedStudentAI</h1>", unsafe_allow_html=True)
-st.markdown("<p>Explore as principais funcionalidades para auxiliar seus estudos de medicina.</p>", unsafe_allow_html=True)
+elif tab == "Simulado":
+    if simulado_file.exists():
+        sim_mod = load_module("simulado", simulado_file)
+        sim_mod.main()
+    else:
+        st.error("Arquivo de simulado não encontrado em pages/1_Simulado.py")
 
-# Cartão de Simulado
-st.markdown(
-    "<div class='feature-card'>"
-    "<h2>📝 Simulado Dinâmico</h2>"
-    "<p>Gerar questões de múltipla escolha com base em simulados de referência.</p>"
-    "<p>Resposta imediata e explicativa para cada questão.</p>"
-    "</div>",
-    unsafe_allow_html=True
-)
-
-# Cartão de Posologia
-st.markdown(
-    "<div class='feature-card'>"
-    "<h2>💊 Calculadora de Posologia</h2>"
-    "<p>Calcule doses de medicamentos com base em peso, idade e concentração.</p>"
-    "<p>Receba insights clínicos personalizados para melhorar o aprendizado.</p>"
-    "</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown("</div>", unsafe_allow_html=True)
+elif tab == "Posologia":
+    if posologia_file.exists():
+        pos_mod = load_module("posologia", posologia_file)
+        pos_mod.main()
+    else:
+        st.error("Arquivo de posologia não encontrado em pages/2_Posologia.py")
