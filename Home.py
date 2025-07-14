@@ -1,14 +1,18 @@
+# ==============================================================================
+# ARQUIVO 1: Home.py (Simplificado)
+# Local: Raiz do projeto
+# ==============================================================================
 import streamlit as st
-from services import get_or_create_user, get_user_stats # Importa funções do nosso novo arquivo
+from services import get_or_create_user
 
-st.set_page_config(layout="wide", page_title="Home - Simulador ENAMED")
+st.set_page_config(layout="wide", page_title="Home - MedStudentAI")
 
 # --- ESTILO CSS ---
 st.markdown("""
 <style>
     .main { background-color: #F5F5F7; }
-    .st-emotion-cache-1y4p8pa { padding-top: 2rem; } /* Reduz o padding do topo */
-    .st-emotion-cache-z5fcl4 { padding-top: 2rem; } /* Reduz o padding do topo */
+    .st-emotion-cache-1y4p8pa { padding-top: 2rem; }
+    .st-emotion-cache-z5fcl4 { padding-top: 2rem; }
     .card {
         background-color: white;
         border-radius: 12px;
@@ -16,6 +20,7 @@ st.markdown("""
         margin: 10px 0;
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         transition: all 0.3s ease-in-out;
+        height: 100%;
     }
     .card:hover {
         transform: translateY(-5px);
@@ -34,14 +39,11 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- LÓGICA DE LOGIN E UI ---
-
-# Inicializa o user_id no estado da sessão se não existir
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 
-# Se não estiver logado, mostra a tela de login
 if not st.session_state.user_id:
-    st.title("Bem-vinda ao Simulador ENAMED, Yasmin! 👋")
+    st.title("Bem-vindo ao MedStudent! 👋")
     st.subheader("Insira seu e-mail para começar a praticar e salvar seu progresso.")
     
     with st.form("login_form"):
@@ -51,15 +53,12 @@ if not st.session_state.user_id:
             with st.spinner("Verificando..."):
                 st.session_state.user_id = get_or_create_user(email)
             st.rerun()
-
-# Se estiver logado, mostra a Home Page
 else:
-    st.title("Painel Principal")
+    st.title(f"Olá, Yasmin!")
+    st.markdown("### O que vamos praticar hoje?")
     st.markdown("---")
 
-    # --- SEÇÃO DE NAVEGAÇÃO ---
-    st.header("O que vamos praticar hoje?")
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
     with col1:
         st.markdown("""
         <div class="card">
@@ -67,7 +66,7 @@ else:
             <p>Gere questões de múltipla escolha, teste seus conhecimentos e receba feedback detalhado na hora.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/1_Questões.py", label="Ir para o Simulado", icon="📝")
+        st.page_link("pages/1_Questões.py", label="**Ir para o Simulado**", icon="📝")
 
     with col2:
         st.markdown("""
@@ -76,24 +75,20 @@ else:
             <p>Calcule doses de medicamentos de forma rápida e segura, com insights clínicos gerados por IA.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/2_Posologia.py", label="Ir para a Calculadora", icon="💊")
+        st.page_link("pages/2_Posologia.py", label="**Ir para a Calculadora**", icon="💊")
 
-    st.markdown("---")
-
-    # --- SEÇÃO DE ESTATÍSTICAS ---
-    st.header("Sua Performance")
-    with st.spinner("Calculando suas estatísticas..."):
-        stats = get_user_stats(st.session_state.user_id)
+    with col3:
+        st.markdown("""
+        <div class="card">
+            <h2>📊 Meu Perfil</h2>
+            <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link("pages/3_Meu_Perfil.py", label="**Ver minha performance**", icon="�")
     
-    c1, c2, c3 = st.columns(3)
-    with c1:
-        st.metric(label="Taxa de Acerto Geral", value=f"{stats['accuracy']:.1f}%")
-    with c2:
-        st.metric(label="Total de Questões Respondidas", value=stats['total_answered'])
-    with c3:
-        st.metric(label="Total de Respostas Corretas", value=stats['total_correct'])
-
     if st.sidebar.button("Sair"):
         for key in st.session_state.keys():
-            del st.session_state[key]
+            if key != 'user_id': # Mantém o user_id para evitar relogin imediato se necessário
+                del st.session_state[key]
+        st.session_state.user_id = None
         st.rerun()
