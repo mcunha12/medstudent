@@ -54,7 +54,7 @@ if not st.session_state.user_id:
                 st.session_state.user_id = get_or_create_user(email)
             st.rerun()
 else:
-    st.title(f"Olá, Yasmin!")
+    st.title(f"Olá!")
     st.markdown("### O que vamos praticar hoje?")
     st.markdown("---")
 
@@ -66,7 +66,7 @@ else:
             <p>Gere questões de múltipla escolha, teste seus conhecimentos e receba feedback detalhado na hora.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/1_Questões.py", label="**Ir para o Simulado**", icon="📝")
+        st.page_link("pages/2_Questões.py", label="**Ir para o Simulado**", icon="📝")
 
     with col2:
         st.markdown("""
@@ -75,7 +75,7 @@ else:
             <p>Calcule doses de medicamentos de forma rápida e segura, com insights clínicos gerados por IA.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/2_Posologia.py", label="**Ir para a Calculadora**", icon="💊")
+        st.page_link("pages/3_Posologia.py", label="**Ir para a Calculadora**", icon="💊")
 
     with col3:
         st.markdown("""
@@ -84,7 +84,7 @@ else:
             <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/3_Meu_Perfil.py", label="**Ver minha performance**", icon="�")
+        st.page_link("pages/1_Meu_Perfil.py", label="**Ver minha performance**", icon="�")
     
     if st.sidebar.button("Sair"):
         for key in st.session_state.keys():
