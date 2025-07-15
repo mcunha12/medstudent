@@ -137,9 +137,9 @@ d30_metrics = get_time_window_metrics(all_answers, days=30)
 
 st.markdown("##### Taxa de Acerto")
 col1, col2, col3 = st.columns(3)
-col1.metric("Geral", f"{geral_metrics['accuracy']:.1f}%")
-col2.metric("Últimos 7 dias", f"{d7_metrics['accuracy']:.1f}%")
-col3.metric("Últimos 30 dias", f"{d30_metrics['accuracy']:.1f}%")
+col1.metric("Geral", f"{geral_metrics['accuracy']:.0f}%")
+col2.metric("Últimos 7 dias", f"{d7_metrics['accuracy']:.0f}%")
+col3.metric("Últimos 30 dias", f"{d30_metrics['accuracy']:.0f}%")
 
 st.markdown("##### Questões Respondidas")
 col1, col2, col3 = st.columns(3)
