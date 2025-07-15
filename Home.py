@@ -126,7 +126,7 @@ else:
             st.metric(label="Estudantes focados nesta Semana", value=f"{stats['active_this_week']:,}".replace(",", "."))
         
         with stat_col3:
-            st.metric(label="Questões Resolvidas (Últimos 7 dias)", value=f"{stats['answered_last_7_days']:,}".replace(",", "."))
+            st.metric(label="Questões Resolvidas pela Comunidade (Últimos 7 dias)", value=f"{stats['answered_last_7_days']:,}".replace(",", "."))
             
         with stat_col4:
             st.metric(label="Acertos da Comunidade (Últimos 7 dias)", value=f"{stats['accuracy_last_7_days']:.1f}%")
