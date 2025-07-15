@@ -24,18 +24,19 @@ user_id = st.session_state.user_id
 with st.container(border=True):
     st.subheader("Filtros do Simulado")
 
-    # --- NOVO: Filtro de Status da Questão ---
+    # ALTERADO: Filtro de Status agora permite múltiplas seleções
     status_options = {
         "Questões não respondidas": "nao_respondidas",
         "Questões que acertei": "corretas",
         "Questões que errei": "incorretas"
     }
-    selected_status_label = st.radio(
+    selected_status_labels = st.multiselect(
         "Buscar em:",
-        options=status_options.keys(),
-        horizontal=True,
+        options=list(status_options.keys()),
+        default=["Questões não respondidas"] # Mantém um padrão amigável
     )
-    selected_status_value = status_options[selected_status_label]
+    # Converte os rótulos selecionados para os valores que a função espera
+    selected_status_values = [status_options[label] for label in selected_status_labels]
     
     col1, col2 = st.columns(2)
     with col1:
@@ -63,20 +64,25 @@ with st.container(border=True):
             st.rerun()
     
     if st.button("Gerar Nova Questão", type="primary", use_container_width=True):
-        with st.spinner("Buscando uma questão com os filtros selecionados..."):
-            st.session_state.current_question = get_next_question(
-                user_id,
-                status_filter=selected_status_value, # Passa o novo filtro
-                specialty=selected_specialty,
-                provas=selected_provas,
-                keywords=st.session_state.keywords
-            )
-            st.session_state.answer_submitted = False
-            st.session_state.feedback_answer = None
-            st.rerun() # Adicionado para garantir que a interface atualize corretamente
+        # Validação para garantir que pelo menos um status foi selecionado
+        if not selected_status_values:
+            st.warning("Por favor, selecione pelo menos um status de questão para buscar.")
+        else:
+            with st.spinner("Buscando uma questão com os filtros selecionados..."):
+                st.session_state.current_question = get_next_question(
+                    user_id,
+                    status_filters=selected_status_values, # Passa a LISTA de filtros
+                    specialty=selected_specialty,
+                    provas=selected_provas,
+                    keywords=st.session_state.keywords
+                )
+                st.session_state.answer_submitted = False
+                st.session_state.feedback_answer = None
+                st.rerun()
 
 # =================================================================
-# ÁREA DE EXIBIÇÃO DA QUESTÃO (lógica de exibição sem grandes alterações)
+# ÁREA DE EXIBIÇÃO DA QUESTÃO
+# (Nenhuma mudança necessária aqui)
 # =================================================================
 st.markdown("---")
 q = st.session_state.current_question

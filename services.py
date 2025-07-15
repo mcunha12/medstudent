@@ -19,7 +19,6 @@ def normalize_for_search(text: str) -> str:
     nfkd_form = unicodedata.normalize('NFD', text)
     return "".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
-
 def _ensure_connected():
     """Garante que a conexão com Google Sheets e Gemini está ativa."""
     if _connections["spreadsheet"] is None:
@@ -60,9 +59,9 @@ def get_or_create_user(email):
         users_sheet.append_row(new_user_data)
     return user_id
 
-def get_next_question(user_id, status_filter='nao_respondidas', specialty=None, provas=None, keywords=None):
+def get_next_question(user_id, status_filters=['nao_respondidas'], specialty=None, provas=None, keywords=None):
     """
-    Busca a próxima questão, com filtros de status (não respondidas, corretas, incorretas) e outros.
+    Busca a próxima questão, com suporte para múltiplos filtros de status.
     """
     _ensure_connected()
     questions_sheet = _connections["spreadsheet"].worksheet("questions")
@@ -74,33 +73,41 @@ def get_next_question(user_id, status_filter='nao_respondidas', specialty=None, 
     if questions_df.empty:
         return None
 
-    # --- NOVO: Lógica de seleção inicial pelo status da resposta ---
-    initial_pool = questions_df.copy()
+    # --- LÓGICA REESCRITA PARA MÚLTIPLOS STATUS ---
+    list_of_pools = []
+    
+    # Pega as respostas do usuário uma única vez
     user_answers_df = pd.DataFrame()
-
     if not answers_df.empty:
         answers_df['user_id'] = answers_df['user_id'].astype(str)
         user_answers_df = answers_df[answers_df['user_id'] == user_id].copy()
 
-    if status_filter == 'nao_respondidas':
+    # Para cada status selecionado, cria um pool de questões correspondente
+    if 'nao_respondidas' in status_filters:
         if not user_answers_df.empty:
-            answered_ids = user_answers_df['question_id'].tolist()
-            initial_pool = questions_df[~questions_df['question_id'].isin(answered_ids)]
-        # Se user_answers_df for vazio, initial_pool já é todas as questões
-    else: # Se o filtro for para questões já respondidas
-        if user_answers_df.empty:
-            return None # Não há questões respondidas para buscar
-        
+            answered_ids = user_answers_df['question_id'].unique().tolist()
+            pool = questions_df[~questions_df['question_id'].isin(answered_ids)]
+        else:
+            pool = questions_df.copy() # Todas as questões estão não respondidas
+        list_of_pools.append(pool)
+
+    if not user_answers_df.empty and ('corretas' in status_filters or 'incorretas' in status_filters):
         user_answers_df['is_correct'] = user_answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
         
-        if status_filter == 'corretas':
-            target_ids = user_answers_df[user_answers_df['is_correct'] == True]['question_id'].tolist()
-        elif status_filter == 'incorretas':
-            target_ids = user_answers_df[user_answers_df['is_correct'] == False]['question_id'].tolist()
-        else:
-            target_ids = []
-            
-        initial_pool = questions_df[questions_df['question_id'].isin(target_ids)]
+        if 'corretas' in status_filters:
+            correct_ids = user_answers_df[user_answers_df['is_correct'] == True]['question_id'].unique().tolist()
+            list_of_pools.append(questions_df[questions_df['question_id'].isin(correct_ids)])
+        
+        if 'incorretas' in status_filters:
+            incorrect_ids = user_answers_df[user_answers_df['is_correct'] == False]['question_id'].unique().tolist()
+            list_of_pools.append(questions_df[questions_df['question_id'].isin(incorrect_ids)])
+
+    # Se nenhum pool foi selecionado, não há o que buscar
+    if not list_of_pools:
+        return None
+
+    # Concatena todos os pools selecionados e remove duplicatas
+    initial_pool = pd.concat(list_of_pools).drop_duplicates(subset=['question_id']).reset_index(drop=True)
 
     if initial_pool.empty:
         return None
@@ -112,10 +119,7 @@ def get_next_question(user_id, status_filter='nao_respondidas', specialty=None, 
     if provas:
         final_pool = final_pool[final_pool['prova'].isin(provas)]
     if keywords:
-        searchable_text = final_pool.apply(
-            lambda row: normalize_for_search(' '.join(row.values.astype(str))),
-            axis=1
-        )
+        searchable_text = final_pool.apply(lambda row: normalize_for_search(' '.join(row.values.astype(str))), axis=1)
         normalized_keywords = [normalize_for_search(kw) for kw in keywords]
         keyword_regex = '|'.join(normalized_keywords)
         final_pool = final_pool[searchable_text.str.contains(keyword_regex, na=False)]
