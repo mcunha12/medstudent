@@ -1,5 +1,5 @@
 # ==============================================================================
-# ARQUIVO: pages/3_Revisao_de_Questoes.py
+# ARQUIVO: pages/3_Revisão.py (COM CAMPO DE BUSCA)
 # ==============================================================================
 import streamlit as st
 import pandas as pd
@@ -19,7 +19,6 @@ st.markdown("---")
 
 # --- CARREGA OS DADOS DO HISTÓRICO ---
 with st.spinner("Carregando seu histórico de respostas..."):
-    # Usamos a nova função para buscar os dados completos
     answered_df = get_user_answered_questions_details(st.session_state.user_id)
 
 if answered_df.empty:
@@ -28,6 +27,13 @@ if answered_df.empty:
 
 # --- ÁREA DE FILTROS ---
 st.subheader("Filtros")
+
+# NOVO: Campo de busca por palavra-chave
+search_query = st.text_input(
+    "Buscar por palavra-chave:",
+    placeholder="Ex: diabetes, insuficiência renal, penicilina..."
+)
+
 col1, col2, col3 = st.columns(3)
 
 with col1:
@@ -39,7 +45,6 @@ with col1:
 
 with col2:
     # Filtro por Área
-    # Pega todas as áreas únicas das questões respondidas para popular o filtro
     unique_areas = sorted(list(answered_df['areas_principais'].str.split(',\s*').explode().str.strip().unique()))
     area_filter = st.multiselect("Filtrar por Área:", options=unique_areas)
 
@@ -51,13 +56,24 @@ with col3:
 # --- APLICA A LÓGICA DE FILTRAGEM ---
 filtered_df = answered_df.copy()
 
+# 1. Aplica o filtro de busca por palavra-chave primeiro
+if search_query:
+    # Junta todas as colunas de texto em uma só para a busca
+    # .fillna('') garante que colunas vazias não causem erro
+    searchable_text = filtered_df.apply(
+        lambda row: ' '.join(row[['enunciado', 'alternativas', 'comentarios', 'areas_principais', 'subtopicos', 'prova']].astype(str).fillna('')),
+        axis=1
+    )
+    # Filtra o DataFrame onde a 'searchable_text' contém a query (case-insensitive)
+    filtered_df = filtered_df[searchable_text.str.contains(search_query, case=False, na=False)]
+
+# 2. Aplica os outros filtros no resultado da busca
 if status_filter == "Corretas":
     filtered_df = filtered_df[filtered_df['is_correct'] == True]
 elif status_filter == "Incorretas":
     filtered_df = filtered_df[filtered_df['is_correct'] == False]
 
 if area_filter:
-    # Filtra linhas onde a coluna 'areas_principais' contém QUALQUER UMA das áreas selecionadas
     filtered_df = filtered_df[filtered_df['areas_principais'].str.contains('|'.join(area_filter), case=False, na=False)]
 
 if prova_filter:
@@ -71,15 +87,12 @@ st.subheader(f"Exibindo {len(filtered_df)} de {len(answered_df)} questões")
 if filtered_df.empty:
     st.warning("Nenhum resultado encontrado para os filtros selecionados.")
 else:
-    # Itera sobre o DataFrame filtrado para criar os cards
+    # O resto do código para exibir os cards permanece o mesmo
     for _, row in filtered_df.iterrows():
         icon = '✅' if row['is_correct'] else '❌'
-        
-        # Cria o título do card minimizado
         expander_title = f"{icon} **{row.get('prova', 'N/A')}** | {row.get('enunciado', '')[:100]}..."
 
         with st.expander(expander_title):
-            # --- Conteúdo do Card Expandido ---
             st.markdown(f"**Prova:** {row.get('prova', 'N/A')}")
             st.markdown(f"**Áreas:** {row.get('areas_principais', 'N/A')}")
             st.markdown("---")
@@ -90,7 +103,6 @@ else:
 
             st.subheader("Alternativas e Comentários")
             
-            # Carrega os dados JSON das colunas
             try:
                 alternativas = json.loads(row.get('alternativas', '{}'))
                 comentarios = json.loads(row.get('comentarios', '{}'))
