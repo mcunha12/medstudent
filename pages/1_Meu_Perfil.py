@@ -100,11 +100,16 @@ with col1:
     if not areas_perf_df.empty:
         top_areas_acerto = areas_perf_df.sort_values('taxa_de_acerto', ascending=False).head(10)
         fig = px.bar(top_areas_acerto, x='areas_principais', y='taxa_de_acerto', title="Áreas com Maior Acerto", labels={'areas_principais': 'Área', 'taxa_de_acerto': 'Taxa de Acerto (%)'})
+        
+        # ALTERAÇÃO APLICADA AQUI: Fixa o eixo Y de 0 a 100
+        fig.update_yaxes(range=[0, 100])
+        
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Sem dados de áreas para exibir.")
 
 with col2:
+    # Este gráfico permanece inalterado, pois seu eixo Y não é uma porcentagem
     if not areas_perf_df.empty:
         top_areas_pratica = areas_perf_df.sort_values('total_respondidas', ascending=False).head(10)
         fig = px.bar(top_areas_pratica, x='areas_principais', y='total_respondidas', title="Áreas Mais Praticadas", labels={'areas_principais': 'Área', 'total_respondidas': 'Nº de Questões'})
