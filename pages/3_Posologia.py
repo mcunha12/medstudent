@@ -1,10 +1,6 @@
-# ==============================================================================
-# ARQUIVO 2: pages/3_Posologia.py (Corrigido)
-# ==============================================================================
 import streamlit as st
 import json
-# Importa a nova função em vez de tentar importar 'model'
-from services import get_gemini_model
+import requests  # Importa a biblioteca para fazer chamadas HTTP
 
 # --- VERIFICAÇÃO DE LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
@@ -76,7 +72,6 @@ with st.form(key='posologia_form'):
 # --- PROCESSAMENTO APÓS ENVIO ---
 if submit_button:
     # Validação e conversão de valores...
-    # ... (código inalterado)
     required_fields = [med_name, weight_str, age_str, dosage_str, interval_str, concentration_str]
     if not all(required_fields):
         st.error("Por favor, preencha todos os campos obrigatórios.")
@@ -92,7 +87,6 @@ if submit_button:
         st.stop()
 
     # Cálculo da dose...
-    # ... (código inalterado)
     st.subheader("Resultado do Cálculo")
     if concentration > 0:
         total_mg_dose = weight * dosage_mgkg
@@ -106,7 +100,7 @@ if submit_button:
     else:
         st.warning("A concentração deve ser maior que zero para calcular a dose em mL.")
 
-    # --- CHAMADA À IA (GEMINI) ---
+    # --- CHAMADA À IA (OPENROUTER) ---
     st.subheader("Relatório Educacional MedStudentAI")
     with st.spinner("Gerando insights clínicos com a IA..."):
         data_for_ai = {
@@ -115,6 +109,7 @@ if submit_button:
             "concentracao_mg_por_ml": concentration,
             "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
         }
+        # O prompt continua o mesmo, apenas o método de chamada muda
         prompt = (
             f"Você é um médico sênior e educador, respondendo a uma estudante de medicina. "
             f"Com base nos seguintes dados de um caso hipotético: {json.dumps(data_for_ai, ensure_ascii=False)}. "
@@ -130,10 +125,34 @@ if submit_button:
         )
 
         try:
-            # CORREÇÃO: Chama a nova função para obter o modelo
-            model = get_gemini_model()
-            response = model.generate_content(prompt)
-            ai_report = response.text
+            # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
+            api_key = st.secrets.get("OPENROUTER_API_KEY")
+            api_url = st.secrets.get("OPENROUTER_URL")
+            model_name = st.secrets.get("MODEL")
+
+            if not all([api_key, api_url, model_name]):
+                st.error("As configurações do OpenRouter (API_KEY, URL, MODEL) não foram encontradas em secrets.toml.")
+                st.stop()
+
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            body = {
+                "model": model_name,
+                "messages": [
+                    {"role": "user", "content": prompt}
+                ]
+            }
+            
+            response = requests.post(api_url, headers=headers, json=body, timeout=30)
+            response.raise_for_status()  # Lança um erro para respostas 4xx/5xx
+            
+            # Extrai a resposta do JSON
+            ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
             st.markdown(ai_report)
+
+        except requests.exceptions.RequestException as e:
+            st.error(f"Erro de conexão ao tentar contatar o servidor de IA: {e}")
         except Exception as e:
-            st.error(f"Ocorreu um erro ao gerar o relatório da IA: {e}")
+            st.error(f"Ocorreu um erro inesperado ao gerar o relatório da IA: {e}")
