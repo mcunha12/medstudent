@@ -1,23 +1,21 @@
+# ==============================================================================
+# ARQUIVO 2: pages/3_Posologia.py (Corrigido)
+# ==============================================================================
 import streamlit as st
 import json
-# Importa apenas o 'model' do Gemini do nosso arquivo de serviços
-from services import model
+# Importa a nova função em vez de tentar importar 'model'
+from services import get_gemini_model
 
 # --- VERIFICAÇÃO DE LOGIN ---
-# Garante que o usuário esteja logado para usar a ferramenta.
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para acessar a calculadora.")
     st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
     st.stop()
 
 # --- CONFIGURAÇÃO E ESTILO DA PÁGINA ---
-# O st.set_page_config() foi removido, pois ele só pode ser chamado uma vez
-# no arquivo principal (Home.py). As outras páginas herdam a configuração.
-
 st.title("💊 Calculadora de Posologia")
 st.markdown("---")
 
-# CSS para um estilo mais limpo e profissional
 st.markdown(
     """
     <style>
@@ -47,15 +45,8 @@ st.markdown(
           border-radius: 8px;
           margin-top: 16px;
       }
-      .result-card h3 {
-          margin-top: 0;
-          color: #1C1C1E;
-      }
-      .result-card p {
-          font-size: 18px;
-          font-weight: 500;
-          color: #1C1C1E;
-      }
+      .result-card h3 { margin-top: 0; color: #1C1C1E; }
+      .result-card p { font-size: 18px; font-weight: 500; color: #1C1C1E; }
     </style>
     """,
     unsafe_allow_html=True
@@ -65,7 +56,6 @@ st.markdown(
 with st.form(key='posologia_form'):
     st.subheader("Dados do Paciente e Medicação")
     
-    # Usando colunas para um layout mais organizado
     col1, col2 = st.columns(2)
     with col1:
         med_name = st.text_input("Medicamento", placeholder="Ex: Amoxicilina")
@@ -85,13 +75,12 @@ with st.form(key='posologia_form'):
 
 # --- PROCESSAMENTO APÓS ENVIO ---
 if submit_button:
-    # Validação dos campos
+    # Validação e conversão de valores...
+    # ... (código inalterado)
     required_fields = [med_name, weight_str, age_str, dosage_str, interval_str, concentration_str]
     if not all(required_fields):
         st.error("Por favor, preencha todos os campos obrigatórios.")
         st.stop()
-    
-    # Conversão dos valores com tratamento de erro
     try:
         weight = float(weight_str)
         age = int(age_str)
@@ -102,12 +91,12 @@ if submit_button:
         st.error("Por favor, insira valores numéricos válidos para peso, idade, dosagem, intervalo e concentração.")
         st.stop()
 
-    # --- CÁLCULO DA DOSE ---
+    # Cálculo da dose...
+    # ... (código inalterado)
     st.subheader("Resultado do Cálculo")
     if concentration > 0:
         total_mg_dose = weight * dosage_mgkg
         dose_ml = total_mg_dose / concentration
-        
         st.markdown(f"""
         <div class="result-card">
             <h3>Dose Calculada:</h3>
@@ -120,13 +109,9 @@ if submit_button:
     # --- CHAMADA À IA (GEMINI) ---
     st.subheader("Relatório Educacional MedStudentAI")
     with st.spinner("Gerando insights clínicos com a IA..."):
-        # Preparação do prompt para o Gemini
         data_for_ai = {
-            "medicamento": med_name,
-            "peso_kg": weight,
-            "idade_anos": age,
-            "dosagem_mg_por_kg": dosage_mgkg,
-            "intervalo_horas": interval_hours,
+            "medicamento": med_name, "peso_kg": weight, "idade_anos": age,
+            "dosagem_mg_por_kg": dosage_mgkg, "intervalo_horas": interval_hours,
             "concentracao_mg_por_ml": concentration,
             "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
         }
@@ -145,7 +130,8 @@ if submit_button:
         )
 
         try:
-            # Usa o modelo Gemini importado de services.py
+            # CORREÇÃO: Chama a nova função para obter o modelo
+            model = get_gemini_model()
             response = model.generate_content(prompt)
             ai_report = response.text
             st.markdown(ai_report)
