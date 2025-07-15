@@ -1,19 +1,16 @@
 # ==============================================================================
-# ARQUIVO 2: pages/3_Meu_Perfil.py (Atualizado)
-# Local: pasta "pages"
-# Descrição: Adiciona o seletor de período e corrige o `st.image`.
+# ARQUIVO: pages/1_Meu_Perfil.py (Corrigido)
 # ==============================================================================
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-# A função get_weekly_performance foi substituída
 from services import get_performance_data, get_time_window_metrics, get_temporal_performance, get_areas_performance, get_subtopics_for_review
 
-# st.set_page_config foi removido daqui
-
+# O st.set_page_config foi removido pois só pode ser chamado na Home.py
 st.title("📊 Meu Perfil de Performance")
 st.markdown("---")
 
+# --- VERIFICA LOGIN E CARREGA DADOS ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para ver seu perfil.")
     st.page_link("Home.py", label="Voltar para a Home", icon="�")
@@ -33,7 +30,6 @@ subtopicos_exploded = performance_data["subtopicos_exploded"]
 # --- LINHA 1: GRÁFICOS TEMPORAIS E RANKING ---
 st.subheader("Evolução da Performance")
 
-# Adiciona o seletor de período
 periodo_selecionado = st.selectbox(
     "Agrupar dados por:",
     ("Semana", "Dia")
@@ -62,14 +58,19 @@ with col2:
 with col3:
     st.markdown("**Ranking Geral**")
     st.info("Em breve você poderá comparar sua performance com outros estudantes.")
-    # CORREÇÃO: use_container_width em vez de use_column_width
-    st.image("[https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking](https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking)\n(Em Breve)", use_container_width=True)
+    
+    # --- CORREÇÃO APLICADA AQUI ---
+    # Passamos apenas a URL para o st.image
+    image_url = "https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking"
+    st.image(image_url, use_container_width=True)
+    st.caption("(Em Breve)") # Usamos st.caption para o texto adicional
 
-# O restante do arquivo continua igual...
+
 st.markdown("---")
+# --- LINHA 2: ANÁLISE POR ÁREA E SUBTÓPICOS ---
 st.subheader("Análise por Área de Conhecimento")
 col1, col2, col3 = st.columns([2, 2, 1])
-# ... (código inalterado)
+
 with col1:
     areas_perf_df = get_areas_performance(areas_exploded)
     if not areas_perf_df.empty:
@@ -78,6 +79,7 @@ with col1:
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Sem dados de áreas para exibir.")
+
 with col2:
     if not areas_perf_df.empty:
         top_areas_pratica = areas_perf_df.sort_values('total_respondidas', ascending=False).head(10)
@@ -85,6 +87,7 @@ with col2:
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Sem dados de áreas para exibir.")
+
 with col3:
     st.markdown("**Foco para os Estudos**")
     st.caption("Subtópicos de questões que você errou nos últimos 7 dias.")
@@ -96,20 +99,25 @@ with col3:
         st.success("Parabéns! Nenhum ponto de melhoria encontrado nos últimos 7 dias.")
 
 st.markdown("---")
+# --- LINHAS 3, 4 e 5: MÉTRICAS GERAIS ---
 st.subheader("Métricas de Performance")
+
 geral_metrics = get_time_window_metrics(all_answers)
 d7_metrics = get_time_window_metrics(all_answers, days=7)
 d30_metrics = get_time_window_metrics(all_answers, days=30)
+
 st.markdown("##### Taxa de Acerto")
 col1, col2, col3 = st.columns(3)
 col1.metric("Geral", f"{geral_metrics['accuracy']:.1f}%")
 col2.metric("Últimos 7 dias", f"{d7_metrics['accuracy']:.1f}%")
 col3.metric("Últimos 30 dias", f"{d30_metrics['accuracy']:.1f}%")
+
 st.markdown("##### Questões Respondidas")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total", geral_metrics['answered'])
 col2.metric("Últimos 7 dias", d7_metrics['answered'])
 col3.metric("Últimos 30 dias", d30_metrics['answered'])
+
 st.markdown("##### Questões Corretas")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total", geral_metrics['correct'])
