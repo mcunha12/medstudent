@@ -123,13 +123,13 @@ else:
             st.metric(label="Futuros Médicos na Plataforma", value=f"{stats['total_students']:,}".replace(",", "."))
         
         with stat_col2:
-            st.metric(label="Focados nesta Semana", value=f"{stats['active_this_week']:,}".replace(",", "."))
+            st.metric(label="Estudantes focados nesta Semana", value=f"{stats['active_this_week']:,}".replace(",", "."))
         
         with stat_col3:
-            st.metric(label="Questões Resolvidas (7 dias)", value=f"{stats['answered_last_7_days']:,}".replace(",", "."))
+            st.metric(label="Questões Resolvidas (Últimos 7 dias)", value=f"{stats['answered_last_7_days']:,}".replace(",", "."))
             
         with stat_col4:
-            st.metric(label="Acerto da Comunidade (7 dias)", value=f"{stats['accuracy_last_7_days']:.1f}%")
+            st.metric(label="Acertos da Comunidade (Últimos 7 dias)", value=f"{stats['accuracy_last_7_days']:.1f}%")
         
         st.markdown("</div>", unsafe_allow_html=True)
 
