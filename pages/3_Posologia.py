@@ -157,7 +157,7 @@ if submit_button:
             ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
             # st.markdown(ai_report)
 
-        except requests.exceptions.RequestException as e:
-            st.error(f"Erro de conexão ao tentar contatar o servidor de IA: {e}")
-        except Exception as e:
-            st.error(f"Ocorreu um erro inesperado ao gerar o relatório da IA: {e}")
+        # except requests.exceptions.RequestException as e:
+        #     st.error(f"Erro de conexão ao tentar contatar o servidor de IA: {e}")
+        # except Exception as e:
+        #     st.error(f"Ocorreu um erro inesperado ao gerar o relatório da IA: {e}")
