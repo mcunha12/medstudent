@@ -43,6 +43,10 @@ with col1:
     temporal_df = get_temporal_performance(all_answers, period=period_code)
     if not temporal_df.empty:
         fig = px.bar(temporal_df, x='periodo', y='questoes_respondidas', title=f"Questões Respondidas por {periodo_selecionado}", labels={'periodo': periodo_selecionado, 'questoes_respondidas': 'Quantidade'})
+        
+        # ALTERAÇÃO APLICADA AQUI: Formata o eixo X para o padrão dia/mês/ano
+        fig.update_xaxes(tickformat='%d/%m/%y')
+        
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info(f"Sem dados para o período selecionado.")
@@ -51,6 +55,10 @@ with col2:
     if not temporal_df.empty:
         fig = px.line(temporal_df, x='periodo', y='taxa_de_acerto', title=f"Taxa de Acerto por {periodo_selecionado}", markers=True, labels={'periodo': periodo_selecionado, 'taxa_de_acerto': 'Taxa de Acerto (%)'})
         fig.update_yaxes(range=[0, 101])
+        
+        # ALTERAÇÃO APLICADA AQUI: Formata o eixo X para o padrão dia/mês/ano
+        fig.update_xaxes(tickformat='%d/%m/%y')
+
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info(f"Sem dados para o período selecionado.")
@@ -59,11 +67,9 @@ with col3:
     st.markdown("**Ranking Geral**")
     st.info("Em breve você poderá comparar sua performance com outros estudantes.")
     
-    # --- CORREÇÃO APLICADA AQUI ---
-    # Passamos apenas a URL para o st.image
     image_url = "https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking"
     st.image(image_url, use_container_width=True)
-    st.caption("(Em Breve)") # Usamos st.caption para o texto adicional
+    st.caption("(Em Breve)")
 
 
 st.markdown("---")
