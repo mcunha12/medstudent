@@ -155,7 +155,7 @@ if submit_button:
             response.raise_for_status()
             
             ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
-            st.markdown(ai_report)
+            # st.markdown(ai_report)
 
         except requests.exceptions.RequestException as e:
             st.error(f"Erro de conexão ao tentar contatar o servidor de IA: {e}")
