@@ -306,3 +306,45 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
         'total_users': total_users,
         'percentile': percentile
     }
+
+# Adicione esta função ao final do seu arquivo services.py
+@st.cache_data(ttl=600) # Cache de 10 minutos para os dados de revisão
+def get_user_answered_questions_details(user_id):
+    """
+    Busca todas as respostas de um usuário e as combina com os detalhes das questões.
+    
+    Returns:
+        pd.DataFrame: Um DataFrame com os dados combinados e ordenado do mais recente para o mais antigo.
+                      Retorna um DataFrame vazio se não houver respostas.
+    """
+    _ensure_connected() # Garante que a conexão com o Google Sheets está ativa
+    try:
+        answers_sheet = _connections["spreadsheet"].worksheet("answers")
+        questions_sheet = _connections["spreadsheet"].worksheet("questions")
+        
+        answers_df = pd.DataFrame(answers_sheet.get_all_records())
+        questions_df = pd.DataFrame(questions_sheet.get_all_records())
+
+        if answers_df.empty or questions_df.empty:
+            return pd.DataFrame()
+
+        # Filtra apenas as respostas do usuário logado
+        user_answers = answers_df[answers_df['user_id'].astype(str) == str(user_id)].copy()
+
+        if user_answers.empty:
+            return pd.DataFrame()
+
+        # Converte tipos para garantir consistência
+        user_answers['answered_at'] = pd.to_datetime(user_answers['answered_at'])
+        user_answers['is_correct'] = user_answers['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+
+        # Combina os dados das respostas com os detalhes das questões
+        merged_df = pd.merge(user_answers, questions_df, on='question_id', how='left')
+
+        # Ordena da resposta mais recente para a mais antiga
+        merged_df = merged_df.sort_values(by='answered_at', ascending=False)
+        
+        return merged_df
+    except Exception as e:
+        st.error(f"Erro ao buscar histórico de revisão: {e}")
+        return pd.DataFrame()
