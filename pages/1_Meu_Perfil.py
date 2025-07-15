@@ -6,7 +6,6 @@ import pandas as pd
 import plotly.express as px
 # 1. IMPORTE A NOVA FUNÇÃO JUNTO COM AS OUTRAS
 from services import get_performance_data, get_time_window_metrics, get_temporal_performance, get_areas_performance, get_subtopics_for_review, get_ranking_data
-
 st.title("📊 Meu Perfil de Performance")
 st.markdown("---")
 
