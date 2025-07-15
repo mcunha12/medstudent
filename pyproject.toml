@@ -1,16 +1,21 @@
+# ==============================================================================
+# ARQUIVO 1: pyproject.toml
+# Local: Raiz do seu NOVO projeto
+# Descrição: Esta é a configuração de dependências mais simples e robusta
+# que diz ao Streamlit para não tratar seu app como um pacote.
+# ==============================================================================
+
 [tool.poetry]
-name = "medstudent"
+name = "medstudent-app"
 version = "0.1.0"
 description = "Simulador de questões ENAMED e ferramentas de estudo para medicina."
 authors = ["Yasmin e Marcelo <marceloopcunha@gmail.com>"]
 readme = "README.md"
 
-# Seção de dependências
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
 
 # Dependências essenciais para o projeto.
-# O símbolo '^' permite que o Poetry encontre as melhores versões compatíveis.
 streamlit = "^1.34.0"
 gspread = "^6.0.0"
 pandas = "^2.2.0"
@@ -18,8 +23,6 @@ google-generativeai = "^0.5.0"
 plotly = "^5.18.0"
 toml = "^0.10.2"
 
-# Seção de build do sistema
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
