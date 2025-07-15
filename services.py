@@ -13,13 +13,12 @@ _connections = {"spreadsheet": None, "model": None}
 def normalize_for_search(text: str) -> str:
     """
     Normaliza um texto para busca: remove acentos e converte para minúsculas.
-    Ex: 'Insuficiência Renal' -> 'insuficiencia renal'
     """
     if not isinstance(text, str):
         return ""
-    # Decompõe os caracteres (ex: 'ç' -> 'c' + '̧') e remove os acentos
     nfkd_form = unicodedata.normalize('NFD', text)
     return "".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
+
 
 def _ensure_connected():
     """Garante que a conexão com Google Sheets e Gemini está ativa."""
@@ -61,9 +60,9 @@ def get_or_create_user(email):
         users_sheet.append_row(new_user_data)
     return user_id
 
-def get_next_question(user_id, specialty=None, provas=None, keywords=None):
+def get_next_question(user_id, status_filter='nao_respondidas', specialty=None, provas=None, keywords=None):
     """
-    Busca a próxima questão não respondida, com filtros avançados e normalização de busca.
+    Busca a próxima questão, com filtros de status (não respondidas, corretas, incorretas) e outros.
     """
     _ensure_connected()
     questions_sheet = _connections["spreadsheet"].worksheet("questions")
@@ -75,54 +74,107 @@ def get_next_question(user_id, specialty=None, provas=None, keywords=None):
     if questions_df.empty:
         return None
 
-    filtered_questions = questions_df.copy()
+    # --- NOVO: Lógica de seleção inicial pelo status da resposta ---
+    initial_pool = questions_df.copy()
+    user_answers_df = pd.DataFrame()
 
-    # Filtros por Especialidade e Prova (sem alteração)
-    if specialty and specialty != "Todas":
-        filtered_questions = filtered_questions[filtered_questions['areas_principais'].str.contains(specialty, na=False, case=False)]
-    if provas:
-        filtered_questions = filtered_questions[filtered_questions['prova'].isin(provas)]
-
-    # ALTERAÇÃO: Filtro por Palavra-chave com normalização
-    if keywords:
-        # 1. Normaliza os dados da planilha para a busca
-        searchable_text = filtered_questions.apply(
-            lambda row: normalize_for_search(
-                ' '.join(row[['enunciado', 'alternativas', 'comentarios', 'areas_principais', 'subtopicos', 'prova']].astype(str).fillna(''))
-            ),
-            axis=1
-        )
-        # 2. Normaliza as palavras-chave da busca e cria a regex
-        normalized_keywords = [normalize_for_search(kw) for kw in keywords]
-        keyword_regex = '|'.join(normalized_keywords)
-        
-        # 3. Compara o texto normalizado da planilha com a regex normalizada
-        filtered_questions = filtered_questions[searchable_text.str.contains(keyword_regex, na=False)]
-
-    if filtered_questions.empty:
-        return None
-
-    # Filtro de questões já respondidas (sem alteração)
     if not answers_df.empty:
         answers_df['user_id'] = answers_df['user_id'].astype(str)
-        answered_ids = answers_df[answers_df['user_id'] == user_id]['question_id'].tolist()
-        unanswered_questions = filtered_questions[~filtered_questions['question_id'].isin(answered_ids)]
-    else:
-        unanswered_questions = filtered_questions
+        user_answers_df = answers_df[answers_df['user_id'] == user_id].copy()
+
+    if status_filter == 'nao_respondidas':
+        if not user_answers_df.empty:
+            answered_ids = user_answers_df['question_id'].tolist()
+            initial_pool = questions_df[~questions_df['question_id'].isin(answered_ids)]
+        # Se user_answers_df for vazio, initial_pool já é todas as questões
+    else: # Se o filtro for para questões já respondidas
+        if user_answers_df.empty:
+            return None # Não há questões respondidas para buscar
         
-    return unanswered_questions.sample(n=1).to_dict('records')[0] if not unanswered_questions.empty else None
+        user_answers_df['is_correct'] = user_answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+        
+        if status_filter == 'corretas':
+            target_ids = user_answers_df[user_answers_df['is_correct'] == True]['question_id'].tolist()
+        elif status_filter == 'incorretas':
+            target_ids = user_answers_df[user_answers_df['is_correct'] == False]['question_id'].tolist()
+        else:
+            target_ids = []
+            
+        initial_pool = questions_df[questions_df['question_id'].isin(target_ids)]
+
+    if initial_pool.empty:
+        return None
+
+    # --- Aplica os outros filtros no pool de questões já selecionado ---
+    final_pool = initial_pool.copy()
+    if specialty and specialty != "Todas":
+        final_pool = final_pool[final_pool['areas_principais'].str.contains(specialty, na=False, case=False)]
+    if provas:
+        final_pool = final_pool[final_pool['prova'].isin(provas)]
+    if keywords:
+        searchable_text = final_pool.apply(
+            lambda row: normalize_for_search(' '.join(row.values.astype(str))),
+            axis=1
+        )
+        normalized_keywords = [normalize_for_search(kw) for kw in keywords]
+        keyword_regex = '|'.join(normalized_keywords)
+        final_pool = final_pool[searchable_text.str.contains(keyword_regex, na=False)]
+
+    if final_pool.empty:
+        return None
+        
+    return final_pool.sample(n=1).to_dict('records')[0]
 
 def save_answer(user_id, question_id, user_answer, is_correct):
-    """Salva a resposta do usuário na planilha."""
+    """
+    Salva ou atualiza uma resposta, com lógica para não sobrescrever acertos com erros.
+    """
     _ensure_connected()
     answers_sheet = _connections["spreadsheet"].worksheet("answers")
-    answer_id = str(uuid.uuid4())
-    timestamp = datetime.now().isoformat()
-    # Garante que is_correct seja 'TRUE' ou 'FALSE' para consistência na planilha
-    is_correct_str = 'TRUE' if is_correct else 'FALSE'
-    new_answer_data = [answer_id, str(user_id), str(question_id), user_answer, is_correct_str, timestamp]
-    answers_sheet.append_row(new_answer_data)
-    st.cache_data.clear() # Limpa o cache para que os dados sejam recarregados na próxima vez
+    all_answers = pd.DataFrame(answers_sheet.get_all_records())
+
+    # Procura por uma resposta existente para esta questão e usuário
+    existing_answer = all_answers[
+        (all_answers['user_id'] == str(user_id)) & 
+        (all_answers['question_id'] == str(question_id))
+    ]
+
+    if existing_answer.empty:
+        # Se não existe, é uma nova resposta. Adiciona a linha.
+        answer_id = str(uuid.uuid4())
+        timestamp = datetime.now().isoformat()
+        new_answer_data = [answer_id, str(user_id), str(question_id), user_answer, 'TRUE' if is_correct else 'FALSE', timestamp]
+        answers_sheet.append_row(new_answer_data)
+    else:
+        # Se já existe, aplica a lógica de atualização
+        old_is_correct = str(existing_answer['is_correct'].iloc[0]).upper() == 'TRUE'
+        
+        # REGRA: Se a resposta antiga era correta e a nova é errada, não faz nada.
+        if old_is_correct and not is_correct:
+            print(f"INFO: Resposta para a questão {question_id} já era correta. Nenhuma alteração feita.")
+            return
+
+        # Para todos os outros casos (errada->certa, errada->errada, certa->certa), atualiza.
+        # Encontra a linha na planilha para atualizar
+        try:
+            cell = answers_sheet.find(existing_answer['answer_id'].iloc[0])
+            row_index = cell.row
+            
+            # Monta a linha com os dados atualizados
+            updated_row = [
+                existing_answer['answer_id'].iloc[0],
+                str(user_id),
+                str(question_id),
+                user_answer,
+                'TRUE' if is_correct else 'FALSE',
+                datetime.now().isoformat()
+            ]
+            # Atualiza a linha específica
+            answers_sheet.update(f'A{row_index}:F{row_index}', [updated_row])
+        except Exception as e:
+            print(f"ERRO: Não foi possível encontrar ou atualizar a linha da resposta. Erro: {e}")
+            
+    st.cache_data.clear() # Limpa o cache para refletir a mudança
 
 def generate_question_with_gemini():
     """Gera uma nova questão usando a API do Gemini."""
@@ -405,3 +457,57 @@ def get_all_provas():
     
     unique_provas = sorted(list(questions_df['prova'].dropna().unique()))
     return unique_provas
+
+@st.cache_data(ttl=3600) # Armazena o resultado em cache por 1 hora
+def get_global_platform_stats():
+    """
+    Calcula as estatísticas globais da plataforma para exibir na Home.
+    """
+    _ensure_connected()
+    try:
+        users_sheet = _connections["spreadsheet"].worksheet("users")
+        answers_sheet = _connections["spreadsheet"].worksheet("answers")
+
+        users_df = pd.DataFrame(users_sheet.get_all_records())
+        answers_df = pd.DataFrame(answers_sheet.get_all_records())
+
+        # Métrica 1: Total de alunos
+        total_students = len(users_df) if not users_df.empty else 0
+
+        # Se não houver respostas, retorna os valores padrão
+        if answers_df.empty:
+            return {
+                'total_students': total_students,
+                'active_this_week': 0,
+                'answered_last_7_days': 0,
+                'accuracy_last_7_days': 0.0
+            }
+
+        answers_df['answered_at'] = pd.to_datetime(answers_df['answered_at'])
+        answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+
+        # Garante que 'now' tenha o mesmo fuso horário dos dados
+        now = datetime.now(answers_df['answered_at'].dt.tz)
+
+        # Métrica 2: Alunos ativos na semana corrente (de Segunda a Domingo)
+        start_of_week = now - timedelta(days=now.weekday())
+        start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
+        this_week_answers = answers_df[answers_df['answered_at'] >= start_of_week]
+        active_this_week = this_week_answers['user_id'].nunique()
+
+        # Métricas 3 e 4: Respostas e acertos nos últimos 7 dias
+        seven_days_ago = now - timedelta(days=7)
+        last_7_days_answers = answers_df[answers_df['answered_at'] >= seven_days_ago]
+        
+        answered_last_7_days = len(last_7_days_answers)
+        accuracy_last_7_days = (last_7_days_answers['is_correct'].mean() * 100) if not last_7_days_answers.empty else 0.0
+
+        return {
+            'total_students': total_students,
+            'active_this_week': active_this_week,
+            'answered_last_7_days': answered_last_7_days,
+            'accuracy_last_7_days': accuracy_last_7_days
+        }
+    except Exception as e:
+        print(f"Erro ao calcular estatísticas globais: {e}")
+        return {'total_students': 0, 'active_this_week': 0, 'answered_last_7_days': 0, 'accuracy_last_7_days': 0.0}

@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-from services import get_next_question, save_answer, get_all_specialties, get_all_provas
+from services import get_next_question, save_answer, get_all_specialties, get_all_provas, normalize_for_search
 
 # --- VERIFICA LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
@@ -23,59 +23,62 @@ user_id = st.session_state.user_id
 # =================================================================
 with st.container(border=True):
     st.subheader("Filtros do Simulado")
+
+    # --- NOVO: Filtro de Status da Questão ---
+    status_options = {
+        "Questões não respondidas": "nao_respondidas",
+        "Questões que acertei": "corretas",
+        "Questões que errei": "incorretas"
+    }
+    selected_status_label = st.radio(
+        "Buscar em:",
+        options=status_options.keys(),
+        horizontal=True,
+    )
+    selected_status_value = status_options[selected_status_label]
     
     col1, col2 = st.columns(2)
     with col1:
-        # Filtro de Especialidade
         specialties = ["Todas"] + get_all_specialties()
         selected_specialty = st.selectbox("Área Principal:", specialties)
-
     with col2:
-        # Filtro de Prova
         provas = get_all_provas()
         selected_provas = st.multiselect("Prova(s):", provas)
 
-    # --- Filtro de Palavras-chave ---
     def add_keyword():
-        """Adiciona a palavra-chave do input à lista no session_state."""
-        keyword = st.session_state.keyword_input
-        if keyword and keyword.lower() not in [k.lower() for k in st.session_state.keywords]:
-            st.session_state.keywords.append(keyword)
-        st.session_state.keyword_input = "" # Limpa o campo de input
+        keyword_input = st.session_state.get("keyword_input", "")
+        if keyword_input:
+            normalized_keyword = normalize_for_search(keyword_input)
+            if normalized_keyword not in st.session_state.keywords:
+                st.session_state.keywords.append(normalized_keyword)
+        st.session_state.keyword_input = ""
 
-    st.text_input(
-        "Buscar por palavras-chave:",
-        placeholder="Digite uma palavra e pressione Enter...",
-        on_change=add_keyword,
-        key="keyword_input"
-    )
+    st.text_input("Buscar por palavras-chave:", placeholder="Digite uma palavra e pressione Enter...", on_change=add_keyword, key="keyword_input")
 
-    # Exibe as palavras-chave ativas com opção de remover
     if st.session_state.keywords:
-        st.write("Filtros ativos:")
-        cols = st.columns(len(st.session_state.keywords))
-        for i, keyword in enumerate(st.session_state.keywords):
-            with cols[i]:
-                if st.button(f"❌ {keyword}", key=f"kw_{keyword}", use_container_width=True):
-                    st.session_state.keywords.remove(keyword)
-                    st.rerun()
+        active_keywords_str = " | ".join([f"'{kw}'" for kw in st.session_state.keywords])
+        st.caption(f"Palavras-chave ativas: {active_keywords_str}")
+        if st.button("Limpar palavras-chave"):
+            st.session_state.keywords = []
+            st.rerun()
     
-    # --- Botão para Gerar Questão ---
     if st.button("Gerar Nova Questão", type="primary", use_container_width=True):
         with st.spinner("Buscando uma questão com os filtros selecionados..."):
             st.session_state.current_question = get_next_question(
                 user_id,
+                status_filter=selected_status_value, # Passa o novo filtro
                 specialty=selected_specialty,
                 provas=selected_provas,
                 keywords=st.session_state.keywords
             )
-            st.session_state.answer_submitted = False # Reseta o estado da resposta
+            st.session_state.answer_submitted = False
+            st.session_state.feedback_answer = None
+            st.rerun() # Adicionado para garantir que a interface atualize corretamente
 
 # =================================================================
-# ÁREA DE EXIBIÇÃO DA QUESTÃO
+# ÁREA DE EXIBIÇÃO DA QUESTÃO (lógica de exibição sem grandes alterações)
 # =================================================================
 st.markdown("---")
-
 q = st.session_state.current_question
 
 if q:
@@ -84,7 +87,6 @@ if q:
     
     alternativas = json.loads(q.get('alternativas', '{}'))
     
-    # Botões de alternativa
     if not st.session_state.answer_submitted:
         selected_answer = None
         for key, value in alternativas.items():
@@ -95,11 +97,9 @@ if q:
             st.session_state.answer_submitted = True
             is_correct = (selected_answer == q['alternativa_correta'])
             save_answer(user_id, q['question_id'], selected_answer, is_correct)
-            # Guarda a resposta selecionada para exibir o feedback correto
             st.session_state.feedback_answer = selected_answer
             st.rerun()
 
-    # Feedback após resposta
     if st.session_state.answer_submitted:
         comentarios = json.loads(q.get('comentarios', '{}'))
         st.subheader("Comentários das Alternativas")
@@ -111,6 +111,5 @@ if q:
             else:
                 st.info(f"**{key}:** {comment}")
 else:
-    # Mensagem exibida quando não há questão carregada
     st.info("Use os filtros acima e clique em **'Gerar Nova Questão'** para começar seu simulado.")
     st.warning("Se nenhuma questão for encontrada, tente remover ou alterar alguns filtros.")
