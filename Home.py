@@ -1,7 +1,3 @@
-# ==============================================================================
-# ARQUIVO 1: Home.py (Simplificado)
-# Local: Raiz do projeto
-# ==============================================================================
 import streamlit as st
 from services import get_or_create_user
 
@@ -43,7 +39,7 @@ if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 
 if not st.session_state.user_id:
-    st.title("Bem-vindo ao MedStudent! 👋")
+    st.title("Bem-vindo ao MedStudentAI! 👋")
     st.subheader("Insira seu e-mail para começar a praticar e salvar seu progresso.")
     
     with st.form("login_form"):
@@ -59,7 +55,18 @@ else:
     st.markdown("---")
 
     col1, col2, col3 = st.columns(3)
+    
     with col1:
+        st.markdown("""
+        <div class="card">
+            <h2>📊 Meu Perfil</h2>
+            <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        # CORREÇÃO: Usando um emoji válido e o caminho do arquivo correto
+        st.page_link("pages/1_Meu_Perfil.py", label="**Ver minha performance**", icon="📊")
+
+    with col2:
         st.markdown("""
         <div class="card">
             <h2>📝 Simulador de Questões</h2>
@@ -68,7 +75,7 @@ else:
         """, unsafe_allow_html=True)
         st.page_link("pages/2_Questões.py", label="**Ir para o Simulado**", icon="📝")
 
-    with col2:
+    with col3:
         st.markdown("""
         <div class="card">
             <h2>💊 Calculadora de Posologia</h2>
@@ -76,19 +83,10 @@ else:
         </div>
         """, unsafe_allow_html=True)
         st.page_link("pages/3_Posologia.py", label="**Ir para a Calculadora**", icon="💊")
-
-    with col3:
-        st.markdown("""
-        <div class="card">
-            <h2>📊 Meu Perfil</h2>
-            <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.page_link("pages/1_Meu_Perfil.py", label="**Ver minha performance**", icon="�")
     
     if st.sidebar.button("Sair"):
         for key in st.session_state.keys():
-            if key != 'user_id': # Mantém o user_id para evitar relogin imediato se necessário
+            if key != 'user_id':
                 del st.session_state[key]
         st.session_state.user_id = None
         st.rerun()
