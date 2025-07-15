@@ -101,28 +101,28 @@ if submit_button:
         st.warning("A concentração deve ser maior que zero para calcular a dose em mL.")
 
     # --- CHAMADA À IA (OPENROUTER) ---
-    st.subheader("Relatório Educacional MedStudentAI")
-    with st.spinner("Gerando insights clínicos com a IA..."):
-        data_for_ai = {
-            "medicamento": med_name, "peso_kg": weight, "idade_anos": age,
-            "dosagem_mg_por_kg": dosage_mgkg, "intervalo_horas": interval_hours,
-            "concentracao_mg_por_ml": concentration,
-            "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
-        }
+    # st.subheader("Relatório Educacional MedStudentAI")
+    # with st.spinner("Gerando insights clínicos com a IA..."):
+    #     data_for_ai = {
+    #         "medicamento": med_name, "peso_kg": weight, "idade_anos": age,
+    #         "dosagem_mg_por_kg": dosage_mgkg, "intervalo_horas": interval_hours,
+    #         "concentracao_mg_por_ml": concentration,
+    #         "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
+    #     }
         
-        prompt = (
-            f"Você é um médico sênior e educador, respondendo a uma estudante de medicina. "
-            f"Com base nos seguintes dados de um caso hipotético: {json.dumps(data_for_ai, ensure_ascii=False)}. "
-            "Gere um relatório educacional sucinto e direto. Foque nos seguintes pontos:\n"
-            "1. **Análise Clínica:** Como as comorbidades informadas (ou a ausência delas) impactam a escolha ou a posologia deste medicamento? Quais cuidados são necessários?\n"
-            "2. **Contexto Prático:** Se for um medicamento comum, crie um breve exemplo de cenário clínico onde essa prescrição seria típica. Ex: 'Imagine um paciente chegando ao PS com...'.\n"
-            "3. **Pontos de Atenção:** Mencione 1 ou 2 'red flags' ou efeitos adversos importantes que a estudante deve monitorar.\n\n"
-            "**Instruções de Formato:**\n"
-            "- Use um tom amigável e instrutivo.\n"
-            "- Não repita o cálculo da dose, apenas a análise clínica.\n"
-            "- Use negrito para destacar termos importantes.\n"
-            "- A resposta deve ser apenas o relatório, sem introduções como 'Olá, Yasmin' ou 'Aqui está o relatório'."
-        )
+    #     prompt = (
+    #         f"Você é um médico sênior e educador, respondendo a uma estudante de medicina. "
+    #         f"Com base nos seguintes dados de um caso hipotético: {json.dumps(data_for_ai, ensure_ascii=False)}. "
+    #         "Gere um relatório educacional sucinto e direto. Foque nos seguintes pontos:\n"
+    #         "1. **Análise Clínica:** Como as comorbidades informadas (ou a ausência delas) impactam a escolha ou a posologia deste medicamento? Quais cuidados são necessários?\n"
+    #         "2. **Contexto Prático:** Se for um medicamento comum, crie um breve exemplo de cenário clínico onde essa prescrição seria típica. Ex: 'Imagine um paciente chegando ao PS com...'.\n"
+    #         "3. **Pontos de Atenção:** Mencione 1 ou 2 'red flags' ou efeitos adversos importantes que a estudante deve monitorar.\n\n"
+    #         "**Instruções de Formato:**\n"
+    #         "- Use um tom amigável e instrutivo.\n"
+    #         "- Não repita o cálculo da dose, apenas a análise clínica.\n"
+    #         "- Use negrito para destacar termos importantes.\n"
+    #         "- A resposta deve ser apenas o relatório, sem introduções como 'Olá, Yasmin' ou 'Aqui está o relatório'."
+    #     )
 
         # try:
         #     # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
