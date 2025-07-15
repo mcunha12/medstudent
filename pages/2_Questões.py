@@ -24,20 +24,26 @@ user_id = st.session_state.user_id
 with st.container(border=True):
     st.subheader("Filtros do Simulado")
 
-    # ALTERADO: Filtro de Status agora permite múltiplas seleções
-    status_options = {
-        "Questões não respondidas": "nao_respondidas",
-        "Questões que acertei": "corretas",
-        "Questões que errei": "incorretas"
-    }
-    selected_status_labels = st.multiselect(
-        "Buscar em:",
-        options=list(status_options.keys()),
-        default=["Questões não respondidas"] # Mantém um padrão amigável
-    )
-    # Converte os rótulos selecionados para os valores que a função espera
-    selected_status_values = [status_options[label] for label in selected_status_labels]
+    # --- ALTERADO: Filtro de Status agora usa 3 Checkboxes ---
+    st.markdown("**Buscar em:**")
+    filter_cols = st.columns(3)
+    with filter_cols[0]:
+        status_nao_respondidas = st.checkbox("Questões não respondidas", value=True)
+    with filter_cols[1]:
+        status_corretas = st.checkbox("Questões que acertei")
+    with filter_cols[2]:
+        status_incorretas = st.checkbox("Questões que errei")
+
+    # Monta a lista de filtros de status com base nos checkboxes marcados
+    selected_status_values = []
+    if status_nao_respondidas:
+        selected_status_values.append("nao_respondidas")
+    if status_corretas:
+        selected_status_values.append("corretas")
+    if status_incorretas:
+        selected_status_values.append("incorretas")
     
+    # --- Demais filtros permanecem iguais ---
     col1, col2 = st.columns(2)
     with col1:
         specialties = ["Todas"] + get_all_specialties()
@@ -64,14 +70,13 @@ with st.container(border=True):
             st.rerun()
     
     if st.button("Gerar Nova Questão", type="primary", use_container_width=True):
-        # Validação para garantir que pelo menos um status foi selecionado
         if not selected_status_values:
-            st.warning("Por favor, selecione pelo menos um status de questão para buscar.")
+            st.warning("Por favor, selecione pelo menos um status de questão para buscar (ex: Não respondidas).")
         else:
             with st.spinner("Buscando uma questão com os filtros selecionados..."):
                 st.session_state.current_question = get_next_question(
                     user_id,
-                    status_filters=selected_status_values, # Passa a LISTA de filtros
+                    status_filters=selected_status_values,
                     specialty=selected_specialty,
                     provas=selected_provas,
                     keywords=st.session_state.keywords
@@ -81,8 +86,7 @@ with st.container(border=True):
                 st.rerun()
 
 # =================================================================
-# ÁREA DE EXIBIÇÃO DA QUESTÃO
-# (Nenhuma mudança necessária aqui)
+# ÁREA DE EXIBIÇÃO DA QUESTÃO (sem alterações)
 # =================================================================
 st.markdown("---")
 q = st.session_state.current_question
