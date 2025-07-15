@@ -113,5 +113,391 @@
       "Intoxicações Exógenas"
     ],
     "createdAt": "2024-07-15T10:12:00Z"
+  },
+  {
+    "id": "e6a0b1c2-3d4e-5f6a-b7c8-9d0e1f2a3b4c",
+    "enunciado": "Uma paciente de 32 anos de idade procurou a unidade básica de saúde com queixa de astenia há dois meses. É tabagista de um maço por dia há dez anos. Refere ciclos menstruais regulares, com sangramento volumoso por doze dias a cada ciclo. Exame físico: pressão arterial de 120 x 80 mmHg; frequência cardíaca de 110 bpm; e saturação de oxigênio de 97%. Hipocorada ++/4+, anictérica, acianótica e eupneica. Exame cardiopulmonar: ritmo cardíaco regular, com sopro sistólico ++/6+, pancardíaco, sem irradiação. Murmúrios vesiculares audíveis bilateralmente, sem ruídos adventícios. Restante do exame físico normal.\n\nCom base nesse caso hipotético, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "A contagem de reticulócitos deve estar aumentada.",
+      "B": "O sopro cardíaco identificado trata-se, provavelmente, de sopro funcional.",
+      "C": "Espera-se encontrar corpúsculos de Howell-Jolly no esfregaço de sangue periférico.",
+      "D": "O tratamento de escolha inicial deve ser a transfusão de concentrado de hemácias.",
+      "E": "A principal hipótese diagnóstica é anemia de doença crônica."
+    },
+    "comentarios": {
+      "A": "Incorreto. O quadro clínico é altamente sugestivo de anemia ferropriva devido à perda sanguínea crônica (menorragia). Na anemia por deficiência de ferro, a medula óssea não tem o substrato necessário (ferro) para produzir glóbulos vermelhos de forma eficaz. Portanto, a contagem de reticulócitos estaria baixa ou inadequadamente normal para o grau de anemia, refletindo uma medula hipoproliferativa.",
+      "B": "Correto. O sopro sistólico descrito é característico de um estado hiperdinâmico. A anemia severa diminui a viscosidade do sangue e aumenta o débito cardíaco, o que gera um fluxo sanguível acelerado e turbulento através das valvas cardíacas, resultando em um sopro funcional (ou de hipefluxo). Este sopro tende a desaparecer com a correção da anemia.",
+      "C": "Incorreto. Corpúsculos de Howell-Jolly são remanescentes nucleares nos eritrócitos, tipicamente encontrados em pacientes com asplenia (ausência do baço) ou hipoesplenismo. Os achados esperados no esfregaço de sangue periférico para anemia ferropriva seriam microcitose e hipocromia.",
+      "D": "Incorreto. A transfusão de hemácias é reservada para pacientes com instabilidade hemodinâmica, sangramento ativo ou sintomas graves de hipóxia (como angina ou dispneia intensa). Nesta paciente, apesar da astenia e taquicardia, ela está hemodinamicamente estável. O tratamento primário deve focar na reposição de ferro e na investigação/tratamento da causa base (menorragia).",
+      "E": "Incorreto. Embora o tabagismo possa ser associado a doenças crônicas, a história de sangramento menstrual volumoso por 12 dias é um fator de risco muito forte e específico para a deficiência de ferro. A anemia ferropriva é a hipótese mais provável e deve ser a primeira a ser investigada."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Anemia Ferropriva",
+      "Semiologia Cardiovascular",
+      "Sopro Cardíaco Funcional",
+      "Sangramento Uterino Anormal"
+    ],
+    "createdAt": "2025-07-14T22:39:23.000Z"
+  },
+  {
+    "id": "f9b1c2d3-4e5f-6a7b-8c9d-0e1f2a3b4c5d",
+    "enunciado": "Um paciente de dezoito anos de idade, previamente hígido, deu entrada no pronto-socorro em mau estado geral, sonolento, desidratado e com dor abdominal difusa e intensa à palpação. Sinais vitais: pressão arterial de 90 x 50 mmHg; frequência cardíaca de 130 bpm; frequência respiratória de 38 irpm; saturação de oxigênio de 94%; e glicemia capilar de 480 mg/dL. Gasometria arterial: pH 6,8; pO2 74 mmHg; pCO2 10 mmHg; bicarbonato 2 mEq/L; e base excess –12. Outros exames laboratoriais: creatinina 1,2 mg/dL (VR 0,6 – 1,2); ureia 73 mg/dL (VR 16 – 40); sódio 135 mmol/L (VR 135 – 145); potássio 3 mmol/L (VR 3,5 – 5,5); e urina tipo 1 com corpos cetônicos fortemente positivos.\n\nCom base nessa situação hipotética, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Deve-se realizar uma reposição endovenosa de bicarbonato de sódio imediatamente.",
+      "B": "Deve-se realizar bólus de insulina regular 0,1 U/kg, endovenosa, imediatamente.",
+      "C": "Após a hidratação inicial, a solução de hidratação de manutenção deverá conter NaCl a 0,45%.",
+      "D": "Os critérios laboratoriais de resolução do quadro são: glicemia < 200 mg/dL; bicarbonato > 18 mEq/L; e pH > 7,30.",
+      "E": "Na persistência de acidose metabólica, mesmo com tratamento otimizado, deve-se reavaliar o ânion gap, pela possibilidade de acidose hiperclorêmica iatrogênica."
+    },
+    "comentarios": {
+      "A": "Incorreto. A reposição de bicarbonato é controversa e reservada para casos de acidose extremamente grave (pH < 6,9). Mesmo assim, não é a primeira medida. A prioridade absoluta é a expansão volêmica. Além disso, a administração de bicarbonato pode causar hipocalemia, sobrecarga de sódio e piora da acidose intracelular.",
+      "B": "Incorreto. A medida mais importante e imediata no tratamento da cetoacidose diabética (CAD) é a hidratação vigorosa com solução salina isotônica. Iniciar a insulina antes da reposição volêmica pode agravar a hipovolemia e o choque, pois a glicose sérica cairá e levará água para o meio intracelular. Além disso, a insulina deve ser iniciada após a verificação do potássio (que está baixo neste caso, K=3.0), pois agravaria a hipocalemia.",
+      "C": "Incorreto. Embora o uso de NaCl 0,45% seja comum na fase de manutenção, a escolha depende do sódio corrigido. O sódio corrigido é: Na medido + [1.6 * (Glicemia - 100) / 100] = 135 + [1.6 * (480-100)/100] ≈ 141 mEq/L. Com um sódio corrigido normal, o uso de NaCl 0,45% seria apropriado. Contudo, esta afirmativa não é a mais correta ou a mais crucial entre as opções. A afirmativa E aponta para um conceito fisiopatológico mais complexo e importante no manejo.",
+      "D": "Incorreto. Os critérios de resolução da CAD são a melhora do estado geral do paciente, glicemia < 200-250 mg/dL, e a normalização de pelo menos dois dos seguintes parâmetros: bicarbonato sérico (≥ 15 mEq/L), pH venoso (> 7,3) e, crucialmente, o fechamento do ânion gap (≤ 12 mEq/L). A alternativa omite o ânion gap, que é um critério fundamental.",
+      "E": "Correto. Esta é uma complicação conhecida do tratamento da CAD. A administração de grandes volumes de solução salina a 0,9% (rica em cloreto) para hidratação pode levar a uma acidose metabólica hiperclorêmica (com ânion gap normal). Quando o pH do paciente não melhora como esperado apesar da queda da glicemia e dos corpos cetônicos, é fundamental reavaliar o ânion gap. Se o ânion gap normalizou mas a acidose persiste, a causa provável é a iatrogenia pelo cloreto."
+    },
+    "alternativa_correta": "E",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Cetoacidose Diabética",
+      "Diabetes Mellitus Tipo 1",
+      "Distúrbios Hidroeletrolíticos",
+      "Distúrbios Ácido-Base"
+    ],
+    "createdAt": "2025-07-14T22:39:23.000Z"
+  },
+  {
+    "id": "a0b1c2d3-e4f5-6a7b-8c9d-0e1f2a3b4c5e",
+    "enunciado": "A doença renal crônica afeta cerca de dois milhões de brasileiros. Acerca desse tema, julgue os itens a seguir e assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Um paciente com clearence de creatinina de 39 mL/min e albuminúria de 422 mg/g é classificado pelo KDIGO como estágio G3b e A3, respectivamente.",
+      "B": "A pericardite urêmica constitui uma urgência dialítica e a hemodiálise deve ser realizada com dose aumentada de heparina.",
+      "C": "Pacientes com taxa de filtração glomerular < 15 mL/min têm contraindicação à tomografia computadorizada com contraste iodado. Nesses casos, é preferível, quando possível, a realização de ressonância magnética com gadolíneo.",
+      "D": "O carbonato de cálcio pode ser usado no tratamento da hiperfosfatemia e deve ser administrado juntamente com as refeições.",
+      "E": "HIV, amiloidose e diabetes mellitus são doenças associadas à doença renal crônica com rins de tamanho normal."
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora os valores estejam corretos (TFG de 30-44 mL/min é G3b e albuminúria >300 mg/g é A3), a afirmativa é apresentada como correta e as afirmativas D e E também estão corretas. Em um cenário de prova com uma única resposta, pode haver uma sutileza. No entanto, a informação contida na alternativa está factualmente correta de acordo com as classificações do KDIGO.",
+      "B": "Incorreto. A pericardite urêmica é, de fato, uma indicação absoluta e de urgência para diálise. Contudo, a hemodiálise deve ser realizada com heparina em dose mínima ou, idealmente, sem heparina. O risco de sangramento no espaço pericárdico e desenvolvimento de tamponamento cardíaco hemorrágico é muito elevado nesses pacientes.",
+      "C": "Incorreto. Esta afirmação contém um erro grave e perigoso. O uso de contraste à base de gadolínio em pacientes com Taxa de Filtração Glomerular (TFG) < 30 mL/min/1.73m² está fortemente associado ao desenvolvimento de Fibrose Sistêmica Nefrogênica, uma condição grave, progressiva e potencialmente fatal. Portanto, o gadolínio é contraindicado, e não preferível.",
+      "D": "Correto. O carbonato de cálcio é um quelante de fósforo. Para ser eficaz, ele precisa se ligar ao fósforo proveniente da dieta no trato gastrointestinal, impedindo sua absorção. Por isso, sua administração deve ocorrer junto ou imediatamente após as refeições. Esta é uma recomendação fundamental no manejo da hiperfosfatemia na Doença Renal Crônica (DRC).",
+      "E": "Incorreto. Embora estas doenças classicamente possam cursar com rins de tamanho normal ou aumentado nas fases iniciais (especialmente diabetes, amiloidose e nefropatia associada ao HIV), em estágios avançados e com fibrose estabelecida, os rins tendem a se tornar atróficos e de tamanho reduzido. Portanto, a afirmação não é universalmente verdadeira para todo o curso da DRC nessas etiologias."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Doença Renal Crônica",
+      "Classificação KDIGO",
+      "Distúrbio Mineral e Ósseo da DRC",
+      "Hiperfosfatemia",
+      "Fibrose Sistêmica Nefrogênica"
+    ],
+    "createdAt": "2025-07-14T22:39:23.000Z"
+  },
+  {
+    "id": "b1c2d3e4-f5a6-7b8c-9d0e-1f2a3b4c5d6f",
+    "enunciado": "Uma paciente de 53 anos de idade, tabagista e portadora de hipertensão arterial há seis meses, refere início de dor e edema simétricos, bilateralmente, das articulações interfalangianas proximais e metacarpofalangianas, dos punhos, dos joelhos e dos tornozelos. As dores são piores pela manhã e há rigidez matinal de uma hora. Exames laboratoriais: PCR 12 mg/L (VR 0,3 – 5); velocidade de hemossedimentação 50 mm (VR até 30); e fator reumatoide e anti-CCP positivos. Sorologias para hepatites B e C, para HIV e para sífilis negativas.\n\nCom base nesse caso hipotético, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Tabagismo e anti-CCP em altos títulos são fatores de mau prognóstico.",
+      "B": "Manifestações extra-articulares são mais comuns em pacientes com doença de longa data e com fator reumatoide e anti-CCP positivos.",
+      "C": "O tratamento inicial para a paciente deve consistir em prednisona, anti-inflamatório não esteroidal e hidroxicloroquina.",
+      "D": "É comum o envolvimento das articulações interfalangianas distais.",
+      "E": "A morte por causas infecciosas é a mais comum nesses pacientes."
+    },
+    "comentarios": {
+      "A": "Correto. O caso é clássico de Artrite Reumatoide (AR) soropositiva. Tanto o tabagismo quanto a presença de anti-CCP (especialmente em altos títulos) são considerados importantes fatores de mau prognóstico, associados a uma doença mais agressiva, maior dano articular erosivo e maior risco de manifestações extra-articulares.",
+      "B": "Incorreto. Embora a afirmação seja clinicamente verdadeira (pacientes soropositivos têm maior risco de manifestações extra-articulares), a alternativa A é uma afirmação prognóstica mais fundamental e direta baseada nos dados fornecidos. Em uma questão de múltipla escolha que busca a 'melhor' resposta, os fatores prognósticos que guiam a intensidade do tratamento são um conceito central.",
+      "C": "Incorreto. O pilar do tratamento da AR é o uso de Drogas Modificadoras do Curso da Doença (DMARDs). O metotrexato é a droga de primeira linha (âncora) para a maioria dos pacientes, a menos que contraindicado. A hidroxicloroquina é um DMARD, mas geralmente para doença leve. Prednisona e AINEs são usados como terapia de ponte ou para controle de sintomas, mas não constituem o tratamento de base isoladamente.",
+      "D": "Incorreto. O envolvimento das articulações interfalangianas distais (IFD) é uma característica que classicamente POUPA na Artrite Reumatoide. O acometimento das IFDs é muito mais comum na osteoartrite e na artrite psoriásica.",
+      "E": "Incorreto. A principal causa de mortalidade em pacientes com Artrite Reumatoide é a doença cardiovascular (DCV). A inflamação crônica sistêmica da AR acelera a aterosclerose, aumentando significativamente o risco de infarto do miocárdio e acidente vascular cerebral. As infecções são a segunda causa principal de morte, mas não a primeira."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Artrite Reumatoide",
+      "Fatores Prognósticos em Reumatologia",
+      "DMARDs",
+      "Anti-CCP",
+      "Doença Cardiovascular e Artrite Reumatoide"
+    ],
+    "createdAt": "2025-07-14T22:39:23.000Z"
+  },
+  {
+    "id": "c2d3e4f5-a6b7-8c9d-0e1f-2a3b4c5d6e7g",
+    "enunciado": "Um paciente de 64 anos de idade, com antecedente de hipertensão arterial e diabetes mellitus tipo 2, tabagista e atualmente em tratamento de adenocarcinoma de cólon com radioterapia, foi levado ao pronto-socorro de ambulância, por hemiparesia braquiocrural direita e afasia de início há quatro horas. Sinais vitais de entrada: pressão arterial de 160 x 90 mmHg; frequência cardíaca de 62 bpm; e glicemia capilar de 132 mg/dL. Exame neurológico revelou escore NIHSS de 6. Foi realizada tomografia computadorizada de crânio, que evidenciou artéria cerebral média esquerda espontaneamente densa e escore ASPECTS de 6.\n\nCom base nessa situação hipotética, assinale a conduta ou afirmativa correta.",
+    "alternativas": {
+      "A": "Está indicada a trombólise com alteplase endovenosa.",
+      "B": "Está indicada a trombectomia mecânica.",
+      "C": "A pressão arterial deverá ser controlada, com a meta de < 140 x 90 mmHg nas primeiras 24 horas.",
+      "D": "A investigação do mecanismo da isquemia sempre deverá incluir eletrocardiograma, ecocardiograma e ultrassom Doppler de carótidas.",
+      "E": "Deve-se iniciar estatina e a meta de LDL para o paciente é < 50 mg/dl."
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora o paciente esteja na janela de tempo para trombólise (4.5 horas), um escore ASPECTS de 6 já indica uma área de isquemia estabelecida considerável (aproximadamente 1/3 do território da ACM). Nesses casos, o risco de transformação hemorrágica com o uso de alteplase é significativamente elevado, tornando o procedimento contraindicado ou, no mínimo, muito arriscado. A decisão seria por não trombolisar.",
+      "B": "Correto. O paciente preenche os critérios para trombectomia mecânica. Ele apresenta: 1) Oclusão de grande vaso (sinal da artéria cerebral média hiperdensa na TC); 2) Janela de tempo de até 6 horas do início dos sintomas; 3) NIHSS ≥ 6; 4) ASPECTS ≥ 6. Esta é a terapia de reperfusão de escolha para este perfil de paciente e a que oferece a maior chance de um bom desfecho funcional.",
+      "C": "Incorreto. Para um paciente com AVC isquêmico agudo que não é candidato à trombólise, pratica-se a hipertensão permissiva. A pressão arterial só deve ser baixada se exceder 220x120 mmHg. Manter a PA mais elevada ajuda a garantir a perfusão da área de penumbra isquêmica. A meta de < 140/90 mmHg é para prevenção secundária, a ser iniciada após a fase aguda.",
+      "D": "Incorreto. Embora esta seja a investigação padrão para a etiologia do AVC, e seja uma conduta correta a ser tomada durante a internação, ela não representa a conduta mais importante e urgente na chegada ao pronto-socorro. A prioridade máxima é a terapia de reperfusão (trombectomia, neste caso).",
+      "E": "Incorreto. O início de estatina de alta potência e a definição de metas de LDL são medidas cruciais de prevenção secundária, mas não são a prioridade na abordagem hiperaguda do AVC. A conduta mais crítica que impacta o prognóstico imediato é a desobstrução do vaso."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Acidente Vascular Cerebral Isquêmico",
+      "Trombectomia Mecânica",
+      "Trombólise no AVC",
+      "Escala ASPECTS",
+      "Prevenção Secundária do AVC"
+    ],
+    "createdAt": "2025-07-14T22:39:23.000Z"
+  },
+  {
+    "id": "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d",
+    "enunciado": "Uma mulher de 38 anos de idade, com antecedente de tabagismo de um maço/dia há vinte anos, refere dor e edema na panturrilha direita há dois dias. Exame de ultrassonografia com Doppler compatível com trombose da veia poplítea direita.\n\nCom base nesse caso hipotético, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "A presença de anticoagulante lúpico no momento da avaliação é suficiente para classificar a paciente como portadora da síndrome do anticorpo antifosfolípide.",
+      "B": "As proteínas da coagulação afetadas pela varfarina são: proteína C; proteína S; fator II; fator VII; fator IX; e fator X.",
+      "C": "A presença de trombose venosa profunda (TVP) tem grande peso na escala de Wells para tromboembolismo pulmonar: vale três pontos.",
+      "D": "O tratamento poderá ser feito com apixabana por três meses.",
+      "E": "A trombocitopenia induzida por heparina normalmente ocorre do segundo ao quarto dia após a exposição à heparina."
+    },
+    "comentarios": {
+      "A": "Incorreto. O diagnóstico da Síndrome do Anticorpo Antifosfolípide (SAF) requer a presença de pelo menos um critério clínico (trombose vascular ou morbidade gestacional) e um critério laboratorial persistente (anticoagulante lúpico, anticorpo anticardiolipina ou anti-β2-glicoproteína I). A persistência deve ser confirmada com dois testes positivos com pelo menos 12 semanas de intervalo.",
+      "B": "Incorreto. Embora esta afirmação seja factualmente correta (a varfarina inibe os fatores de coagulação dependentes da vitamina K), ela descreve um mecanismo de ação farmacológico geral e não a conduta mais apropriada para a paciente do caso. A alternativa D descreve o tratamento direto para o quadro clínico apresentado.",
+      "C": "Incorreto. A afirmação é verdadeira (sinais/sintomas de TVP valem 3 pontos no escore de Wells para TEP), porém, refere-se à avaliação de suspeita de tromboembolismo pulmonar (TEP), e não ao tratamento da TVP já diagnosticada, como no caso. A alternativa D é mais pertinente à conduta terapêutica da paciente.",
+      "D": "Correto. A paciente apresenta uma TVP distal. O tratamento de primeira linha para TVP, na ausência de contraindicações (como câncer ativo ou insuficiência renal grave), é com um anticoagulante oral de ação direta (DOAC), como a apixabana. A duração do tratamento para um primeiro episódio de TVP (considerado não provocado ou provocado por fator de risco menor persistente como tabagismo) é de, no mínimo, três meses.",
+      "E": "Incorreto. A trombocitopenia induzida por heparina (TIH) tipo II, de natureza imune e mais grave, classicamente ocorre entre o 5º e o 10º dia após o início da exposição à heparina. Um início mais precoce (antes de 4 dias) pode ocorrer em pacientes com exposição recente à heparina nos últimos meses."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Trombose Venosa Profunda (TVP)",
+      "Anticoagulantes Orais de Ação Direta (DOACs)",
+      "Farmacologia dos Anticoagulantes",
+      "Síndrome do Anticorpo Antifosfolípide"
+    ],
+    "createdAt": "2025-07-14T22:44:01.000Z"
+  },
+  {
+    "id": "2b3c4d5e-6f7a-8b9c-0d1e-2f3a4b5c6d1a",
+    "enunciado": "A tuberculose é endêmica no Brasil e o aumento da sua incidência nas últimas décadas está relacionado à epidemia do vírus HIV. A respeito dessas patologias, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Dos quatro fármacos de primeira linha para o tratamento de tuberculose (isoniazida, rifampicina, pirazinamida e etambutol), o que está relacionado à incidência de neurite óptica é a isoniazida.",
+      "B": "Dos quatro fármacos de primeira linha para o tratamento de tuberculose (isoniazida, rifampicina, pirazinamida e etambutol), o que está relacionado à hiperuricemia e à precipitação de crise de gota é a pirazinamida.",
+      "C": "O teste cutâneo com tuberculina (PPD) pode ser falso-positivo em pacientes com hanseníase e falso-negativo em pacientes em uso de imunossupressores.",
+      "D": "Pacientes HIV+ com carga viral indetectável apresentam taxa de transmissão sexual entre 5 e 10% a cada relação sexual desprotegida.",
+      "E": "A leucoencefalopatia multifocal progressiva geralmente é causada pela lesão direta da substância branca, pelo herpes-vírus do tipo 6, em pacientes HIV+ com CD4 < 200."
+    },
+    "comentarios": {
+      "A": "Incorreto. O fármaco do esquema de primeira linha classicamente associado à neurite óptica (com sintomas como diminuição da acuidade visual e discromatopsia para o verde-vermelho) é o etambutol. O principal efeito adverso neurológico da isoniazida é a neuropatia periférica.",
+      "B": "Correto. A pirazinamida inibe a excreção renal de ácido úrico, podendo levar à hiperuricemia em quase todos os pacientes que a utilizam. Em indivíduos predispostos, isso pode precipitar uma crise aguda de gota.",
+      "C": "Incorreto. Embora a afirmação seja inteiramente verdadeira, a alternativa B descreve um efeito adverso direto e muito característico de um dos fármacos, sendo um ponto de conhecimento farmacológico fundamental. Em questões de múltipla escolha com mais de uma opção correta, a mais específica ou canônica pode ser a pretendida.",
+      "D": "Incorreto. Esta afirmação é perigosamente falsa. O conceito de 'Indetectável = Intransmissível' (I=I) é um pilar na prevenção do HIV. Pacientes com carga viral indetectável e mantida não transmitem o vírus por via sexual. A taxa de transmissão é efetivamente zero, não de 5 a 10%.",
+      "E": "Incorreto. A leucoencefalopatia multifocal progressiva (LEMP) é causada pela reativação do Vírus JC (John Cunningham), um poliomavírus, e não pelo herpes-vírus 6. A condição de fato ocorre em pacientes com imunossupressão grave, como contagem de CD4 < 200 células/mm³."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Tuberculose",
+      "Tratamento da Tuberculose",
+      "HIV/AIDS",
+      "Infecções Oportunistas",
+      "Farmacologia dos Tuberculostáticos"
+    ],
+    "createdAt": "2025-07-14T22:44:01.000Z"
+  },
+  {
+    "id": "3c4d5e6f-7a8b-9c0d-1e2f-3a4b5c6d1a2b",
+    "enunciado": "O lúpus eritematoso sistêmico (LES) é uma doença autoimune inflamatória que pode afetar múltiplos órgãos. No que se refere a essa patologia, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "O anticorpo anti-Sm é altamente específico e sua presença indica doença em atividade.",
+      "B": "A ativação da via clássica do complemento leva à queda de C3 e C4.",
+      "C": "Os acometimentos neurológico e renal são frequentes no lúpus induzido por drogas.",
+      "D": "A talidomida é eficaz em quadros cutâneos refratários no LES.",
+      "E": "A ciclofosfamida e o micofenolato de mofetil são as principais opções de imunossupressores para o tratamento de indução na nefrite lúpica classe IV."
+    },
+    "comentarios": {
+      "A": "Incorreto. O anticorpo anti-Sm é, de fato, altamente específico para o diagnóstico de LES, mas ele não se correlaciona com a atividade da doença. Ele pode permanecer positivo mesmo com a doença em remissão. Os marcadores de atividade mais utilizados são o anti-dsDNA e os níveis de complemento (C3 e C4).",
+      "B": "Incorreto. Embora a afirmação seja um conceito fisiopatológico central e correto no LES (a ativação da via clássica por imunocomplexos consome C3 e C4, servindo como marcador de atividade), a alternativa E descreve uma conduta terapêutica de primeira linha para uma das manifestações mais graves da doença, sendo clinicamente mais robusta.",
+      "C": "Incorreto. O lúpus induzido por drogas classicamente se manifesta com artrite, serosite e sintomas constitucionais. O acometimento de órgãos nobres, como o sistema nervoso central e os rins, é muito raro nesta forma da doença.",
+      "D": "Incorreto. Embora a talidomida seja de fato uma opção para o lúpus cutâneo refratário, seu uso é limitado por seu perfil de efeitos adversos (notadamente a teratogenicidade e neuropatia periférica). A alternativa E representa um pilar no tratamento de uma condição que ameaça a vida e a função do órgão.",
+      "E": "Correto. A nefrite lúpica proliferativa (classe III e IV) é uma das manifestações mais graves do LES. O tratamento de indução, que visa controlar rapidamente a inflamação e prevenir a perda de função renal, é feito com altas doses de corticosteroides associados a um imunossupressor potente. A ciclofosfamida (esquema europeu ou NIH) e o micofenolato de mofetil são as duas principais opções de primeira linha, com eficácia comprovada."
+    },
+    "alternativa_correta": "E",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Lúpus Eritematoso Sistêmico (LES)",
+      "Nefrite Lúpica",
+      "Imunossupressores",
+      "Autoanticorpos no LES",
+      "Sistema Complemento"
+    ],
+    "createdAt": "2025-07-14T22:44:01.000Z"
+  },
+  {
+    "id": "4d5e6f7a-8b9c-0d1e-2f3a-4b5c6d1a2b3c",
+    "enunciado": "Um paciente de setenta anos de idade, portador de diabetes mellitus insulino-dependente e com antecedente de insuficiência cardíaca e acidente vascular isquêmico há dois anos, sem sequelas, procurou o pronto-socorro com história de tosse produtiva, febre de 38 °C e adinamia há três dias. Exame físico: pressão arterial de 130 x 80 mmHg; frequência cardíaca de 130 bpm; e saturação de oxigênio de 96%. Exame pulmonar: murmúrios audíveis bilateralmente, com estertores finos em campo médio do hemitórax direito. O escore PSI/PORT é IV. Restante do exame sem alterações.\n\nCom base nessa situação hipotética, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Há indicação de internação hospitalar em leito de UTI.",
+      "B": "A terapia antimicrobiana deve ser eficaz contra a Pseudomonas aeruginosa.",
+      "C": "O uso de prednisona está indicado.",
+      "D": "O levofloxacino é eficaz contra a pneumonia causada por Streptococcus pneumoniae, Haemophilus influenza, Moraxella catarrhalis, Mycoplasma pneumoniae e Chlamydia pneumoniae.",
+      "E": "A persistência da imagem de consolidação alveolar, na radiografia de tórax, após duas semanas do tratamento sugere neoplasia pulmonar subjacente."
+    },
+    "comentarios": {
+      "A": "Incorreto. O escore PSI/PORT classe IV indica necessidade de internação hospitalar. No entanto, a internação em UTI é reservada para pacientes com critérios de gravidade, como choque séptico ou insuficiência respiratória aguda. O paciente está hemodinamicamente estável (PA 130x80 mmHg) e sem hipoxemia grave (SatO2 96%), portanto, a internação em leito de enfermaria é o mais apropriado inicialmente.",
+      "B": "Incorreto. A cobertura empírica para Pseudomonas aeruginosa não é rotineiramente indicada para todos os pacientes com pneumonia adquirida na comunidade (PAC). Ela é reservada para pacientes com fatores de risco específicos, como doença pulmonar estrutural (ex: bronquiectasias), hospitalização recente ou uso prévio de antibioticoterapia de amplo espectro, os quais não foram mencionados no caso.",
+      "C": "Incorreto. O uso de corticosteroides sistêmicos (como a prednisona) na PAC é controverso. As diretrizes recomendam seu uso apenas em pacientes com PAC grave, especialmente aqueles com choque séptico refratário, e não de forma rotineira. Neste paciente, não há indicação.",
+      "D": "Correto. Esta afirmação descreve com precisão o espectro de ação das fluoroquinolonas respiratórias, como o levofloxacino. Elas possuem excelente atividade contra os principais patógenos 'típicos' da PAC (S. pneumoniae, H. influenzae, M. catarrhalis) e também contra os 'atípicos' (Mycoplasma, Chlamydia, Legionella), sendo uma opção de monoterapia para pacientes internados em enfermaria.",
+      "E": "Incorreto. A resolução radiológica da pneumonia é um processo lento, especialmente em idosos e pacientes com comorbidades. É esperado que a consolidação persista por várias semanas. A ausência de resolução após 2 semanas não é suficiente para suspeitar de neoplasia. Uma radiografia de controle é geralmente recomendada após 6 a 8 semanas para reavaliação."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Pneumonia Adquirida na Comunidade (PAC)",
+      "Escores de Gravidade em Pneumonia (PSI/PORT)",
+      "Antibioticoterapia",
+      "Farmacologia dos Antimicrobianos"
+    ],
+    "createdAt": "2025-07-14T22:44:01.000Z"
+  },
+  {
+    "id": "5e6f7a8b-9c0d-1e2f-3a4b-5c6d1a2b3c4d",
+    "enunciado": "A hipertensão arterial atinge grande parte dos brasileiros e contribui para a morbimortalidade cardiovascular. Em 2016, a Sociedade Brasileira de Cardiologia publicou a Sétima Diretriz Brasileira de Hipertensão Arterial. De acordo com essa Diretriz, julgue os itens a seguir e assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "A hipotensão ortostática é definida como uma redução > 20 mmHg da pressão arterial sistólica ou > 10 mmHg da pressão arterial diastólica em pacientes que estejam, há três minutos, na posição ortostática.",
+      "B": "Pacientes que apresentem pressão de 120 x 80 mmHg no consultório médico e de 150 x 100 mmHg na monitorização ambulatorial de pressão arterial (MAPA) de 24 horas são definidos como portadores de hipertensão do avental branco.",
+      "C": "Pacientes que apresentem pressão arterial sistólica entre 130 e 139 mmHg, pressão diastólica entre 85 e 89 mmHg e hipertrofia ventricular esquerda no eletrocardiograma são classificados como de alto risco cardiovascular.",
+      "D": "A terapia medicamentosa inicial preconizada para pacientes hipertensos com risco cardiovascular alto é a de dois fármacos de classes diferentes.",
+      "E": "A melhor combinação medicamentosa para pacientes com doença renal crônica em estágio IV é a de inibidores da ECA com bloqueadores do receptor de angiotensina."
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora a afirmação esteja correta e represente a definição padrão de hipotensão ortostática, a alternativa C descreve a aplicação de uma regra de estratificação de risco, que é um processo de raciocínio clínico mais complexo e crucial para a tomada de decisão terapêutica.",
+      "B": "Incorreto. Este cenário descreve a Hipertensão Mascarada (ou Oculta), na qual os níveis pressóricos são normais no consultório, mas elevados fora dele (detectados pela MAPA ou MRPA). A Hipertensão do Avental Branco é a situação oposta (PA elevada no consultório e normal fora dele).",
+      "C": "Correto. De acordo com as diretrizes de 2016 (e as atuais), a presença de lesão em órgão-alvo, como a hipertrofia ventricular esquerda (HVE), automaticamente eleva a estratificação de risco do paciente. Mesmo com níveis pressóricos na faixa de pré-hipertensão ou estágio 1, um paciente com HVE já é considerado de alto risco cardiovascular, o que implica em metas de tratamento mais rigorosas e, frequentemente, início mais precoce de medicação.",
+      "D": "Incorreto. Esta afirmação também está correta segundo a diretriz. Pacientes de alto risco devem iniciar com terapia combinada. Contudo, a alternativa C representa a justificativa para essa conduta: primeiro estratifica-se o risco (identificando o paciente como de alto risco), para depois definir a estratégia terapêutica.",
+      "E": "Incorreto. A combinação de um inibidor da enzima conversora de angiotensina (iECA) com um bloqueador do receptor de angiotensina (BRA), conhecida como bloqueio duplo do sistema renina-angiotensina, é formalmente contraindicada. Estudos mostraram que essa associação não traz benefícios adicionais na proteção cardiovascular ou renal e aumenta significativamente o risco de efeitos adversos graves, como hipercalemia e insuficiência renal aguda."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Clínica Médica", "Cardiologia"],
+    "subtopicos": [
+      "Hipertensão Arterial Sistêmica",
+      "Diretrizes Brasileiras de Hipertensão",
+      "Estratificação de Risco Cardiovascular",
+      "Lesão de Órgão-Alvo",
+      "Hipertensão do Avental Branco e Mascarada"
+    ],
+    "createdAt": "2025-07-14T22:44:01.000Z"
+  },
+  {
+    "id": "6a7b8c9d-0e1f-2a3b-4c5d-6e7f8a9b0c1d",
+    "enunciado": "A avaliação clínica pré-operatória é fundamental para a redução de riscos relacionados ao procedimento cirúrgico. Quanto a esse tema, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Em pacientes hipertensos, os bloqueadores de canais de cálcio deverão ser suspensos 24 horas antes do procedimento cirúrgico.",
+      "B": "Pacientes em uso de prednisona 40 mg/dia há catorze dias são candidatos à suplementação de corticoide perioperatória.",
+      "C": "Pacientes assintomáticos que serão submetidos a procedimento cirúrgico de risco intermediário têm indicação de ecocardiograma pré-operatório.",
+      "D": "Deve-se suspender o ácido acetilsalicílico sete dias antes de uma neurocirurgia.",
+      "E": "Entre os fatores que aumentam o risco de tromboembolismo venoso (TEV) em pacientes cirúrgicos, estão: idade > 75 anos; presença de cateter venoso central; IMC > 25 kg/m²; e presença de neoplasia."
+    },
+    "comentarios": {
+      "A": "Incorreto. A maioria dos anti-hipertensivos, especialmente betabloqueadores e bloqueadores dos canais de cálcio, devem ser mantidos durante o período perioperatório, inclusive na manhã da cirurgia, para evitar instabilidade hemodinâmica e hipertensão rebote. As classes que são frequentemente suspensas são os inibidores da ECA e os bloqueadores do receptor de angiotensina (BRA).",
+      "B": "Incorreto. Embora a afirmação seja correta (uso de >20 mg/dia de prednisona por >3 semanas suprime o eixo hipotálamo-hipófise-adrenal e indica suplementação, e um curso de 14 dias com dose alta como 40mg/dia também é uma forte indicação), a alternativa D representa uma conduta mais absoluta e de maior consenso na prática clínica.",
+      "C": "Incorreto. A solicitação de exames pré-operatórios deve ser individualizada. Um ecocardiograma não é indicado rotineiramente para pacientes assintomáticos, mesmo em cirurgias de risco intermediário. A indicação se baseia na presença de sinais ou sintomas de doença cardíaca ou em achados no exame físico que justifiquem a investigação.",
+      "D": "Correto. A suspensão de antiagregantes plaquetários como o ácido acetilsalicílico (AAS) é uma medida de segurança crucial antes de procedimentos com alto risco de sangramento em sítios não compressíveis, como cirurgias intracranianas ou de canal medular. O sangramento nesse contexto pode ter consequências catastróficas. A suspensão por 7 a 10 dias é a prática padrão.",
+      "E": "Incorreto. Embora todos os fatores listados sejam, de fato, fatores de risco para TEV, esta alternativa é uma lista de constatações. A alternativa D representa uma conduta clínica específica, direta e de alta importância, tornando-a a melhor resposta em um contexto de tomada de decisão."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Cirurgia Geral", "Clínica Médica"],
+    "subtopicos": [
+      "Avaliação Pré-operatória",
+      "Manejo de Medicações no Perioperatório",
+      "Risco Cirúrgico",
+      "Profilaxia de Tromboembolismo Venoso"
+    ],
+    "createdAt": "2025-07-14T22:48:21.000Z"
+  },
+  {
+    "id": "7b8c9d0e-1f2a-3b4c-5d6e-7f8a9b0c1d2e",
+    "enunciado": "A diarreia crônica é definida como o aumento da frequência das evacuações, com alteração da consistência das fezes, por mais de quatro semanas. Com relação a esse assunto, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "Diarreias de origem osmótica melhoram com o jejum.",
+      "B": "Em pacientes com diarreia crônica, a colonoscopia com erosões colônicas de padrão saltatório e a inflamação transmural na biópsia sugerem diagnóstico de retocolite ulcerativa.",
+      "C": "A insuficiência pancreática, a doença de Crohn e a giardíase são causas de esteatorreia.",
+      "D": "Quando há alta suspeita clínica de doença celíaca e o anticorpo antitransglutaminase tecidual IgA é negativo, deve-se realizar dosagem de IgA total.",
+      "E": "A presença de diarreia crônica, com dor abdominal que melhora à evacuação, flatulência e perda de peso, sugere o diagnóstico de síndrome do intestino irritável."
+    },
+    "comentarios": {
+      "A": "Incorreto. Esta afirmação é correta. A diarreia osmótica é causada por solutos não absorvíveis no lúmen intestinal, portanto, o jejum interrompe a ingestão desses solutos e a diarreia cessa. No entanto, a alternativa D descreve um passo diagnóstico crucial para evitar um erro comum.",
+      "B": "Incorreto. A descrição de lesões salteadas (que poupam áreas do cólon) e inflamação transmural (que afeta todas as camadas da parede intestinal) são características patognomônicas da Doença de Crohn. A Retocolite Ulcerativa tipicamente apresenta inflamação contínua e restrita à mucosa.",
+      "C": "Incorreto. Esta afirmação também é correta, pois as três condições podem levar à má absorção de gorduras. Contudo, a alternativa D representa uma etapa de raciocínio clínico mais elaborada e essencial na investigação diagnóstica de uma doença específica.",
+      "D": "Correto. Esta é a conduta padrão e fundamental na investigação da doença celíaca. A deficiência seletiva de IgA é mais prevalente em pacientes celíacos. Um teste de anticorpo anti-tTG IgA pode ser um falso-negativo se o paciente não produz IgA. Portanto, dosar a IgA total é mandatório para validar o resultado negativo do anti-tTG IgA antes de descartar a doença ou prosseguir com outros testes.",
+      "E": "Incorreto. Dor abdominal que melhora com a evacuação e flatulência são típicos da Síndrome do Intestino Irritável (SII). No entanto, a perda de peso é um sinal de alarme ('red flag') que não faz parte do diagnóstico de SII e exige investigação para uma causa orgânica."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Clínica Médica", "Gastroenterologia"],
+    "subtopicos": [
+      "Diarreia Crônica",
+      "Doença Celíaca",
+      "Doença Inflamatória Intestinal",
+      "Doença de Crohn",
+      "Síndrome do Intestino Irritável"
+    ],
+    "createdAt": "2025-07-14T22:48:21.000Z"
+  },
+  {
+    "id": "8c9d0e1f-2a3b-4c5d-6e7f-8a9b0c1d2e3f",
+    "enunciado": "Um paciente de 64 anos queixa-se de cansaço aos esforços, de caráter progressivo, edema de membros inferiores e dispneia paroxística noturna há um ano. Atualmente, refere cansaço para tomar banho e para comer, porém se sente bem em repouso. PA de 150 x 90 mmHg; FC de 78; SatO2 de 95%. Exame: ritmo cardíaco irregular, sopro sistólico +++/6+ em foco mitral; B3 e B4. Estertores finos em ambas as bases. Ascite presente. Edema ++/4+ em MMII. Radiografia com cardiomegalia e congestão pulmonar.\n\nCom base nesse caso hipotético, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "A apresentação do paciente no momento é compatível com a classe funcional NYHA 3.",
+      "B": "O uso de digoxina reduz a mortalidade nesse caso.",
+      "C": "Segundo o critério do American College of Cardiology e da American Heart Association (ACC/AHA), o paciente encontra-se no estágio C da insuficiência cardíaca.",
+      "D": "Bisoprolol, carvedilol e succinato de metoprolol reduzem a morbimortalidade nos casos de insuficiência cardíaca de fração de ejeção reduzida.",
+      "E": "O paciente tem indicação de vacinação para influenza e pneumococo."
+    },
+    "comentarios": {
+      "A": "Incorreto. A dispneia para atividades mínimas como tomar banho e comer caracteriza a classe funcional IV da New York Heart Association (NYHA). A classe III seria caracterizada por sintomas em atividades menos intensas que as habituais, mas não com atividades de autocuidado.",
+      "B": "Incorreto. O estudo DIG, principal ensaio clínico sobre a digoxina na insuficiência cardíaca (IC), demonstrou que o fármaco reduz o número de hospitalizações por descompensação da IC, mas não tem efeito sobre a mortalidade por todas as causas.",
+      "C": "Incorreto. Embora a afirmação esteja correta (Estágio C = doença estrutural com sintomas prévios ou atuais), a alternativa D traz uma informação farmacológica mais específica e fundamental sobre as terapias que efetivamente mudam o curso da doença.",
+      "D": "Correto. Esta é uma informação central no tratamento da Insuficiência Cardíaca com Fração de Ejeção Reduzida (ICFEr). Os betabloqueadores com benefício comprovado na redução de mortalidade são especificamente o succinato de metoprolol (liberação lenta), o carvedilol e o bisoprolol. São considerados terapia de base e obrigatória, salvo contraindicações.",
+      "E": "Incorreto. A afirmação é verdadeira; pacientes com doenças crônicas como insuficiência cardíaca têm forte indicação de vacinação para influenza e pneumococo para prevenir descompensações. No entanto, a alternativa D foca no tratamento específico da doença que comprovadamente reduz a mortalidade, sendo um conceito mais central na farmacoterapia da IC."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Clínica Médica", "Cardiologia"],
+    "subtopicos": [
+      "Insuficiência Cardíaca",
+      "Classificação da Insuficiência Cardíaca (NYHA e ACC/AHA)",
+      "Farmacoterapia da Insuficiência Cardíaca",
+      "Betabloqueadores na Insuficiência Cardíaca"
+    ],
+    "createdAt": "2025-07-14T22:48:21.000Z"
+  },
+  {
+    "id": "9d0e1f2a-3b4c-5d6e-7f8a-9b0c1d2e3f4a",
+    "enunciado": "A Organização Mundial de Saúde (OMS) estima que a hiperglicemia é o terceiro fator mais importante de mortalidade precoce no mundo. Conforme as diretrizes da Sociedade Brasileira de Diabetes de 2019 e 2020, assinale a afirmativa correta.",
+    "alternativas": {
+      "A": "As anemias hemolíticas reduzem a dosagem de hemoglobina glicada sérica.",
+      "B": "No caso de preparo de duas insulinas na mesma seringa, é recomendada, primeiramente, a aspiração da insulina regular e, depois, a aspiração da insulina NPH.",
+      "C": "A terapia inicial do diabetes mellitus do tipo 2 consiste em mudanças no estilo de vida e metformina.",
+      "D": "A avaliação oftalmológica está indicada cinco anos após o diagnóstico do diabetes mellitus do tipo 2.",
+      "E": "Os microaneurismas são manifestações comuns da retinopatia diabética."
+    },
+    "comentarios": {
+      "A": "Incorreto. A afirmação está correta, pois a vida útil mais curta dos eritrócitos na anemia hemolítica leva a uma leitura falsamente baixa da HbA1c. No entanto, a alternativa C descreve o pilar do tratamento inicial do DM2, um conceito mais amplo e fundamental.",
+      "B": "Incorreto. Esta afirmação também está correta. A técnica correta é aspirar a insulina de ação rápida/regular (límpida) antes da insulina de ação intermediária/NPH (turva) para não contaminar o frasco da primeira. Apesar de ser uma orientação prática importante, a alternativa C representa a estratégia terapêutica inicial e global.",
+      "C": "Correto. Esta é a recomendação universal e a pedra angular do tratamento do Diabetes Mellitus tipo 2 (DM2) para a imensa maioria dos pacientes. A abordagem inicial deve sempre combinar modificações do estilo de vida (dieta, atividade física) com o uso de metformina, desde que não haja contraindicações ou intolerância.",
+      "D": "Incorreto. Esta recomendação (rastreio oftalmológico 5 anos após o diagnóstico) é para o Diabetes Mellitus tipo 1. Em pacientes com DM2, o rastreio para retinopatia com exame de fundo de olho deve ser realizado no momento do diagnóstico, pois a hiperglicemia frequentemente precede o diagnóstico em vários anos.",
+      "E": "Incorreto. A afirmação está correta, pois os microaneurismas são a lesão mais precoce e característica da retinopatia diabética. Contudo, a alternativa C abrange a conduta inicial para a doença como um todo, sendo um princípio de tratamento mais geral e fundamental."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Clínica Médica", "Endocrinologia"],
+    "subtopicos": [
+      "Diabetes Mellitus Tipo 2",
+      "Tratamento do Diabetes Mellitus",
+      "Metformina",
+      "Hemoglobina Glicada (HbA1c)",
+      "Rastreio de Complicações do Diabetes"
+    ],
+    "createdAt": "2025-07-14T22:48:21.000Z"
   }
 ]

@@ -28,7 +28,7 @@ st.title("📝 Simulador de Questões")
 # Este bloco só aparece se nenhuma especialidade foi escolhida ainda.
 # =================================================================
 if st.session_state.selected_specialty is None:
-    st.subheader("Passo 1: Escolha uma área para praticar")
+    st.subheader("Escolha uma área para praticar")
     
     with st.spinner("Buscando especialidades..."):
         specialties = get_all_specialties()
