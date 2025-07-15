@@ -1,21 +1,22 @@
 # ==============================================================================
-# ARQUIVO 3: pages/3_Meu_Perfil.py (NOVO)
-# Crie este arquivo dentro da pasta "pages".
+# ARQUIVO 2: pages/3_Meu_Perfil.py (Atualizado)
+# Local: pasta "pages"
+# Descrição: Adiciona o seletor de período e corrige o `st.image`.
 # ==============================================================================
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from services import get_performance_data, get_time_window_metrics, get_weekly_performance, get_areas_performance, get_subtopics_for_review
+# A função get_weekly_performance foi substituída
+from services import get_performance_data, get_time_window_metrics, get_temporal_performance, get_areas_performance, get_subtopics_for_review
 
-st.set_page_config(layout="wide", page_title="Meu Perfil")
+# st.set_page_config foi removido daqui
 
 st.title("📊 Meu Perfil de Performance")
 st.markdown("---")
 
-# --- VERIFICA LOGIN E CARREGA DADOS ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para ver seu perfil.")
-    st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
+    st.page_link("Home.py", label="Voltar para a Home", icon="�")
     st.stop()
 
 with st.spinner("Analisando seu histórico de performance..."):
@@ -25,42 +26,50 @@ if performance_data is None:
     st.info("Você ainda não respondeu nenhuma questão. Comece pelo simulado para ver suas estatísticas aqui!")
     st.stop()
 
-# Desempacota os dataframes para uso
 all_answers = performance_data["all_answers"]
 areas_exploded = performance_data["areas_exploded"]
 subtopicos_exploded = performance_data["subtopicos_exploded"]
 
 # --- LINHA 1: GRÁFICOS TEMPORAIS E RANKING ---
-st.subheader("Evolução Semanal")
+st.subheader("Evolução da Performance")
+
+# Adiciona o seletor de período
+periodo_selecionado = st.selectbox(
+    "Agrupar dados por:",
+    ("Semana", "Dia")
+)
+period_map = {"Semana": "W", "Dia": "D"}
+period_code = period_map[periodo_selecionado]
+
 col1, col2, col3 = st.columns([2, 2, 1])
 
 with col1:
-    weekly_df = get_weekly_performance(all_answers)
-    if not weekly_df.empty:
-        fig = px.bar(weekly_df, x='answered_at', y='questoes_respondidas', title="Questões Respondidas por Semana", labels={'answered_at': 'Semana', 'questoes_respondidas': 'Quantidade'})
+    temporal_df = get_temporal_performance(all_answers, period=period_code)
+    if not temporal_df.empty:
+        fig = px.bar(temporal_df, x='periodo', y='questoes_respondidas', title=f"Questões Respondidas por {periodo_selecionado}", labels={'periodo': periodo_selecionado, 'questoes_respondidas': 'Quantidade'})
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("Sem dados semanais para exibir.")
+        st.info(f"Sem dados para o período selecionado.")
 
 with col2:
-    if not weekly_df.empty:
-        fig = px.line(weekly_df, x='answered_at', y='taxa_de_acerto', title="Taxa de Acerto por Semana", markers=True, labels={'answered_at': 'Semana', 'taxa_de_acerto': 'Taxa de Acerto (%)'})
-        fig.update_yaxes(range=[0, 100])
+    if not temporal_df.empty:
+        fig = px.line(temporal_df, x='periodo', y='taxa_de_acerto', title=f"Taxa de Acerto por {periodo_selecionado}", markers=True, labels={'periodo': periodo_selecionado, 'taxa_de_acerto': 'Taxa de Acerto (%)'})
+        fig.update_yaxes(range=[0, 101])
         st.plotly_chart(fig, use_container_width=True)
     else:
-        st.info("Sem dados semanais para exibir.")
+        st.info(f"Sem dados para o período selecionado.")
 
 with col3:
     st.markdown("**Ranking Geral**")
     st.info("Em breve você poderá comparar sua performance com outros estudantes.")
-    st.image("https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking\n(Em Breve)", use_column_width=True)
+    # CORREÇÃO: use_container_width em vez de use_column_width
+    st.image("[https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking](https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking)\n(Em Breve)", use_container_width=True)
 
-
+# O restante do arquivo continua igual...
 st.markdown("---")
-# --- LINHA 2: ANÁLISE POR ÁREA E SUBTÓPICOS ---
 st.subheader("Análise por Área de Conhecimento")
 col1, col2, col3 = st.columns([2, 2, 1])
-
+# ... (código inalterado)
 with col1:
     areas_perf_df = get_areas_performance(areas_exploded)
     if not areas_perf_df.empty:
@@ -69,7 +78,6 @@ with col1:
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Sem dados de áreas para exibir.")
-
 with col2:
     if not areas_perf_df.empty:
         top_areas_pratica = areas_perf_df.sort_values('total_respondidas', ascending=False).head(10)
@@ -77,7 +85,6 @@ with col2:
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Sem dados de áreas para exibir.")
-
 with col3:
     st.markdown("**Foco para os Estudos**")
     st.caption("Subtópicos de questões que você errou nos últimos 7 dias.")
@@ -89,29 +96,20 @@ with col3:
         st.success("Parabéns! Nenhum ponto de melhoria encontrado nos últimos 7 dias.")
 
 st.markdown("---")
-# --- LINHAS 3, 4 e 5: MÉTRICAS GERAIS ---
 st.subheader("Métricas de Performance")
-
-# Calcula as métricas para os diferentes períodos
 geral_metrics = get_time_window_metrics(all_answers)
 d7_metrics = get_time_window_metrics(all_answers, days=7)
 d30_metrics = get_time_window_metrics(all_answers, days=30)
-
-# Linha 3: Taxa de Acerto
 st.markdown("##### Taxa de Acerto")
 col1, col2, col3 = st.columns(3)
 col1.metric("Geral", f"{geral_metrics['accuracy']:.1f}%")
 col2.metric("Últimos 7 dias", f"{d7_metrics['accuracy']:.1f}%")
 col3.metric("Últimos 30 dias", f"{d30_metrics['accuracy']:.1f}%")
-
-# Linha 4: Questões Respondidas
 st.markdown("##### Questões Respondidas")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total", geral_metrics['answered'])
 col2.metric("Últimos 7 dias", d7_metrics['answered'])
 col3.metric("Últimos 30 dias", d30_metrics['answered'])
-
-# Linha 5: Questões Corretas
 st.markdown("##### Questões Corretas")
 col1, col2, col3 = st.columns(3)
 col1.metric("Total", geral_metrics['correct'])

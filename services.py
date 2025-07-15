@@ -1,6 +1,8 @@
 # ==============================================================================
-# ARQUIVO 2: services.py (Turbinado com Pandas)
-# Local: Raiz do projeto
+# ARQUIVO 1: services.py (Atualizado)
+# Local: Raiz do seu projeto
+# Descrição: A função get_weekly_performance foi substituída por uma mais
+# flexível, a get_temporal_performance.
 # ==============================================================================
 import streamlit as st
 import gspread
@@ -11,7 +13,7 @@ import uuid
 from datetime import datetime, timedelta
 
 # --- LAZY CONNECTION SETUP ---
-_connections = {"spreadsheet": None, "model": None, "dataframes": None}
+_connections = {"spreadsheet": None, "model": None}
 
 def _ensure_connected():
     if _connections["spreadsheet"] is None:
@@ -28,7 +30,10 @@ def _ensure_connected():
             st.stop()
 
 # --- FUNÇÕES DE DADOS ---
-# As funções de get/save/generate continuam as mesmas...
+# get_or_create_user, save_answer, generate_question_with_gemini, etc.
+# permanecem as mesmas da versão anterior.
+# ... (código inalterado)
+
 def get_or_create_user(email):
     _ensure_connected()
     users_sheet = _connections["spreadsheet"].worksheet("users")
@@ -63,101 +68,110 @@ def save_answer(user_id, question_id, user_answer, is_correct):
     timestamp = datetime.now().isoformat()
     new_answer_data = [answer_id, str(user_id), str(question_id), user_answer, is_correct, timestamp]
     answers_sheet.append_row(new_answer_data)
-    # Invalida o cache de dados após salvar uma nova resposta
-    if "dataframes" in _connections:
-        _connections["dataframes"] = None
-
+    st.cache_data.clear() # Limpa o cache para que os dados sejam recarregados
 
 def generate_question_with_gemini():
-    # ... (código da função inalterado) ...
-    pass
-
-# --- NOVAS FUNÇÕES DE ANÁLISE DE PERFORMANCE ---
-
-@st.cache_data(ttl=600) # Cache de 10 minutos
-def get_performance_data(user_id):
-    """Função central que busca e prepara todos os dados para os gráficos."""
     _ensure_connected()
-    
+    model = _connections["model"]
+    questions_sheet = _connections["spreadsheet"].worksheet("questions")
+    prompt = """
+    Crie uma nova questão de múltipla escolha para a prova de residência médica (ENAMED) no Brasil.
+    A questão deve ser desafiadora e clinicamente relevante.
+    Retorne a resposta EXCLUSIVAMENTE em formato JSON, seguindo esta estrutura:
+    {
+      "enunciado": "...",
+      "alternativas": {"A": "...", "B": "...", "C": "...", "D": "...", "E": "..."},
+      "comentarios": {"A": "...", "B": "...", "C": "...", "D": "...", "E": "..."},
+      "alternativa_correta": "Letra da alternativa correta (ex: 'C')",
+      "areas_principais": ["Área 1", "Área 2"],
+      "subtopicos": ["Subtópico 1", "Subtópico 2"]
+    }
+    Não inclua a palavra 'json' ou ``` no início ou no fim da sua resposta.
+    """
+    try:
+        response = model.generate_content(prompt)
+        cleaned_response = response.text.strip().replace("```json", "").replace("```", "")
+        new_question = json.loads(cleaned_response)
+        question_id = str(uuid.uuid4())
+        new_question_data = [
+            question_id, new_question["enunciado"], json.dumps(new_question["alternativas"]),
+            json.dumps(new_question["comentarios"]), new_question["alternativa_correta"],
+            ", ".join(new_question["areas_principais"]), ", ".join(new_question["subtopicos"])
+        ]
+        questions_sheet.append_row(new_question_data)
+        new_question['question_id'] = question_id
+        return new_question
+    except Exception as e:
+        st.error(f"Falha ao gerar ou processar questão da IA: {e}")
+        return None
+
+# --- FUNÇÕES DE ANÁLISE DE PERFORMANCE (ATUALIZADAS) ---
+
+@st.cache_data(ttl=600)
+def get_performance_data(user_id):
+    _ensure_connected()
     questions_sheet = _connections["spreadsheet"].worksheet("questions")
     answers_sheet = _connections["spreadsheet"].worksheet("answers")
-
     questions_df = pd.DataFrame(questions_sheet.get_all_records())
     answers_df = pd.DataFrame(answers_sheet.get_all_records())
 
-    if answers_df.empty or questions_df.empty:
-        return None
-
-    # Filtra apenas as respostas do usuário logado
+    if answers_df.empty or questions_df.empty: return None
     user_answers_df = answers_df[answers_df['user_id'].astype(str) == user_id].copy()
-    
-    if user_answers_df.empty:
-        return None
+    if user_answers_df.empty: return None
 
-    # --- PREPARAÇÃO DOS DADOS ---
-    # Converte tipos de dados
     user_answers_df['answered_at'] = pd.to_datetime(user_answers_df['answered_at'])
     user_answers_df['is_correct'] = user_answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
     
-    # Junta as respostas com os dados das questões
     merged_df = pd.merge(user_answers_df, questions_df, on='question_id', how='left')
     
-    # Limpa e expande as áreas principais
-    merged_df['areas_principais'] = merged_df['areas_principais'].str.split(',').apply(lambda x: [i.strip() for i in x] if isinstance(x, list) else [])
-    areas_df = merged_df.explode('areas_principais')
-    
-    # Limpa e expande os subtópicos
-    merged_df['subtopicos'] = merged_df['subtopicos'].str.split(',').apply(lambda x: [i.strip() for i in x] if isinstance(x, list) else [])
-    subtopicos_df = merged_df.explode('subtopicos')
+    # Previne erro se 'areas_principais' ou 'subtopicos' estiverem vazios/nulos
+    merged_df['areas_principais'] = merged_df['areas_principais'].fillna('').str.split(',')
+    merged_df['subtopicos'] = merged_df['subtopicos'].fillna('').str.split(',')
 
-    return {
-        "all_answers": merged_df,
-        "areas_exploded": areas_df,
-        "subtopicos_exploded": subtopicos_df
-    }
+    areas_df = merged_df.explode('areas_principais')
+    areas_df['areas_principais'] = areas_df['areas_principais'].str.strip()
+
+    subtopicos_df = merged_df.explode('subtopicos')
+    subtopicos_df['subtopicos'] = subtopicos_df['subtopicos'].str.strip()
+
+    return {"all_answers": merged_df, "areas_exploded": areas_df, "subtopicos_exploded": subtopicos_df}
 
 def calculate_metrics(df):
-    """Calcula métricas básicas a partir de um dataframe de respostas."""
-    if df is None or df.empty:
-        return {"answered": 0, "correct": 0, "accuracy": 0.0}
-    
+    if df is None or df.empty: return {"answered": 0, "correct": 0, "accuracy": 0.0}
     answered = len(df)
     correct = df['is_correct'].sum()
     accuracy = (correct / answered * 100) if answered > 0 else 0.0
     return {"answered": answered, "correct": correct, "accuracy": accuracy}
 
 def get_time_window_metrics(all_answers_df, days=None):
-    """Filtra o dataframe por um período e calcula as métricas."""
     if all_answers_df is None: return calculate_metrics(None)
+    if days is None: return calculate_metrics(all_answers_df)
     
-    if days is None: # Geral
-        return calculate_metrics(all_answers_df)
-    
-    # Filtra por período
-    cutoff_date = datetime.now() - timedelta(days=days)
+    cutoff_date = datetime.now(all_answers_df['answered_at'].dt.tz) - timedelta(days=days)
     window_df = all_answers_df[all_answers_df['answered_at'] >= cutoff_date]
     return calculate_metrics(window_df)
 
-def get_weekly_performance(all_answers_df):
-    """Calcula questões respondidas e acertos por semana."""
+def get_temporal_performance(all_answers_df, period='W'):
+    """
+    NOVA FUNÇÃO: Calcula performance por período (Dia ou Semana).
+    'period' pode ser 'D' para dia ou 'W' para semana.
+    """
     if all_answers_df is None or all_answers_df.empty:
         return pd.DataFrame()
         
     df = all_answers_df.copy()
-    df = df.set_index('answered_at')
-    # Resample por semana (W-MON significa que a semana termina na segunda)
-    weekly_summary = df.resample('W-MON').agg(
+    # Normaliza a data para o início do dia ou da semana, removendo as horas.
+    df['periodo'] = df['answered_at'].dt.to_period(period).dt.start_time
+    
+    summary = df.groupby('periodo').agg(
         questoes_respondidas=('question_id', 'count'),
         acertos=('is_correct', 'sum')
     ).reset_index()
-    weekly_summary['taxa_de_acerto'] = (weekly_summary['acertos'] / weekly_summary['questoes_respondidas'] * 100).fillna(0)
-    return weekly_summary
+    summary['taxa_de_acerto'] = (summary['acertos'] / summary['questoes_respondidas'] * 100).fillna(0)
+    return summary
 
 def get_areas_performance(areas_exploded_df):
-    """Calcula performance por área de conhecimento."""
-    if areas_exploded_df is None or areas_exploded_df.empty:
-        return pd.DataFrame()
-
+    if areas_exploded_df is None or areas_exploded_df.empty: return pd.DataFrame()
     areas_summary = areas_exploded_df.groupby('areas_principais').agg(
         total_respondidas=('question_id', 'count'),
         total_acertos=('is_correct', 'sum')
@@ -166,19 +180,11 @@ def get_areas_performance(areas_exploded_df):
     return areas_summary
 
 def get_subtopics_for_review(subtopicos_exploded_df, days=7):
-    """Retorna subtópicos de questões erradas nos últimos dias."""
-    if subtopicos_exploded_df is None or subtopicos_exploded_df.empty:
-        return []
-
-    cutoff_date = datetime.now() - timedelta(days=days)
+    if subtopicos_exploded_df is None or subtopicos_exploded_df.empty: return []
+    cutoff_date = datetime.now(subtopicos_exploded_df['answered_at'].dt.tz) - timedelta(days=days)
     recent_errors_df = subtopicos_exploded_df[
         (subtopicos_exploded_df['answered_at'] >= cutoff_date) & 
         (subtopicos_exploded_df['is_correct'] == False)
     ]
-    
-    # Conta a frequência de erros por subtópico e retorna os mais comuns
-    if recent_errors_df.empty:
-        return []
-    
+    if recent_errors_df.empty: return []
     return recent_errors_df['subtopicos'].value_counts().nlargest(5).index.tolist()
-
