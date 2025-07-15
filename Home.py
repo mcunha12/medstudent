@@ -65,39 +65,39 @@ else:
     row2_col1, row2_col2 = st.columns(2)
     
     with row1_col1:
-        st.markdown("""
-        <div class="card">
-            <h2>📊 Meu Perfil</h2>
-            <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # st.markdown("""
+        # <div class="card">
+        #     <h2>📊 Meu Perfil</h2>
+        #     <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
+        # </div>
+        # """, unsafe_allow_html=True)
         st.page_link("pages/1_Meu_Perfil.py", label="**Ver minha performance**", icon="📊")
 
     with row1_col2:
-        st.markdown("""
-        <div class="card">
-            <h2>📝 Simulador de Questões</h2>
-            <p>Gere questões de múltipla escolha, teste seus conhecimentos e receba feedback detalhado na hora.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # st.markdown("""
+        # <div class="card">
+        #     <h2>📝 Simulador de Questões</h2>
+        #     <p>Gere questões de múltipla escolha, teste seus conhecimentos e receba feedback detalhado na hora.</p>
+        # </div>
+        # """, unsafe_allow_html=True)
         st.page_link("pages/2_Questões.py", label="**Ir para o Simulado**", icon="📝")
 
     # NOVO CARD: Adicionado card para a página de Revisão
     with row2_col1:
-        st.markdown("""
-        <div class="card">
-            <h2>🔎 Revisão de Questões</h2>
-            <p>Revise todas as questões que você já respondeu, filtre por acertos, erros, área ou prova.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # st.markdown("""
+        # <div class="card">
+        #     <h2>🔎 Revisão de Questões</h2>
+        #     <p>Revise todas as questões que você já respondeu, filtre por acertos, erros, área ou prova.</p>
+        # </div>
+        # """, unsafe_allow_html=True)
         st.page_link("pages/3_Revisão.py", label="**Revisar minhas questões**", icon="🔎")
     with row2_col2:
-        st.markdown("""
-        <div class="card">
-            <h2>💊 Calculadora de Posologia</h2>
-            <p>Calcule doses de medicamentos de forma rápida e segura, com insights clínicos gerados por IA.</p>
-        </div>
-        """, unsafe_allow_html=True)
+        # st.markdown("""
+        # <div class="card">
+        #     <h2>💊 Calculadora de Posologia</h2>
+        #     <p>Calcule doses de medicamentos de forma rápida e segura, com insights clínicos gerados por IA.</p>
+        # </div>
+        # """, unsafe_allow_html=True)
         # CORREÇÃO: O caminho do arquivo foi corrigido de 3 para 4
         st.page_link("pages/4_Posologia.py", label="**Ir para a Calculadora**", icon="💊")
     

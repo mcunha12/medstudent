@@ -5,9 +5,21 @@ import google.generativeai as genai
 import json
 import uuid
 from datetime import datetime, timedelta
+import unicodedata
 
 # --- LAZY CONNECTION SETUP ---
 _connections = {"spreadsheet": None, "model": None}
+
+def normalize_for_search(text: str) -> str:
+    """
+    Normaliza um texto para busca: remove acentos e converte para minúsculas.
+    Ex: 'Insuficiência Renal' -> 'insuficiencia renal'
+    """
+    if not isinstance(text, str):
+        return ""
+    # Decompõe os caracteres (ex: 'ç' -> 'c' + '̧') e remove os acentos
+    nfkd_form = unicodedata.normalize('NFD', text)
+    return "".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
 
 def _ensure_connected():
     """Garante que a conexão com Google Sheets e Gemini está ativa."""
@@ -49,24 +61,56 @@ def get_or_create_user(email):
         users_sheet.append_row(new_user_data)
     return user_id
 
-def get_next_question(user_id):
-    """Busca a próxima questão não respondida pelo usuário."""
+def get_next_question(user_id, specialty=None, provas=None, keywords=None):
+    """
+    Busca a próxima questão não respondida, com filtros avançados e normalização de busca.
+    """
     _ensure_connected()
     questions_sheet = _connections["spreadsheet"].worksheet("questions")
     answers_sheet = _connections["spreadsheet"].worksheet("answers")
+    
     questions_df = pd.DataFrame(questions_sheet.get_all_records())
     answers_df = pd.DataFrame(answers_sheet.get_all_records())
     
-    if questions_df.empty: return None
+    if questions_df.empty:
+        return None
 
+    filtered_questions = questions_df.copy()
+
+    # Filtros por Especialidade e Prova (sem alteração)
+    if specialty and specialty != "Todas":
+        filtered_questions = filtered_questions[filtered_questions['areas_principais'].str.contains(specialty, na=False, case=False)]
+    if provas:
+        filtered_questions = filtered_questions[filtered_questions['prova'].isin(provas)]
+
+    # ALTERAÇÃO: Filtro por Palavra-chave com normalização
+    if keywords:
+        # 1. Normaliza os dados da planilha para a busca
+        searchable_text = filtered_questions.apply(
+            lambda row: normalize_for_search(
+                ' '.join(row[['enunciado', 'alternativas', 'comentarios', 'areas_principais', 'subtopicos', 'prova']].astype(str).fillna(''))
+            ),
+            axis=1
+        )
+        # 2. Normaliza as palavras-chave da busca e cria a regex
+        normalized_keywords = [normalize_for_search(kw) for kw in keywords]
+        keyword_regex = '|'.join(normalized_keywords)
+        
+        # 3. Compara o texto normalizado da planilha com a regex normalizada
+        filtered_questions = filtered_questions[searchable_text.str.contains(keyword_regex, na=False)]
+
+    if filtered_questions.empty:
+        return None
+
+    # Filtro de questões já respondidas (sem alteração)
     if not answers_df.empty:
         answers_df['user_id'] = answers_df['user_id'].astype(str)
-        answered_questions_ids = answers_df[answers_df['user_id'] == user_id]['question_id'].tolist()
-        unanswered_questions_df = questions_df[~questions_df['question_id'].isin(answered_questions_ids)]
+        answered_ids = answers_df[answers_df['user_id'] == user_id]['question_id'].tolist()
+        unanswered_questions = filtered_questions[~filtered_questions['question_id'].isin(answered_ids)]
     else:
-        unanswered_questions_df = questions_df
+        unanswered_questions = filtered_questions
         
-    return unanswered_questions_df.sample(n=1).to_dict('records')[0] if not unanswered_questions_df.empty else None
+    return unanswered_questions.sample(n=1).to_dict('records')[0] if not unanswered_questions.empty else None
 
 def save_answer(user_id, question_id, user_answer, is_correct):
     """Salva a resposta do usuário na planilha."""
@@ -349,7 +393,6 @@ def get_user_answered_questions_details(user_id):
         st.error(f"Erro ao buscar histórico de revisão: {e}")
         return pd.DataFrame()
     
-# Adicione esta função ao seu services.py
 @st.cache_data(ttl=3600) # Cache por 1 hora
 def get_all_provas():
     """Busca todas as provas únicas da planilha de questões."""
@@ -362,62 +405,3 @@ def get_all_provas():
     
     unique_provas = sorted(list(questions_df['prova'].dropna().unique()))
     return unique_provas
-
-# Substitua sua função get_next_question por esta versão completa
-def get_next_question(user_id, specialty=None, provas=None, keywords=None):
-    """
-    Busca a próxima questão não respondida, com filtros avançados.
-    
-    Args:
-        user_id (str): ID do usuário logado.
-        specialty (str, optional): Filtro de especialidade única.
-        provas (list, optional): Lista de provas para filtrar.
-        keywords (list, optional): Lista de palavras-chave para buscar.
-    """
-    _ensure_connected()
-    questions_sheet = _connections["spreadsheet"].worksheet("questions")
-    answers_sheet = _connections["spreadsheet"].worksheet("answers")
-    
-    questions_df = pd.DataFrame(questions_sheet.get_all_records())
-    answers_df = pd.DataFrame(answers_sheet.get_all_records())
-    
-    if questions_df.empty:
-        return None
-
-    # Inicia com todas as questões disponíveis
-    filtered_questions = questions_df.copy()
-
-    # 1. Filtro por Especialidade
-    if specialty and specialty != "Todas":
-        filtered_questions = filtered_questions[filtered_questions['areas_principais'].str.contains(specialty, na=False, case=False)]
-
-    # 2. Filtro por Prova(s)
-    if provas: # Se a lista de provas não estiver vazia
-        filtered_questions = filtered_questions[filtered_questions['prova'].isin(provas)]
-
-    # 3. Filtro por Palavra(s)-chave
-    if keywords: # Se a lista de keywords não estiver vazia
-        # Cria uma "super string" de busca para cada questão
-        searchable_text = filtered_questions.apply(
-            lambda row: ' '.join(row[['enunciado', 'alternativas', 'comentarios', 'areas_principais', 'subtopicos', 'prova']].astype(str).fillna('')),
-            axis=1
-        )
-        # Cria uma regex que busca por QUALQUER uma das palavras-chave
-        keyword_regex = '|'.join(keywords)
-        filtered_questions = filtered_questions[searchable_text.str.contains(keyword_regex, case=False, na=False)]
-
-    # Se nenhum filtro retornar questões, encerra
-    if filtered_questions.empty:
-        return None
-
-    # 4. Filtra questões já respondidas pelo usuário
-    if not answers_df.empty:
-        answers_df['user_id'] = answers_df['user_id'].astype(str)
-        answered_ids = answers_df[answers_df['user_id'] == user_id]['question_id'].tolist()
-        # Seleciona apenas as questões do DataFrame já filtrado que não foram respondidas
-        unanswered_questions = filtered_questions[~filtered_questions['question_id'].isin(answered_ids)]
-    else:
-        unanswered_questions = filtered_questions
-        
-    # Retorna uma amostra aleatória de 1 questão do resultado final
-    return unanswered_questions.sample(n=1).to_dict('records')[0] if not unanswered_questions.empty else None
