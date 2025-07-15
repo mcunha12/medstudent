@@ -127,7 +127,7 @@ if submit_button:
         try:
             # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
             api_key = st.secrets.get("OPENROUTER_API_KEY")
-            api_url = st.secrets.get("OPENROUTER_URL")
+            api_url = "https://openrouter.ai/api/v1/chat/completions"
             model_name = st.secrets.get("MODEL")
 
             if not all([api_key, api_url, model_name]):
