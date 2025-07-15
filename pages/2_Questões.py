@@ -24,7 +24,6 @@ user_id = st.session_state.user_id
 with st.container(border=True):
     st.subheader("Filtros do Simulado")
 
-    # --- ALTERADO: Filtro de Status agora usa 3 Checkboxes ---
     st.markdown("**Buscar em:**")
     filter_cols = st.columns(3)
     with filter_cols[0]:
@@ -34,7 +33,6 @@ with st.container(border=True):
     with filter_cols[2]:
         status_incorretas = st.checkbox("Questões que errei")
 
-    # Monta a lista de filtros de status com base nos checkboxes marcados
     selected_status_values = []
     if status_nao_respondidas:
         selected_status_values.append("nao_respondidas")
@@ -43,7 +41,6 @@ with st.container(border=True):
     if status_incorretas:
         selected_status_values.append("incorretas")
     
-    # --- Demais filtros permanecem iguais ---
     col1, col2 = st.columns(2)
     with col1:
         specialties = ["Todas"] + get_all_specialties()
@@ -62,12 +59,33 @@ with st.container(border=True):
 
     st.text_input("Buscar por palavras-chave:", placeholder="Digite uma palavra e pressione Enter...", on_change=add_keyword, key="keyword_input")
 
+    # --- ALTERAÇÃO APLICADA AQUI ---
+    # Lógica para exibir e permitir a remoção individual de palavras-chave
     if st.session_state.keywords:
-        active_keywords_str = " | ".join([f"'{kw}'" for kw in st.session_state.keywords])
-        st.caption(f"Palavras-chave ativas: {active_keywords_str}")
-        if st.button("Limpar palavras-chave"):
+        st.caption("Palavras-chave ativas (clique para remover):")
+        
+        # Define um número máximo de colunas por linha para os botões
+        cols_per_row = 7 
+        
+        # Agrupa as palavras-chave em linhas de 'cols_per_row'
+        for i in range(0, len(st.session_state.keywords), cols_per_row):
+            cols = st.columns(cols_per_row)
+            # Pega a "fatia" de palavras-chave para a linha atual
+            chunk = st.session_state.keywords[i:i + cols_per_row]
+            
+            for j, keyword in enumerate(chunk):
+                with cols[j]:
+                    # Cria um botão para cada palavra-chave
+                    if st.button(f"❌ {keyword}", key=f"kw_{keyword}", use_container_width=True):
+                        st.session_state.keywords.remove(keyword)
+                        st.rerun()
+        
+        # Adiciona um separador e mantém o botão de limpar tudo
+        st.markdown("""<hr style="height:1px;border:none;color:#333;background-color:#333;" /> """, unsafe_allow_html=True)
+        if st.button("Limpar todas as palavras-chave"):
             st.session_state.keywords = []
             st.rerun()
+    # --- FIM DA ALTERAÇÃO ---
     
     if st.button("Gerar Nova Questão", type="primary", use_container_width=True):
         if not selected_status_values:
