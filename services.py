@@ -90,6 +90,61 @@ def generate_question_with_gemini():
     # ... (lógica de geração e salvamento da questão)
     pass
 
+# Adicione esta função ao seu services.py. Ela pode ir antes de get_performance_data.
+@st.cache_data(ttl=3600) # Cache por 1 hora para não ler a planilha toda vez
+def get_all_specialties():
+    """
+    Busca todas as áreas principais (especialidades) únicas da planilha de questões.
+    """
+    _ensure_connected()
+    questions_sheet = _connections["spreadsheet"].worksheet("questions")
+    questions_df = pd.DataFrame(questions_sheet.get_all_records())
+    
+    # Retorna uma lista vazia se a coluna não existir ou o DF estiver vazio
+    if 'areas_principais' not in questions_df.columns or questions_df.empty:
+        return []
+    
+    # Pega a coluna, trata valores nulos, separa por vírgula, e "explode" para ter uma área por linha
+    specialties = questions_df['areas_principais'].dropna().str.split(',').explode()
+    
+    # Remove espaços em branco, pega valores únicos, converte para lista e ordena
+    unique_specialties = sorted(list(specialties.str.strip().unique()))
+    
+    return unique_specialties
+
+
+# Modifique a função get_next_question para aceitar o filtro de especialidade
+def get_next_question(user_id, specialty=None): # Adicionado o parâmetro 'specialty'
+    """Busca a próxima questão não respondida, com um filtro opcional de especialidade."""
+    _ensure_connected()
+    questions_sheet = _connections["spreadsheet"].worksheet("questions")
+    answers_sheet = _connections["spreadsheet"].worksheet("answers")
+    questions_df = pd.DataFrame(questions_sheet.get_all_records())
+    answers_df = pd.DataFrame(answers_sheet.get_all_records())
+    
+    if questions_df.empty: return None
+
+    # --- NOVO BLOCO DE FILTRO POR ESPECIALIDADE ---
+    if specialty and specialty != "Todas":
+        # Filtra o DataFrame para questões que contenham a string da especialidade
+        # na=False ignora NaNs, case=False torna a busca case-insensitive
+        questions_df = questions_df[questions_df['areas_principais'].str.contains(specialty, na=False, case=False)]
+        
+        # Se o filtro não retornar nenhuma questão, encerra a busca
+        if questions_df.empty:
+            return None
+    # --- FIM DO NOVO BLOCO ---
+
+    if not answers_df.empty:
+        answers_df['user_id'] = answers_df['user_id'].astype(str)
+        answered_questions_ids = answers_df[answers_df['user_id'] == user_id]['question_id'].tolist()
+        unanswered_questions_df = questions_df[~questions_df['question_id'].isin(answered_questions_ids)]
+    else:
+        unanswered_questions_df = questions_df
+        
+    return unanswered_questions_df.sample(n=1).to_dict('records')[0] if not unanswered_questions_df.empty else None
+
+
 @st.cache_data(ttl=600)
 def get_performance_data(user_id):
     """

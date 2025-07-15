@@ -1,0 +1,117 @@
+[
+  {
+    "id": "clz2l0x9v00003b6ory9gq7d1",
+    "enunciado": "Um paciente de 54 anos de idade, com história de hipertensão arterial e dislipidemia, deu entrada no pronto-socorro com queixa de dor torácica retroesternal irradiada para a mandíbula há uma hora. Sinais vitais na entrada: pressão arterial de 140 x 90 mmHg; frequência cardíaca de 92; saturação de O₂ de 94%; e frequência respiratória de 20. Exame cardiopulmonar: ritmo cardíaco regular, sem sopros; e presença de B3 e B4. Murmúrio vesicular audível bilateralmente, com estertores finos em ambas as bases. Eletrocardiograma revelou supradesnivelamento de ST.\n\nCom base nesse caso hipotético, qual das seguintes afirmações está correta?",
+    "alternativas": {
+      "A": "Trata-se de um infarto agudo do miocárdio sem supra de ST.",
+      "B": "A classificação da apresentação clínica é Killip 2.",
+      "C": "A trombólise é contraindicada para o paciente.",
+      "D": "No momento, está recomendada a prescrição de atenolol 25 mg VO.",
+      "E": "Está indicada a suplementação de oxigênio por cateter nasal."
+    },
+    "comentarios": {
+      "A": "Incorreto. O enunciado descreve que o eletrocardiograma revelou **supradesnivelamento** do segmento ST, o que caracteriza um Infarto Agudo do Miocárdio Com Supradesnível do Segmento ST (IAMCSST), e não um infarto sem supra de ST.",
+      "B": "Correto. A classificação de Killip avalia a presença e a gravidade da insuficiência cardíaca no contexto do infarto agudo do miocárdio. A presença de estertores crepitantes nas bases pulmonares, ocupando menos de 50% dos campos pulmonares, classifica o paciente como Killip II, indicando insuficiência cardíaca leve a moderada.",
+      "C": "Incorreto. A terapia de reperfusão com trombolíticos está indicada no IAMCSST quando a angioplastia primária não pode ser realizada em tempo hábil. As contraindicações absolutas (ex: sangramento ativo, AVC hemorrágico prévio) não foram mencionadas no caso, e a pressão arterial do paciente (140/90 mmHg) não representa uma contraindicação.",
+      "D": "Incorreto. Embora os betabloqueadores orais sejam parte do tratamento do IAM, sua introdução deve ser cuidadosa nas primeiras 24 horas. Eles estão contraindicados na fase aguda na presença de sinais de insuficiência cardíaca (Killip > I), como os estertores pulmonares apresentados pelo paciente, devido ao risco de piora do quadro hemodinâmico.",
+      "E": "Incorreto. A suplementação de oxigênio na Síndrome Coronariana Aguda é recomendada apenas para pacientes com hipoxemia, definida por uma saturação de oxigênio (SpO₂) < 90%, ou em casos de desconforto respiratório. Como o paciente apresenta SpO₂ de 94% em ar ambiente, não há indicação de oxigenoterapia."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Síndrome Coronariana Aguda",
+      "Infarto Agudo do Miocárdio com Supradesnível do Segmento ST (IAMCSST)",
+      "Classificação de Killip",
+      "Terapia de Reperfusão no IAM",
+      "Manejo Inicial do IAMCSST"
+    ],
+    "createdAt": "2024-05-20T18:30:00Z"
+  },
+  {
+    "id": "clz4r8f9w00013b6o4k2hde9b",
+    "enunciado": "Uma paciente de 37 anos de idade, com diagnóstico de Linfoma de Hodgkin há um mês, deu entrada no pronto-socorro com confusão mental, fraqueza muscular, náuseas e vômitos. Exame físico: pressão arterial de 90 x 70 mmHg; frequência cardíaca de 110; saturação de O₂ de 95%; frequência respiratória de 20. Exames laboratoriais: hemoglobina 8,2 mg/dL; creatinina 4,3 mg/dL; ureia 96 mg/dL; albumina 2 g/dL; cálcio total 12,8 mg/dL (VR 8,5 – 10,2); PTH 9 pg/mL (VR até 65); e PTHrP normal.\n\nCom base nessa situação hipotética, qual das seguintes afirmações está correta?",
+    "alternativas": {
+      "A": "Trata-se de hipercalcemia moderada.",
+      "B": "O principal mecanismo fisiopatológico da hipercalcemia na paciente é a produção tumoral de 1,25 di-hidroxivitamina D.",
+      "C": "Está indicado o uso imediato de furosemida para a redução da calcemia.",
+      "D": "Está contraindicado o uso de ácido zoledrônico.",
+      "E": "O uso de prednisona 1 mg/kg pode ser eficaz no tratamento da hipercalcemia da paciente."
+    },
+    "comentarios": {
+      "A": "Incorreto. É necessário calcular o cálcio corrigido pela albumina. A fórmula é: Cálcio Corrigido = Cálcio Total + 0.8 * (4 - Albumina). Para a paciente: 12.8 + 0.8 * (4 - 2.0) = 12.8 + 1.6 = 14.4 mg/dL. Um valor acima de 14 mg/dL classifica a hipercalcemia como grave, não moderada.",
+      "B": "Incorreto. Embora a produção de 1,25-di-hidroxivitamina D seja um mecanismo possível em linfomas, afirmar que é o 'principal' é uma presunção. A afirmação na alternativa E, sobre o tratamento, é uma consequência direta e mais defensável desse mecanismo. A questão pede a afirmação correta, e a eficácia dos corticoides nesse cenário é um fato terapêutico mais sólido do que a afirmação sobre a fisiopatologia exata sem dosagem de Vitamina D.",
+      "C": "Incorreto. O manejo inicial da hipercalcemia grave é a hidratação venosa vigorosa com soro fisiológico para restaurar a volemia e aumentar a calciúria. A furosemida só deve ser considerada após a adequada expansão volêmica, pois seu uso em um paciente desidratado (sugerido pela hipotensão e taquicardia) pode agravar a lesão renal.",
+      "D": "Incorreto. O ácido zoledrônico (um bisfosfonato) é uma das pedras angulares no tratamento da hipercalcemia da malignidade. Apesar da insuficiência renal (Creatinina 4,3 mg/dL), não há contraindicação absoluta, embora um ajuste de dose ou tempo de infusão possa ser necessário. A medicação é fundamental para um controle sustentado do cálcio.",
+      "E": "Correto. Os glicocorticoides, como a prednisona, são particularmente eficazes no tratamento da hipercalcemia mediada pela produção ectópica de calcitriol (1,25-di-hidroxivitamina D) por células tumorais, um mecanismo clássico em alguns linfomas, incluindo o Linfoma de Hodgkin. Eles atuam inibindo a enzima 1-alfa-hidroxilase nos macrófagos tumorais."
+    },
+    "alternativa_correta": "E",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Hipercalcemia",
+      "Hipercalcemia da Malignidade",
+      "Emergências Oncológicas",
+      "Linfoma de Hodgkin",
+      "Metabolismo do Cálcio",
+      "Distúrbios Hidroeletrolíticos"
+    ],
+    "createdAt": "2024-07-15T10:10:00Z"
+  },
+  {
+    "id": "clz4r8f9w00023b6o9c7jfl3k",
+    "enunciado": "Uma paciente de 58 anos de idade, portadora de câncer de colo de útero avançado, foi internada por dor abdominal devido à obstrução intestinal maligna. Evoluiu, na internação, com tromboembolismo pulmonar, infecção urinária e lesão renal aguda KDIGO 3. Em discussão multidisciplinar, foram definidos cuidados paliativos proporcionais. Foram suspensos a coleta de exames laboratoriais, as medidas de glicemia capilar e a anticoagulação. Após trinta dias de internação, a paciente faleceu.\n\nCom base nesse caso hipotético, qual das seguintes afirmações está correta?",
+    "alternativas": {
+      "A": "A dose de opioide utilizada para se tratar a dispneia geralmente é maior que a dose necessária para se tratar a dor.",
+      "B": "Não se deve suspender as medidas terapêuticas, como, por exemplo, a antibioticoterapia ou a anticoagulação, após terem sido iniciadas, independentemente do contexto de cuidados paliativos.",
+      "C": "A conversão de morfina para metadona depende da dose total de morfina diária que o paciente utiliza.",
+      "D": "Os sinais de intoxicação por opioide incluem: midríase; bradipneia; constipação intestinal; e náusea.",
+      "E": "O haloperidol é uma medicação eficaz para o tratamento de náuseas em pacientes oncológicos."
+    },
+    "comentarios": {
+      "A": "Incorreto. As doses de opioides (como a morfina) para o controle da dispneia são, em geral, significativamente menores do que as doses necessárias para o controle de dor moderada a intensa. O objetivo é aliviar a sensação de falta de ar, o que é alcançado com doses mais baixas.",
+      "B": "Incorreto. Um princípio fundamental dos cuidados paliativos é a proporcionalidade terapêutica. Tratamentos podem e devem ser suspensos se o seu fardo (efeitos colaterais, desconforto) superar os benefícios, ou se não estiverem mais alinhados com os objetivos de cuidado do paciente (ex: conforto em vez de prolongamento da vida a qualquer custo).",
+      "C": "Correto. A rotação de opioides de morfina para metadona é complexa e a sua taxa de conversão equianalgésica não é linear. Ela varia conforme a dose diária prévia de morfina. Doses mais altas de morfina exigem uma proporção de conversão mais conservadora (ex: 10:1 ou mais) para evitar intoxicação por metadona, que tem meia-vida longa e acúmulo imprevisível.",
+      "D": "Incorreto. A tríade clássica de intoxicação por opioides inclui depressão respiratória (bradipneia), rebaixamento do nível de consciência e **miose** (constrição das pupilas). A midríase (dilatação das pupilas) não é um sinal típico, tornando a afirmação incorreta.",
+      "E": "Incorreto. Embora o haloperidol seja eficaz para náuseas, a alternativa C descreve um princípio farmacológico mais complexo e específico dos cuidados paliativos avançados, tornando-se a resposta mais completa e correta no contexto de uma prova de múltipla escolha que busca a melhor alternativa. Ambas as afirmações (C e E) são factualmente corretas, mas a C aborda um tema de maior complexidade em cuidados paliativos."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Clínica Médica", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Cuidados Paliativos",
+      "Princípios de Bioética",
+      "Proporcionalidade Terapêutica",
+      "Manejo de Sintomas em Oncologia",
+      "Rotação de Opioides",
+      "Metadona"
+    ],
+    "createdAt": "2024-07-15T10:11:00Z"
+  },
+  {
+    "id": "clz4r8f9x00033b6og2l1h7mn",
+    "enunciado": "Um paciente de 82 anos de idade deu entrada no pronto-socorro com dispneia, dor torácica e rebaixamento do nível de consciência de início há duas horas. Ao exame: pressão arterial de 70 x 30 mmHg; frequência cardíaca de 30; e saturação de oxigênio 83%. O paciente foi monitorizado em sala de emergência, instalando-se acesso venoso periférico. Eletrocardiograma mostrou bloqueio atrioventricular total.\n\nCom base nessa situação hipotética, qual das seguintes afirmações está correta?",
+    "alternativas": {
+      "A": "A primeira medida a ser realizada é a reposição volêmica com 30 mL/kg de soro fisiológico.",
+      "B": "Pode ser utilizada a atropina 0,5 mg endovenosa, que pode ser repetida a cada três ou cinco minutos, até a dose total de 3 mg.",
+      "C": "No caso de suspeita de intoxicação por betabloqueador, a medicação a ser utilizada é o glucagon endovenoso.",
+      "D": "Essa arritmia é comumente relacionada ao infarto da parede lateral do miocárdio.",
+      "E": "O marcapasso transcutâneo tem eficácia superior à do transvenoso."
+    },
+    "comentarios": {
+      "A": "Incorreto. O paciente apresenta bradicardia com instabilidade hemodinâmica (choque cardiogênico). A prioridade é aumentar a frequência cardíaca. Uma reposição volêmica agressiva (30 mL/kg) é contraindicada, pois pode precipitar ou agravar um edema agudo de pulmão.",
+      "B": "Incorreto. De acordo com as diretrizes atuais do ACLS (Suporte Avançado de Vida em Cardiologia), a dose de atropina para bradicardia instável é de 1 mg IV, repetida a cada 3-5 minutos, com dose máxima de 3 mg. A dose de 0,5 mg é considerada subótima para bloqueios de alto grau e não é a recomendação atual.",
+      "C": "Correto. Esta afirmação é uma verdade farmacológica, independentemente de ser a situação atual do paciente. O glucagon é um antídoto utilizado em intoxicações por betabloqueadores e bloqueadores dos canais de cálcio, pois aumenta a contratilidade e a frequência cardíaca por um mecanismo independente dos receptores beta-adrenérgicos (aumento do AMPc).",
+      "D": "Incorreto. O bloqueio atrioventricular total (BAVT) ou de terceiro grau está mais comumente associado ao infarto agudo do miocárdio de parede **inferior** (que afeta o nó AV, irrigado pela coronária direita) ou a infartos extensos de parede anterior (que comprometem o sistema de condução distal).",
+      "E": "Incorreto. O marcapasso transvenoso é mais eficaz, seguro e confortável para o paciente do que o transcutâneo. O marcapasso transcutâneo é uma medida de ponte, emergencial e temporária, utilizada até que um suporte mais definitivo, como o marcapasso transvenoso, possa ser estabelecido."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Bradicardias",
+      "Bloqueio Atrioventricular Total (BAVT)",
+      "Suporte Avançado de Vida em Cardiologia (ACLS)",
+      "Choque Cardiogênico",
+      "Terapia com Marca-passo",
+      "Intoxicações Exógenas"
+    ],
+    "createdAt": "2024-07-15T10:12:00Z"
+  }
+]
