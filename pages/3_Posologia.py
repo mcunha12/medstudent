@@ -124,37 +124,37 @@ if submit_button:
             "- A resposta deve ser apenas o relatório, sem introduções como 'Olá, Yasmin' ou 'Aqui está o relatório'."
         )
 
-        try:
-            # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
-            api_key = st.secrets.get("OPENROUTER_API_KEY")
-            model_name = st.secrets.get("MODEL")
+        # try:
+        #     # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
+        #     api_key = st.secrets.get("OPENROUTER_API_KEY")
+        #     model_name = st.secrets.get("MODEL")
 
-            # ALTERADO: A verificação agora checa apenas as chaves realmente necessárias dos secrets.
-            if not all([api_key, model_name]):
-                st.error("As configurações do OpenRouter (API_KEY, MODEL) não foram encontradas em secrets.toml.")
-                st.stop()
+        #     # ALTERADO: A verificação agora checa apenas as chaves realmente necessárias dos secrets.
+        #     if not all([api_key, model_name]):
+        #         st.error("As configurações do OpenRouter (API_KEY, MODEL) não foram encontradas em secrets.toml.")
+        #         st.stop()
 
-            headers = {
-                "Authorization": f"Bearer {api_key}",
-                "Content-Type": "application/json"
-            }
-            body = {
-                "model": model_name,
-                "messages": [
-                    {"role": "user", "content": prompt}
-                ]
-            }
+        #     headers = {
+        #         "Authorization": f"Bearer {api_key}",
+        #         "Content-Type": "application/json"
+        #     }
+        #     body = {
+        #         "model": model_name,
+        #         "messages": [
+        #             {"role": "user", "content": prompt}
+        #         ]
+        #     }
             
-            # ALTERADO: A URL agora é fixa e passada diretamente para a função.
-            response = requests.post(
-                "https://openrouter.ai/api/v1/chat/completions",
-                headers=headers,
-                json=body,
-                timeout=30
-            )
-            response.raise_for_status()
+        #     # ALTERADO: A URL agora é fixa e passada diretamente para a função.
+        #     response = requests.post(
+        #         "https://openrouter.ai/api/v1/chat/completions",
+        #         headers=headers,
+        #         json=body,
+        #         timeout=30
+        #     )
+        #     response.raise_for_status()
             
-            ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
+        #     ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
             # st.markdown(ai_report)
 
         # except requests.exceptions.RequestException as e:
