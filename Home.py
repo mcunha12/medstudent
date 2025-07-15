@@ -1,4 +1,3 @@
-# Home.py
 import streamlit as st
 from services import get_or_create_user
 
@@ -75,7 +74,7 @@ else:
         </div>
         """, unsafe_allow_html=True)
         # CORREÇÃO: Usando o nome de arquivo correto
-        st.page_link("pages/2_Questões.py", label="**Ir para o Simulado**", icon="📝")
+        st.page_link("pages/2_Questões.py", label="**Ir para o Simulado**", icon="�")
 
     with col3:
         st.markdown("""
