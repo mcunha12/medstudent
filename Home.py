@@ -114,8 +114,7 @@ else:
         stats = get_global_platform_stats()
 
     with st.container():
-        st.markdown("<div class='stats-container'>", unsafe_allow_html=True)
-        st.markdown("<h3 style='text-align: center; color: #1C1C1E;'>Nossa Comunidade em Números</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color: #ffffff;'>Nossa Comunidade em Números</h3>", unsafe_allow_html=True)
         st.write("") # Espaçamento
 
         stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
