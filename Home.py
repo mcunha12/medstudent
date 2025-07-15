@@ -90,8 +90,7 @@ else:
             <p>Revise todas as questões que você já respondeu, filtre por acertos, erros, área ou prova.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/3_Revisao.py", label="**Revisar minhas questões**", icon="🔎")
-
+        st.page_link("pages/3_Revisão.py", label="**Revisar minhas questões**", icon="🔎")
     with row2_col2:
         st.markdown("""
         <div class="card">
