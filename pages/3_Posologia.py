@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-import requests  # Importa a biblioteca para fazer chamadas HTTP
+import requests
 
 # --- VERIFICAÇÃO DE LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
@@ -109,7 +109,7 @@ if submit_button:
             "concentracao_mg_por_ml": concentration,
             "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
         }
-        # O prompt continua o mesmo, apenas o método de chamada muda
+        
         prompt = (
             f"Você é um médico sênior e educador, respondendo a uma estudante de medicina. "
             f"Com base nos seguintes dados de um caso hipotético: {json.dumps(data_for_ai, ensure_ascii=False)}. "
@@ -127,11 +127,11 @@ if submit_button:
         try:
             # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
             api_key = st.secrets.get("OPENROUTER_API_KEY")
-            api_url = "https://openrouter.ai/api/v1/chat/completions"
             model_name = st.secrets.get("MODEL")
 
-            if not all([api_key, api_url, model_name]):
-                st.error("As configurações do OpenRouter (API_KEY, URL, MODEL) não foram encontradas em secrets.toml.")
+            # ALTERADO: A verificação agora checa apenas as chaves realmente necessárias dos secrets.
+            if not all([api_key, model_name]):
+                st.error("As configurações do OpenRouter (API_KEY, MODEL) não foram encontradas em secrets.toml.")
                 st.stop()
 
             headers = {
@@ -145,10 +145,15 @@ if submit_button:
                 ]
             }
             
-            response = requests.post(api_url, headers=headers, json=body, timeout=30)
-            response.raise_for_status()  # Lança um erro para respostas 4xx/5xx
+            # ALTERADO: A URL agora é fixa e passada diretamente para a função.
+            response = requests.post(
+                "https://openrouter.ai/api/v1/chat/completions",
+                headers=headers,
+                json=body,
+                timeout=30
+            )
+            response.raise_for_status()
             
-            # Extrai a resposta do JSON
             ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
             st.markdown(ai_report)
 
