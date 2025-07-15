@@ -1,4 +1,0 @@
-streamlit
-gspread
-pandas
-google-generativeai

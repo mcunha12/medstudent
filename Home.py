@@ -1,3 +1,4 @@
+# Home.py
 import streamlit as st
 from services import get_or_create_user
 
@@ -63,7 +64,7 @@ else:
             <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
         </div>
         """, unsafe_allow_html=True)
-        # CORREÇÃO: Usando um emoji válido e o caminho do arquivo correto
+        # CORREÇÃO: Usando o nome de arquivo correto e emoji válido
         st.page_link("pages/1_Meu_Perfil.py", label="**Ver minha performance**", icon="📊")
 
     with col2:
@@ -73,6 +74,7 @@ else:
             <p>Gere questões de múltipla escolha, teste seus conhecimentos e receba feedback detalhado na hora.</p>
         </div>
         """, unsafe_allow_html=True)
+        # CORREÇÃO: Usando o nome de arquivo correto
         st.page_link("pages/2_Questões.py", label="**Ir para o Simulado**", icon="📝")
 
     with col3:
@@ -82,6 +84,7 @@ else:
             <p>Calcule doses de medicamentos de forma rápida e segura, com insights clínicos gerados por IA.</p>
         </div>
         """, unsafe_allow_html=True)
+        # CORREÇÃO: Usando o nome de arquivo correto
         st.page_link("pages/3_Posologia.py", label="**Ir para a Calculadora**", icon="💊")
     
     if st.sidebar.button("Sair"):
