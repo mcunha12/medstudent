@@ -5,6 +5,7 @@ description = "Simulador de questões ENAMED e ferramentas de estudo para medici
 authors = ["Yasmin e Marcelo <marceloopcunha@gmail.com>"]
 readme = "README.md"
 
+# Seção de dependências
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
 
@@ -17,6 +18,8 @@ google-generativeai = "^0.5.0"
 plotly = "^5.18.0"
 toml = "^0.10.2"
 
+# Seção de build do sistema
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
