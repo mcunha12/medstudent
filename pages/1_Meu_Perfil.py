@@ -1,23 +1,29 @@
 # ==============================================================================
-# ARQUIVO: pages/1_Meu_Perfil.py (Corrigido)
+# ARQUIVO: pages/1_Meu_Perfil.py (VERSÃO FINAL)
 # ==============================================================================
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-from services import get_performance_data, get_time_window_metrics, get_temporal_performance, get_areas_performance, get_subtopics_for_review
+# 1. IMPORTE A NOVA FUNÇÃO JUNTO COM AS OUTRAS
+from services import get_performance_data, get_time_window_metrics, get_temporal_performance, get_areas_performance, get_subtopics_for_review, get_ranking_data
 
-# O st.set_page_config foi removido pois só pode ser chamado na Home.py
 st.title("📊 Meu Perfil de Performance")
 st.markdown("---")
 
 # --- VERIFICA LOGIN E CARREGA DADOS ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para ver seu perfil.")
-    st.page_link("Home.py", label="Voltar para a Home", icon="�")
+    st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
     st.stop()
 
 with st.spinner("Analisando seu histórico de performance..."):
+    # Assumindo que get_performance_data() retorna um dict com os dados
     performance_data = get_performance_data(st.session_state.user_id)
+    # Você precisa de um DataFrame com TODAS as respostas para o ranking.
+    # Se get_performance_data não traz tudo, você precisará de outra chamada.
+    # Vamos assumir que `performance_data` contém 'all_answers_for_ranking'
+    # que é o DataFrame completo da tabela 'answers'.
+    all_answers_for_ranking = performance_data["all_answers_for_ranking"] # <-- IMPORTANTE
 
 if performance_data is None:
     st.info("Você ainda não respondeu nenhuma questão. Comece pelo simulado para ver suas estatísticas aqui!")
@@ -27,26 +33,25 @@ all_answers = performance_data["all_answers"]
 areas_exploded = performance_data["areas_exploded"]
 subtopicos_exploded = performance_data["subtopicos_exploded"]
 
+
 # --- LINHA 1: GRÁFICOS TEMPORAIS E RANKING ---
 st.subheader("Evolução da Performance")
 
 periodo_selecionado = st.selectbox(
     "Agrupar dados por:",
-    ("Semana", "Dia")
+    ("Semana", "Dia"),
+    key='periodo_ranking'
 )
 period_map = {"Semana": "W", "Dia": "D"}
 period_code = period_map[periodo_selecionado]
 
-col1, col2, col3 = st.columns([2, 2, 1])
+col1, col2, col3 = st.columns([2, 2, 1.2]) # Aumentei um pouco a largura da coluna 3
 
 with col1:
     temporal_df = get_temporal_performance(all_answers, period=period_code)
     if not temporal_df.empty:
         fig = px.bar(temporal_df, x='periodo', y='questoes_respondidas', title=f"Questões Respondidas por {periodo_selecionado}", labels={'periodo': periodo_selecionado, 'questoes_respondidas': 'Quantidade'})
-        
-        # ALTERAÇÃO APLICADA AQUI: Formata o eixo X para o padrão dia/mês/ano
         fig.update_xaxes(tickformat='%d/%m/%y')
-        
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info(f"Sem dados para o período selecionado.")
@@ -55,21 +60,35 @@ with col2:
     if not temporal_df.empty:
         fig = px.line(temporal_df, x='periodo', y='taxa_de_acerto', title=f"Taxa de Acerto por {periodo_selecionado}", markers=True, labels={'periodo': periodo_selecionado, 'taxa_de_acerto': 'Taxa de Acerto (%)'})
         fig.update_yaxes(range=[0, 101])
-        
-        # ALTERAÇÃO APLICADA AQUI: Formata o eixo X para o padrão dia/mês/ano
         fig.update_xaxes(tickformat='%d/%m/%y')
-
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info(f"Sem dados para o período selecionado.")
 
+# 2. ATUALIZE A LÓGICA DA COLUNA 3 PARA EXIBIR O RANKING
 with col3:
-    st.markdown("**Ranking Geral**")
-    st.info("Em breve você poderá comparar sua performance com outros estudantes.")
+    st.markdown(f"**Ranking ({periodo_selecionado})**")
     
-    image_url = "https://placehold.co/300x200/007AFF/FFFFFF?text=Ranking"
-    st.image(image_url, use_container_width=True)
-    st.caption("(Em Breve)")
+    with st.spinner("Calculando ranking..."):
+        ranking_info = get_ranking_data(
+            all_answers_for_ranking, 
+            period_code, 
+            st.session_state.user_id
+        )
+
+    if ranking_info and ranking_info.get('rank'):
+        st.metric(
+            label=f"Você está entre os {ranking_info['percentile']:.0f}% melhores",
+            value=f"#{ranking_info['rank']}",
+            help=f"Sua posição em comparação com {ranking_info['total_users']} participante(s) no período."
+        )
+        st.caption(f"Posição: {ranking_info['rank']} de {ranking_info['total_users']} no total.")
+
+    elif ranking_info and ranking_info.get('total_users') > 0:
+         st.info("Você ainda não respondeu questões neste período para ser classificado.")
+         st.caption(f"{ranking_info['total_users']} participante(s) já foram classificados.")
+    else:
+        st.success("🏆 Você é o primeiro a ser rankeado neste período! Continue assim.")
 
 
 st.markdown("---")
