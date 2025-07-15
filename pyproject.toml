@@ -1,8 +1,5 @@
 # ==============================================================================
-# ARQUIVO 1: pyproject.toml
-# Local: Raiz do seu NOVO projeto
-# Descrição: Esta é a configuração de dependências mais simples e robusta
-# que diz ao Streamlit para não tratar seu app como um pacote.
+# ARQUIVO 1: pyproject.toml (Versão Final com a Correção Crucial)
 # ==============================================================================
 
 [tool.poetry]
@@ -11,6 +8,7 @@ version = "0.1.0"
 description = "Simulador de questões ENAMED e ferramentas de estudo para medicina."
 authors = ["Yasmin e Marcelo <marceloopcunha@gmail.com>"]
 readme = "README.md"
+package-mode = false  # <--- ESSA É A LINHA QUE RESOLVE O ERRO DE INSTALAÇÃO
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.14"
