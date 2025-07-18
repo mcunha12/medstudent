@@ -1,10 +1,10 @@
 import streamlit as st
-# Adiciona a importação da nova função de estatísticas
-from services import get_or_create_user, get_global_platform_stats
+# Adiciona a importação da nova função de autenticação e remove a antiga
+from services import authenticate_or_register_user, get_global_platform_stats
 
 st.set_page_config(layout="wide", page_title="Home - MedStudent")
 
-# --- ESTILO CSS ---
+# --- ESTILO CSS (permanece o mesmo) ---
 st.markdown("""
 <style>
     .main { background-color: #F5F5F7; }
@@ -37,7 +37,6 @@ st.markdown("""
     .card p {
         color: #3C3C43;
     }
-    /* Estilo para a seção de estatísticas */
     .stats-container {
         text-align: center;
         background-color: white;
@@ -48,22 +47,38 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- LÓGICA DE LOGIN E UI ---
+# --- NOVA LÓGICA DE LOGIN E UI ---
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 
 if not st.session_state.user_id:
     st.title("Bem-vindo ao MedStudent! 👋")
-    st.subheader("Insira seu e-mail para começar a praticar e salvar seu progresso.")
+    st.subheader("Acesse sua conta ou cadastre-se para começar a praticar.")
     
     with st.form("login_form"):
         email = st.text_input("Seu e-mail", placeholder="seu.email@med.com")
-        submitted = st.form_submit_button("Acessar")
-        if submitted and email:
-            with st.spinner("Verificando..."):
-                st.session_state.user_id = get_or_create_user(email)
-            st.rerun()
+        # Campo de senha adicionado
+        password = st.text_input("Sua senha", type="password", placeholder="********")
+        
+        submitted = st.form_submit_button("Entrar / Cadastrar")
+        
+        if submitted:
+            if not email or not password:
+                st.error("Por favor, preencha o e-mail e a senha.")
+            else:
+                with st.spinner("Verificando..."):
+                    # Chama a nova função de autenticação
+                    auth_response = authenticate_or_register_user(email, password)
+                
+                # Verifica a resposta da função
+                if auth_response['status'] == 'success':
+                    st.session_state.user_id = auth_response['user_id']
+                    st.success(auth_response['message'])
+                    st.rerun() # Redireciona para a página principal
+                else:
+                    st.error(auth_response['message'])
 else:
+    # --- O RESTANTE DA PÁGINA LOGADA PERMANECE IGUAL ---
     st.title(f"Bem-vindo de volta! 👋")
     st.markdown("### O que vamos praticar hoje?")
     
@@ -107,7 +122,6 @@ else:
         """, unsafe_allow_html=True)
         st.page_link("pages/4_Posologia.py", label="**Acessar a Calculadora**", icon="💊")
 
-    # --- NOVA SEÇÃO DE ESTATÍSTICAS ---
     st.markdown("---")
     
     with st.spinner("Buscando dados da comunidade..."):
@@ -115,7 +129,7 @@ else:
 
     with st.container():
         st.markdown("<h3 style='text-align: center; color: #ffffff;'>Nossa Comunidade em Números</h3>", unsafe_allow_html=True)
-        st.write("") # Espaçamento
+        st.write("") 
 
         stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
 
@@ -133,9 +147,8 @@ else:
         
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Lógica do Logout (movida para a barra lateral para melhor UX)
     with st.sidebar:
-        st.write("") # Espaçamento
+        st.write("") 
         if st.button("Sair da Conta", use_container_width=True):
             st.session_state.clear()
             st.rerun()
