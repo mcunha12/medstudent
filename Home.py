@@ -1,10 +1,9 @@
 import streamlit as st
-# Adiciona a importação da nova função de autenticação e remove a antiga
 from services import authenticate_or_register_user, get_global_platform_stats
 
 st.set_page_config(layout="wide", page_title="Home - MedStudent")
 
-# --- ESTILO CSS (permanece o mesmo) ---
+# --- ESTILO CSS (sem alterações) ---
 st.markdown("""
 <style>
     .main { background-color: #F5F5F7; }
@@ -47,7 +46,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- NOVA LÓGICA DE LOGIN E UI ---
+# --- LÓGICA DE LOGIN E UI (sem alterações) ---
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
 
@@ -57,9 +56,7 @@ if not st.session_state.user_id:
     
     with st.form("login_form"):
         email = st.text_input("Seu e-mail", placeholder="seu.email@med.com")
-        # Campo de senha adicionado
         password = st.text_input("Sua senha", type="password", placeholder="********")
-        
         submitted = st.form_submit_button("Entrar / Cadastrar")
         
         if submitted:
@@ -67,44 +64,43 @@ if not st.session_state.user_id:
                 st.error("Por favor, preencha o e-mail e a senha.")
             else:
                 with st.spinner("Verificando..."):
-                    # Chama a nova função de autenticação
                     auth_response = authenticate_or_register_user(email, password)
                 
-                # Verifica a resposta da função
                 if auth_response['status'] == 'success':
                     st.session_state.user_id = auth_response['user_id']
                     st.success(auth_response['message'])
-                    st.rerun() # Redireciona para a página principal
+                    st.rerun()
                 else:
                     st.error(auth_response['message'])
 else:
-    # --- O RESTANTE DA PÁGINA LOGADA PERMANECE IGUAL ---
     st.title(f"Bem-vindo de volta! 👋")
     st.markdown("### O que vamos praticar hoje?")
     
-    # Cards de Navegação
+    # --- MUDANÇA: Cards de Navegação Reorganizados e Links Atualizados ---
     row1_col1, row1_col2 = st.columns(2)
     row2_col1, row2_col2 = st.columns(2)
     
+    # Card 1: Simulador (agora na primeira posição)
     with row1_col1:
+        st.markdown("""
+        <div class="card">
+            <h2>📝 Simulador de Provas</h2>
+            <p>Filtre por área, prova ou palavra-chave e teste seus conhecimentos com simulados de 20 questões.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        st.page_link("pages/1_Simulado.py", label="**Ir para o Simulador**", icon="📝")
+
+    # Card 2: Meu Perfil (agora na segunda posição)
+    with row1_col2:
         st.markdown("""
         <div class="card">
             <h2>📊 Meu Perfil</h2>
             <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/1_Meu_Perfil.py", label="**Ver minha performance**", icon="📊")
+        st.page_link("pages/2_Meu_Perfil.py", label="**Ver minha performance**", icon="📊")
 
-    with row1_col2:
-        st.markdown("""
-        <div class="card">
-            <h2>📝 Simulador de Provas</h2>
-            <p>Filtre por área, prova ou palavra-chave e teste seus conhecimentos com questões direcionadas.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        # ALTERE A LINHA ABAIXO
-        st.page_link("pages/2_Simulado.py", label="**Ir para o Simulador**", icon="📝")
-
+    # Card 3: Revisão de Questões (link atualizado para o novo nome do arquivo)
     with row2_col1:
         st.markdown("""
         <div class="card">
@@ -112,8 +108,9 @@ else:
             <p>Revise todas as questões que você já respondeu, filtre por acertos, erros, área ou prova.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/3_Revisão.py", label="**Revisar minhas questões**", icon="🔎")
+        st.page_link("pages/3_Revisão_de_Questões.py", label="**Revisar minhas questões**", icon="🔎")
     
+    # Card 4: Posologia (sem alteração de posição ou nome)
     with row2_col2:
         st.markdown("""
         <div class="card">
@@ -123,6 +120,7 @@ else:
         """, unsafe_allow_html=True)
         st.page_link("pages/4_Posologia.py", label="**Acessar a Calculadora**", icon="💊")
 
+    # --- Seção de Estatísticas e Logout (sem alterações) ---
     st.markdown("---")
     
     with st.spinner("Buscando dados da comunidade..."):
@@ -130,7 +128,7 @@ else:
 
     with st.container():
         st.markdown("<h3 style='text-align: center; color: #ffffff;'>Nossa Comunidade em Números</h3>", unsafe_allow_html=True)
-        st.write("") 
+        st.write("")
 
         stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
 
@@ -149,7 +147,7 @@ else:
         st.markdown("</div>", unsafe_allow_html=True)
 
     with st.sidebar:
-        st.write("") 
+        st.write("")
         if st.button("Sair da Conta", use_container_width=True):
             st.session_state.clear()
             st.rerun()
