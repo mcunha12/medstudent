@@ -291,3 +291,71 @@ def get_global_platform_stats():
 
 # As demais funções (get_time_window_metrics, get_temporal_performance, etc.) podem ser mantidas como estão
 # pois dependem dos DataFrames já tratados e retornados por get_performance_data.
+
+def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas'], specialty=None, provas=None, keywords=None):
+    """
+    Busca um lote de questões para um simulado, com base nos filtros.
+    """
+    try:
+        _ensure_connected()
+        questions_sheet = _connections["spreadsheet"].worksheet("questions")
+        answers_sheet = _connections["spreadsheet"].worksheet("answers")
+        
+        questions_df = pd.DataFrame(questions_sheet.get_all_records())
+        answers_df = pd.DataFrame(answers_sheet.get_all_records())
+        
+        if questions_df.empty:
+            return []
+
+        # A lógica de filtragem é a mesma de get_next_question
+        list_of_pools = []
+        user_answers_df = pd.DataFrame()
+        if not answers_df.empty:
+            answers_df['user_id'] = answers_df['user_id'].astype(str)
+            user_answers_df = answers_df[answers_df['user_id'] == user_id].copy()
+
+        if 'nao_respondidas' in status_filters:
+            if not user_answers_df.empty:
+                answered_ids = user_answers_df['question_id'].unique().tolist()
+                pool = questions_df[~questions_df['question_id'].isin(answered_ids)]
+            else:
+                pool = questions_df.copy()
+            list_of_pools.append(pool)
+
+        if not user_answers_df.empty and ('corretas' in status_filters or 'incorretas' in status_filters):
+            user_answers_df['is_correct'] = user_answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+            if 'corretas' in status_filters:
+                correct_ids = user_answers_df[user_answers_df['is_correct'] == True]['question_id'].unique().tolist()
+                list_of_pools.append(questions_df[questions_df['question_id'].isin(correct_ids)])
+            if 'incorretas' in status_filters:
+                incorrect_ids = user_answers_df[user_answers_df['is_correct'] == False]['question_id'].unique().tolist()
+                list_of_pools.append(questions_df[questions_df['question_id'].isin(incorrect_ids)])
+
+        if not list_of_pools: return []
+        initial_pool = pd.concat(list_of_pools).drop_duplicates(subset=['question_id']).reset_index(drop=True)
+        if initial_pool.empty: return []
+
+        final_pool = initial_pool.copy()
+        if specialty and specialty != "Todas":
+            final_pool = final_pool[final_pool['areas_principais'].str.contains(specialty, na=False, case=False)]
+        if provas:
+            final_pool = final_pool[final_pool['prova'].isin(provas)]
+        if keywords:
+            searchable_text = final_pool.apply(lambda row: normalize_for_search(' '.join(row.values.astype(str))), axis=1)
+            normalized_keywords = [normalize_for_search(kw) for kw in keywords]
+            keyword_regex = '|'.join(normalized_keywords)
+            final_pool = final_pool[searchable_text.str.contains(keyword_regex, na=False)]
+
+        if final_pool.empty: return []
+        
+        # A principal diferença: buscar 'count' questões, não apenas 1.
+        # Se houver menos questões disponíveis que o solicitado, pega todas.
+        num_available = len(final_pool)
+        sample_size = min(count, num_available)
+        
+        # Retorna uma LISTA de dicionários
+        return final_pool.sample(n=sample_size, replace=False).to_dict('records')
+
+    except (KeyError, Exception) as e:
+        st.warning(f"Não foi possível buscar as questões do simulado devido a um erro: {e}")
+        return []

@@ -98,11 +98,12 @@ else:
     with row1_col2:
         st.markdown("""
         <div class="card">
-            <h2>📝 Simulador de Questões</h2>
+            <h2>📝 Simulador de Provas</h2>
             <p>Filtre por área, prova ou palavra-chave e teste seus conhecimentos com questões direcionadas.</p>
         </div>
         """, unsafe_allow_html=True)
-        st.page_link("pages/2_Questões.py", label="**Ir para o Simulador**", icon="📝")
+        # ALTERE A LINHA ABAIXO
+        st.page_link("pages/2_Simulado.py", label="**Ir para o Simulador**", icon="📝")
 
     with row2_col1:
         st.markdown("""
