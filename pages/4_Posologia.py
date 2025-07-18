@@ -12,6 +12,7 @@ if 'user_id' not in st.session_state or not st.session_state.user_id:
 st.title("💊 Calculadora de Posologia")
 st.markdown("---")
 
+# (O código de estilo CSS permanece o mesmo, sem necessidade de colar novamente)
 st.markdown(
     """
     <style>
@@ -47,6 +48,7 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+
 
 # --- FORMULÁRIO PRINCIPAL ---
 with st.form(key='posologia_form'):
@@ -127,13 +129,29 @@ if submit_button:
         )
 
         try:
-            # Obtém o modelo Gemini já configurado do nosso arquivo de serviços
             model = get_gemini_model()
-            # Gera o conteúdo usando o prompt
             response = model.generate_content(prompt)
             
-            # Exibe o resultado
-            st.markdown(response.text)
+            # --- NOVA VERIFICAÇÃO DETALHADA DA RESPOSTA ---
+            # O acesso a 'response.text' pode gerar um erro se a resposta for bloqueada.
+            # Vamos tentar acessá-lo e, se falhar, o bloco 'except' nos dará o motivo.
+            # Se não falhar, mas o texto estiver vazio, também avisaremos.
+            
+            ai_report = response.text
+            
+            if ai_report:
+                st.markdown(ai_report)
+            else:
+                # Isso pode acontecer se a resposta for bloqueada por segurança
+                block_reason = response.prompt_feedback.block_reason.name if response.prompt_feedback else "Não especificado"
+                st.error(f"A IA não gerou uma resposta. Motivo provável: **{block_reason}**")
+                st.warning(
+                    "**Dica:** A API do Gemini tem filtros de segurança rigorosos. "
+                    "Tópicos relacionados a medicamentos podem ser bloqueados. "
+                    "Tente novamente com um medicamento diferente ou verifique as configurações de segurança da sua API Key no Google AI Studio."
+                )
 
         except Exception as e:
-            st.error(f"Ocorreu um erro inesperado ao gerar o relatório da IA: {e}")
+            # Este bloco agora pegará erros de forma mais clara, como falhas de autenticação ou bloqueios.
+            st.error(f"Ocorreu um erro ao gerar o relatório da IA.")
+            st.exception(e) # st.exception() é ótimo para debugging, pois imprime o traceback completo na tela.
