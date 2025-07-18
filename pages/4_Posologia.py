@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-import requests
+from services import get_gemini_model
 
 # --- VERIFICAÇÃO DE LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
@@ -71,7 +71,7 @@ with st.form(key='posologia_form'):
 
 # --- PROCESSAMENTO APÓS ENVIO ---
 if submit_button:
-    # Validação e conversão de valores...
+    # Validação e conversão de valores
     required_fields = [med_name, weight_str, age_str, dosage_str, interval_str, concentration_str]
     if not all(required_fields):
         st.error("Por favor, preencha todos os campos obrigatórios.")
@@ -85,79 +85,55 @@ if submit_button:
     except ValueError:
         st.error("Por favor, insira valores numéricos válidos para peso, idade, dosagem, intervalo e concentração.")
         st.stop()
+    
+    if weight <= 0 or age <=0 or dosage_mgkg <= 0 or interval_hours <= 0 or concentration <= 0:
+        st.error("Todos os valores numéricos devem ser maiores que zero.")
+        st.stop()
 
-    # Cálculo da dose...
+    # Cálculo da dose
     st.subheader("Resultado do Cálculo")
-    if concentration > 0:
-        total_mg_dose = weight * dosage_mgkg
-        dose_ml = total_mg_dose / concentration
-        st.markdown(f"""
-        <div class="result-card">
-            <h3>Dose Calculada:</h3>
-            <p>{dose_ml:.2f} mL a cada {interval_hours} horas.</p>
-        </div>
-        """, unsafe_allow_html=True)
-    else:
-        st.warning("A concentração deve ser maior que zero para calcular a dose em mL.")
+    total_mg_dose = weight * dosage_mgkg
+    dose_ml = total_mg_dose / concentration
+    st.markdown(f"""
+    <div class="result-card">
+        <h3>Dose Calculada:</h3>
+        <p>{dose_ml:.2f} mL a cada {interval_hours} horas.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    st.markdown("---")
 
-    # --- CHAMADA À IA (OPENROUTER) ---
-    # st.subheader("Relatório Educacional MedStudentAI")
-    # with st.spinner("Gerando insights clínicos com a IA..."):
-    #     data_for_ai = {
-    #         "medicamento": med_name, "peso_kg": weight, "idade_anos": age,
-    #         "dosagem_mg_por_kg": dosage_mgkg, "intervalo_horas": interval_hours,
-    #         "concentracao_mg_por_ml": concentration,
-    #         "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
-    #     }
+    # --- Bloco de chamada à IA com Gemini ---
+    st.subheader("Relatório Educacional MedStudentAI")
+    with st.spinner("Gerando insights clínicos com a IA..."):
+        data_for_ai = {
+            "medicamento": med_name, "peso_kg": weight, "idade_anos": age,
+            "dosagem_mg_por_kg": dosage_mgkg, "intervalo_horas": interval_hours,
+            "concentracao_mg_por_ml": concentration,
+            "comorbidades_e_especificidades": comorbidities or "Nenhuma informada"
+        }
         
-    #     prompt = (
-    #         f"Você é um médico sênior e educador, respondendo a uma estudante de medicina. "
-    #         f"Com base nos seguintes dados de um caso hipotético: {json.dumps(data_for_ai, ensure_ascii=False)}. "
-    #         "Gere um relatório educacional sucinto e direto. Foque nos seguintes pontos:\n"
-    #         "1. **Análise Clínica:** Como as comorbidades informadas (ou a ausência delas) impactam a escolha ou a posologia deste medicamento? Quais cuidados são necessários?\n"
-    #         "2. **Contexto Prático:** Se for um medicamento comum, crie um breve exemplo de cenário clínico onde essa prescrição seria típica. Ex: 'Imagine um paciente chegando ao PS com...'.\n"
-    #         "3. **Pontos de Atenção:** Mencione 1 ou 2 'red flags' ou efeitos adversos importantes que a estudante deve monitorar.\n\n"
-    #         "**Instruções de Formato:**\n"
-    #         "- Use um tom amigável e instrutivo.\n"
-    #         "- Não repita o cálculo da dose, apenas a análise clínica.\n"
-    #         "- Use negrito para destacar termos importantes.\n"
-    #         "- A resposta deve ser apenas o relatório, sem introduções como 'Olá, Yasmin' ou 'Aqui está o relatório'."
-    #     )
+        prompt = (
+            f"Você é um médico sênior e educador, respondendo a uma estudante de medicina. "
+            f"Com base nos seguintes dados de um caso hipotético: {json.dumps(data_for_ai, ensure_ascii=False)}. "
+            "Gere um relatório educacional sucinto e direto. Foque nos seguintes pontos:\n"
+            "1. **Análise Clínica:** Como as comorbidades informadas (ou a ausência delas) impactam a escolha ou a posologia deste medicamento? Quais cuidados são necessários?\n"
+            "2. **Contexto Prático:** Se for um medicamento comum, crie um breve exemplo de cenário clínico onde essa prescrição seria típica. Ex: 'Imagine um paciente chegando ao PS com...'.\n"
+            "3. **Pontos de Atenção:** Mencione 1 ou 2 'red flags' ou efeitos adversos importantes que a estudante deve monitorar.\n\n"
+            "**Instruções de Formato:**\n"
+            "- Use um tom amigável e instrutivo.\n"
+            "- Não repita o cálculo da dose, apenas a análise clínica.\n"
+            "- Use negrito para destacar termos importantes.\n"
+            "- A resposta deve ser apenas o relatório, sem introduções como 'Olá, Yasmin' ou 'Aqui está o relatório'."
+        )
 
-        # try:
-        #     # --- CORREÇÃO: Bloco de chamada para o OpenRouter ---
-        #     api_key = st.secrets.get("OPENROUTER_API_KEY")
-        #     model_name = st.secrets.get("MODEL")
-
-        #     # ALTERADO: A verificação agora checa apenas as chaves realmente necessárias dos secrets.
-        #     if not all([api_key, model_name]):
-        #         st.error("As configurações do OpenRouter (API_KEY, MODEL) não foram encontradas em secrets.toml.")
-        #         st.stop()
-
-        #     headers = {
-        #         "Authorization": f"Bearer {api_key}",
-        #         "Content-Type": "application/json"
-        #     }
-        #     body = {
-        #         "model": model_name,
-        #         "messages": [
-        #             {"role": "user", "content": prompt}
-        #         ]
-        #     }
+        try:
+            # Obtém o modelo Gemini já configurado do nosso arquivo de serviços
+            model = get_gemini_model()
+            # Gera o conteúdo usando o prompt
+            response = model.generate_content(prompt)
             
-        #     # ALTERADO: A URL agora é fixa e passada diretamente para a função.
-        #     response = requests.post(
-        #         "https://openrouter.ai/api/v1/chat/completions",
-        #         headers=headers,
-        #         json=body,
-        #         timeout=30
-        #     )
-        #     response.raise_for_status()
-            
-        #     ai_report = response.json().get("choices", [{}])[0].get("message", {}).get("content", "Não foi possível obter uma resposta da IA.")
-            # st.markdown(ai_report)
+            # Exibe o resultado
+            st.markdown(response.text)
 
-        # except requests.exceptions.RequestException as e:
-        #     st.error(f"Erro de conexão ao tentar contatar o servidor de IA: {e}")
-        # except Exception as e:
-        #     st.error(f"Ocorreu um erro inesperado ao gerar o relatório da IA: {e}")
+        except Exception as e:
+            st.error(f"Ocorreu um erro inesperado ao gerar o relatório da IA: {e}")
