@@ -190,7 +190,6 @@ def generate_question_with_gemini():
     # ... (lógica de geração e salvamento da questão)
     pass
 
-# Adicione esta função ao seu services.py. Ela pode ir antes de get_performance_data.
 @st.cache_data(ttl=3600) # Cache por 1 hora para não ler a planilha toda vez
 def get_all_specialties():
     """
@@ -200,59 +199,21 @@ def get_all_specialties():
     questions_sheet = _connections["spreadsheet"].worksheet("questions")
     questions_df = pd.DataFrame(questions_sheet.get_all_records())
     
-    # Retorna uma lista vazia se a coluna não existir ou o DF estiver vazio
     if 'areas_principais' not in questions_df.columns or questions_df.empty:
         return []
     
-    # Pega a coluna, trata valores nulos, separa por vírgula, e "explode" para ter uma área por linha
     specialties = questions_df['areas_principais'].dropna().str.split(',').explode()
     
-    # Remove espaços em branco, pega valores únicos, converte para lista e ordena
     unique_specialties = sorted(list(specialties.str.strip().unique()))
     
     return unique_specialties
 
-
-# Modifique a função get_next_question para aceitar o filtro de especialidade
-def get_next_question(user_id, specialty=None): # Adicionado o parâmetro 'specialty'
-    """Busca a próxima questão não respondida, com um filtro opcional de especialidade."""
-    _ensure_connected()
-    questions_sheet = _connections["spreadsheet"].worksheet("questions")
-    answers_sheet = _connections["spreadsheet"].worksheet("answers")
-    questions_df = pd.DataFrame(questions_sheet.get_all_records())
-    answers_df = pd.DataFrame(answers_sheet.get_all_records())
-    
-    if questions_df.empty: return None
-
-    # --- NOVO BLOCO DE FILTRO POR ESPECIALIDADE ---
-    if specialty and specialty != "Todas":
-        # Filtra o DataFrame para questões que contenham a string da especialidade
-        # na=False ignora NaNs, case=False torna a busca case-insensitive
-        questions_df = questions_df[questions_df['areas_principais'].str.contains(specialty, na=False, case=False)]
-        
-        # Se o filtro não retornar nenhuma questão, encerra a busca
-        if questions_df.empty:
-            return None
-    # --- FIM DO NOVO BLOCO ---
-
-    if not answers_df.empty:
-        answers_df['user_id'] = answers_df['user_id'].astype(str)
-        answered_questions_ids = answers_df[answers_df['user_id'] == user_id]['question_id'].tolist()
-        unanswered_questions_df = questions_df[~questions_df['question_id'].isin(answered_questions_ids)]
-    else:
-        unanswered_questions_df = questions_df
-        
-    return unanswered_questions_df.sample(n=1).to_dict('records')[0] if not unanswered_questions_df.empty else None
-
+# --- FUNÇÃO REDUNDANTE QUE CAUSAVA O ERRO FOI REMOVIDA DAQUI ---
 
 @st.cache_data(ttl=600)
 def get_performance_data(user_id):
     """
     Busca todos os dados de performance.
-
-    Retorna um dicionário contendo:
-    - Dados de performance do usuário logado (merged_df, areas_exploded, etc.)
-    - Um DataFrame com TODAS as respostas de TODOS os usuários para o ranking.
     """
     _ensure_connected()
     questions_sheet = _connections["spreadsheet"].worksheet("questions")
@@ -262,10 +223,8 @@ def get_performance_data(user_id):
 
     if answers_df.empty or questions_df.empty: return None
     
-    # MODIFICAÇÃO: Converte 'is_correct' para booleano em todo o DataFrame de uma vez
     answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
 
-    # MODIFICAÇÃO: Guarda o DF completo para o ranking antes de filtrar
     all_answers_for_ranking = answers_df.copy()
 
     user_answers_df = answers_df[answers_df['user_id'].astype(str) == str(user_id)].copy()
@@ -283,7 +242,6 @@ def get_performance_data(user_id):
     subtopicos_df = merged_df.explode('subtopicos')
     subtopicos_df['subtopicos'] = subtopicos_df['subtopicos'].str.strip()
     
-    # MODIFICAÇÃO: Adiciona o DF de ranking ao retorno
     return {
         "all_answers": merged_df, 
         "areas_exploded": areas_df, 
@@ -304,7 +262,6 @@ def get_time_window_metrics(all_answers_df, days=None):
     if all_answers_df is None: return calculate_metrics(None)
     if days is None: return calculate_metrics(all_answers_df)
     
-    # Garante que a data de corte tenha o mesmo fuso horário (ou falta de) que os dados
     if all_answers_df['answered_at'].dt.tz:
         cutoff_date = datetime.now(all_answers_df['answered_at'].dt.tz) - timedelta(days=days)
     else:
@@ -352,8 +309,6 @@ def get_subtopics_for_review(subtopicos_exploded_df, days=7):
     
     return recent_errors_df['subtopicos'].value_counts().nlargest(5).index.tolist()
 
-
-# --- FUNÇÃO NOVA ADICIONADA ---
 def get_ranking_data(all_answers_df, period_code, current_user_id):
     """
     Calcula o ranking de performance de um usuário em relação a todos os outros.
@@ -363,7 +318,7 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
 
     df = all_answers_df.copy()
     df['answered_at'] = pd.to_datetime(df['answered_at'])
-    now = datetime.now(df['answered_at'].dt.tz) # Garante fuso horário consistente
+    now = datetime.now(df['answered_at'].dt.tz) 
 
     if period_code == 'D': # Hoje
         start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
@@ -407,17 +362,12 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
         'percentile': percentile
     }
 
-# Adicione esta função ao final do seu arquivo services.py
-@st.cache_data(ttl=600) # Cache de 10 minutos para os dados de revisão
+@st.cache_data(ttl=600)
 def get_user_answered_questions_details(user_id):
     """
     Busca todas as respostas de um usuário e as combina com os detalhes das questões.
-    
-    Returns:
-        pd.DataFrame: Um DataFrame com os dados combinados e ordenado do mais recente para o mais antigo.
-                      Retorna um DataFrame vazio se não houver respostas.
     """
-    _ensure_connected() # Garante que a conexão com o Google Sheets está ativa
+    _ensure_connected() 
     try:
         answers_sheet = _connections["spreadsheet"].worksheet("answers")
         questions_sheet = _connections["spreadsheet"].worksheet("questions")
@@ -428,20 +378,16 @@ def get_user_answered_questions_details(user_id):
         if answers_df.empty or questions_df.empty:
             return pd.DataFrame()
 
-        # Filtra apenas as respostas do usuário logado
         user_answers = answers_df[answers_df['user_id'].astype(str) == str(user_id)].copy()
 
         if user_answers.empty:
             return pd.DataFrame()
 
-        # Converte tipos para garantir consistência
         user_answers['answered_at'] = pd.to_datetime(user_answers['answered_at'])
         user_answers['is_correct'] = user_answers['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
 
-        # Combina os dados das respostas com os detalhes das questões
         merged_df = pd.merge(user_answers, questions_df, on='question_id', how='left')
 
-        # Ordena da resposta mais recente para a mais antiga
         merged_df = merged_df.sort_values(by='answered_at', ascending=False)
         
         return merged_df
@@ -449,7 +395,7 @@ def get_user_answered_questions_details(user_id):
         st.error(f"Erro ao buscar histórico de revisão: {e}")
         return pd.DataFrame()
     
-@st.cache_data(ttl=3600) # Cache por 1 hora
+@st.cache_data(ttl=3600) 
 def get_all_provas():
     """Busca todas as provas únicas da planilha de questões."""
     _ensure_connected()
@@ -462,7 +408,7 @@ def get_all_provas():
     unique_provas = sorted(list(questions_df['prova'].dropna().unique()))
     return unique_provas
 
-@st.cache_data(ttl=3600) # Armazena o resultado em cache por 1 hora
+@st.cache_data(ttl=3600)
 def get_global_platform_stats():
     """
     Calcula as estatísticas globais da plataforma para exibir na Home.
@@ -475,10 +421,8 @@ def get_global_platform_stats():
         users_df = pd.DataFrame(users_sheet.get_all_records())
         answers_df = pd.DataFrame(answers_sheet.get_all_records())
 
-        # Métrica 1: Total de alunos
         total_students = len(users_df) if not users_df.empty else 0
 
-        # Se não houver respostas, retorna os valores padrão
         if answers_df.empty:
             return {
                 'total_students': total_students,
@@ -490,16 +434,13 @@ def get_global_platform_stats():
         answers_df['answered_at'] = pd.to_datetime(answers_df['answered_at'])
         answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
 
-        # Garante que 'now' tenha o mesmo fuso horário dos dados
         now = datetime.now(answers_df['answered_at'].dt.tz)
 
-        # Métrica 2: Alunos ativos na semana corrente (de Segunda a Domingo)
         start_of_week = now - timedelta(days=now.weekday())
         start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
         this_week_answers = answers_df[answers_df['answered_at'] >= start_of_week]
         active_this_week = this_week_answers['user_id'].nunique()
 
-        # Métricas 3 e 4: Respostas e acertos nos últimos 7 dias
         seven_days_ago = now - timedelta(days=7)
         last_7_days_answers = answers_df[answers_df['answered_at'] >= seven_days_ago]
         
