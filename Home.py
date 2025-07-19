@@ -1,4 +1,5 @@
 import streamlit as st
+import re # Para validação de e-mail
 from services import authenticate_or_register_user, get_global_platform_stats
 
 # --- CONFIGURAÇÃO DA PÁGINA (DEVE SER O PRIMEIRO COMANDO) ---
@@ -32,9 +33,22 @@ if not st.session_state.user_id:
         submitted = st.form_submit_button("Entrar / Cadastrar")
         
         if submitted:
+            # Lógica de validação de input
+            is_valid = True
+            
             if not email or not password:
                 st.error("Por favor, preencha o e-mail e a senha.")
-            else:
+                is_valid = False
+
+            elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
+                st.error("Formato de e-mail inválido. Verifique o e-mail digitado.")
+                is_valid = False
+
+            elif len(password) < 6:
+                st.error("A senha deve ter no mínimo 6 caracteres.")
+                is_valid = False
+
+            if is_valid:
                 with st.spinner("Verificando..."):
                     auth_response = authenticate_or_register_user(email, password)
                 
@@ -45,6 +59,7 @@ if not st.session_state.user_id:
                 else:
                     st.error(auth_response['message'])
 else:
+    # Página para usuário logado
     st.title(f"Bem-vindo de volta! 👋")
     st.markdown("### O que vamos praticar hoje?")
     

@@ -45,9 +45,12 @@ def get_gemini_model():
 def authenticate_or_register_user(email, password):
     """
     Autentica um usuário ou registra um novo.
-    Inclui lógica para autocorrigir senhas em formato inválido (erro 'Invalid salt').
+    Converte o e-mail para minúsculas para garantir consistência.
     """
     try:
+        # Padroniza o e-mail
+        email = email.strip().lower()
+        
         _ensure_connected()
         users_sheet = _connections["spreadsheet"].worksheet("users")
 
@@ -58,9 +61,6 @@ def authenticate_or_register_user(email, password):
 
         # Cenário 1: Novo Usuário (email não encontrado)
         if cell is None:
-            if not password:
-                return {'status': 'error', 'message': 'Senha é obrigatória para o cadastro.', 'user_id': None}
-            
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             user_id = str(uuid.uuid4())
             created_at = datetime.now().isoformat()
@@ -75,9 +75,6 @@ def authenticate_or_register_user(email, password):
 
         # Cenário 2a: Usuário existe, mas não tem senha
         if not stored_password_hash:
-            if not password:
-                return {'status': 'error', 'message': 'Por favor, crie uma senha para sua conta.', 'user_id': None}
-            
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             users_sheet.update_cell(cell.row, 4, hashed_password)
             return {'status': 'success', 'message': 'Senha cadastrada com sucesso! Bem-vindo!', 'user_id': user_id}
@@ -368,7 +365,7 @@ def get_all_provas():
             return []
         return sorted(list(questions_df['prova'].dropna().unique()))
     except Exception as e:
-        st.warning(f"Não foi possível carregar la lista de provas: {e}")
+        st.warning(f"Não foi possível carregar a lista de provas: {e}")
         return []
 
 @st.cache_data(ttl=3600)
