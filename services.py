@@ -40,26 +40,18 @@ def get_gemini_model():
     _ensure_connected()
     return _connections["model"]
 
-# --- FUNÇÕES DE DADOS ---
+# --- AUTHENTICATION & USER FUNCTIONS ---
 
 def authenticate_or_register_user(email, password):
-    """
-    Autentica um usuário ou registra um novo.
-    Converte o e-mail para minúsculas para garantir consistência.
-    """
     try:
-        # Padroniza o e-mail
         email = email.strip().lower()
-        
         _ensure_connected()
         users_sheet = _connections["spreadsheet"].worksheet("users")
-
         try:
             cell = users_sheet.find(email)
         except gspread.exceptions.CellNotFound:
             cell = None
 
-        # Cenário 1: Novo Usuário (email não encontrado)
         if cell is None:
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             user_id = str(uuid.uuid4())
@@ -68,43 +60,36 @@ def authenticate_or_register_user(email, password):
             users_sheet.append_row(new_user_data)
             return {'status': 'success', 'message': 'Cadastro realizado com sucesso!', 'user_id': user_id}
 
-        # Cenário 2: Usuário Existente (email encontrado)
         user_row = users_sheet.row_values(cell.row)
         user_id = user_row[1]
         stored_password_hash = user_row[3] if len(user_row) > 3 else None
 
-        # Cenário 2a: Usuário existe, mas não tem senha
         if not stored_password_hash:
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             users_sheet.update_cell(cell.row, 4, hashed_password)
             return {'status': 'success', 'message': 'Senha cadastrada com sucesso! Bem-vindo!', 'user_id': user_id}
 
-        # Cenário 2b: Usuário existe e tem senha (tentativa de login)
         try:
             if bcrypt.checkpw(password.encode('utf-8'), stored_password_hash.encode('utf-8')):
                 return {'status': 'success', 'message': 'Login realizado com sucesso!', 'user_id': user_id}
             else:
                 return {'status': 'error', 'message': 'Senha incorreta. Tente novamente.', 'user_id': None}
-        
         except ValueError:
             st.info("Detectamos um formato de senha antigo. Atualizando sua conta para o novo formato seguro...")
             new_hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             users_sheet.update_cell(cell.row, 4, new_hashed_password)
             return {'status': 'success', 'message': 'Sua conta foi atualizada com sucesso! Login realizado.', 'user_id': user_id}
-
     except Exception as e:
         st.error(f"Ocorreu um erro durante a autenticação: {e}")
         return {'status': 'error', 'message': 'Erro de sistema. Tente novamente mais tarde.', 'user_id': None}
 
+# --- SIMULADO & QUESTIONS FUNCTIONS ---
+
 def save_answer(user_id, question_id, user_answer, is_correct):
-    """
-    Salva uma resposta nova ou atualiza uma existente com a lógica restritiva.
-    """
     try:
         _ensure_connected()
         answers_sheet = _connections["spreadsheet"].worksheet("answers")
         all_answers = pd.DataFrame(answers_sheet.get_all_records())
-
         existing_answer = all_answers[
             (all_answers['user_id'] == str(user_id)) & 
             (all_answers['question_id'] == str(question_id))
@@ -117,7 +102,6 @@ def save_answer(user_id, question_id, user_answer, is_correct):
             answers_sheet.append_row(new_answer_data)
         else:
             old_is_correct = str(existing_answer['is_correct'].iloc[0]).upper() == 'TRUE'
-            
             if not old_is_correct and is_correct:
                 try:
                     cell = answers_sheet.find(existing_answer['answer_id'].iloc[0])
@@ -131,26 +115,19 @@ def save_answer(user_id, question_id, user_answer, is_correct):
                     print(f"ERRO: Não foi possível encontrar ou atualizar a linha da resposta. Erro: {e}")
             else:
                 return
-
         st.cache_data.clear()
-        
     except Exception as e:
         st.error(f"Não foi possível salvar sua resposta: {e}")
 
 def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas'], specialty=None, provas=None, keywords=None):
-    """
-    Busca um lote de questões para um simulado, com base nos filtros.
-    """
     try:
         _ensure_connected()
         questions_sheet = _connections["spreadsheet"].worksheet("questions")
         answers_sheet = _connections["spreadsheet"].worksheet("answers")
-        
         questions_df = pd.DataFrame(questions_sheet.get_all_records())
         answers_df = pd.DataFrame(answers_sheet.get_all_records())
-        
         if questions_df.empty: return []
-
+        
         list_of_pools = []
         user_answers_df = pd.DataFrame()
         if not answers_df.empty:
@@ -190,15 +167,121 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
             final_pool = final_pool[searchable_text.str.contains(keyword_regex, na=False)]
 
         if final_pool.empty: return []
-        
         num_available = len(final_pool)
         sample_size = min(count, num_available)
-        
         return final_pool.sample(n=sample_size, replace=False).to_dict('records')
-
     except (KeyError, Exception) as e:
         st.warning(f"Não foi possível buscar as questões do simulado devido a um erro: {e}")
         return []
+
+# --- WIKI/CONCEPTS FUNCTIONS ---
+
+def _save_concept(concept_name, explanation):
+    try:
+        _ensure_connected()
+        concept_sheet = _connections["spreadsheet"].worksheet("concepts")
+        concept_sheet.append_row([concept_name, explanation])
+    except Exception as e:
+        print(f"ERRO: Falha ao salvar o conceito '{concept_name}'. Erro: {e}")
+
+def _generate_concept_with_gemini(concept_name):
+    prompt = f"""
+Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
+
+**Tópico Principal:** "{concept_name}"
+
+**Instruções de Geração:**
+Gere uma explicação clara e aprofundada sobre o tópico acima, seguindo estritamente a estrutura de formatação Markdown abaixo. Seja denso, técnico e preciso.
+
+---
+
+### 1. Definição Rápida
+* **Conceito:** [Definição concisa do {concept_name} em uma ou duas frases.]
+* **Relevância Clínica:** [Breve explicação de por que este conceito é crucial na prática médica e em provas de residência.]
+
+### 2. Aprofundamento Técnico e Integração
+[Desenvolva o conceito de forma detalhada. Evite isolar o assunto. Conecte-o com a fisiopatologia, farmacologia, semiologia e outras áreas correlatas. Se aplicável, discuta a abordagem diagnóstica (exames de imagem, laboratoriais), opções de tratamento (incluindo classes de medicamentos e posologias comuns), prognóstico e manejo de complicações. Use termos técnicos.]
+
+### 3. Análise 5W2H
+* **What (O quê):** O que é exatamente {concept_name}?
+* **Why (Por quê):** Por que ocorre ou por que é importante?
+* **Who (Quem):** Quem é o grupo de risco ou a população mais afetada?
+* **Where (Onde):** Onde no corpo ou em que contexto clínico se manifesta?
+* **When (Quando):** Quando os sintomas aparecem ou quando a intervenção é necessária?
+* **How (Como):** Como é diagnosticado e tratado?
+* **How Much (Quanto custa):** Qual o impacto (custo para o sistema de saúde, impacto na qualidade de vida)?
+
+### 4. Análise dos 5 Porquês
+[Aplique a técnica dos 5 Porquês para explorar a causa raiz do problema ou da sua principal manifestação clínica. Comece com uma pergunta simples e aprofunde a cada "porquê".]
+* **1. Por que [Pergunta inicial sobre o problema]?**
+    * Porque [Resposta 1].
+* **2. Por que [Pergunta sobre a Resposta 1]?**
+    * Porque [Resposta 2].
+* **3. Por que [Pergunta sobre a Resposta 2]?**
+    * ... e assim por diante até o quinto porquê.
+
+### 5. Pontos-Chave e Analogias
+[Liste 2-3 conceitos mais complexos dentro do tópico e explique-os de forma simplificada, usando analogias se possível.]
+* **Ponto-Chave 1:** [Nome do conceito complexo]
+    * **Explicação:** [Explicação detalhada]
+    * **Analogia:** [Analogia para facilitar o entendimento]
+* **Ponto-Chave 2:** [Nome do conceito complexo]
+    * **Explicação:** [Explicação detalhada]
+    * **Analogia:** [Analogia para facilitar o entendimento]
+
+### 6. Referências
+[Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's Principles of Internal Medicine, diretrizes de sociedades médicas como AHA, SBC, etc.) que embasam as informações. Ex: "De acordo com as diretrizes mais recentes da Sociedade Brasileira de Cardiologia..." ou "O tratamento de primeira linha, conforme consolidado em revisões como o UpToDate..."]
+
+---
+"""
+    try:
+        model = get_gemini_model()
+        response = model.generate_content(prompt)
+        if response.prompt_feedback.block_reason:
+            reason = response.prompt_feedback.block_reason.name
+            return f"**Erro:** A geração de conteúdo foi bloqueada por motivos de segurança ({reason})."
+        return response.text
+    except Exception as e:
+        return f"**Erro ao contatar a IA:** {e}"
+
+@st.cache_data(ttl=86400)
+def get_concept_explanation(concept_name: str):
+    try:
+        _ensure_connected()
+        concept_sheet = _connections["spreadsheet"].worksheet("concepts")
+        
+        cell = concept_sheet.find(concept_name, in_column=1)
+        
+        if cell:
+            explanation = concept_sheet.cell(cell.row, 2).value
+            return explanation
+        else:
+            explanation = _generate_concept_with_gemini(concept_name)
+            if not explanation.startswith("**Erro:**"):
+                _save_concept(concept_name, explanation)
+            return explanation
+    except Exception as e:
+        st.error(f"Ocorreu um erro inesperado ao buscar o conceito '{concept_name}'.")
+        st.exception(e)
+        return f"Ocorreu um erro ao buscar o conceito: {e}"
+
+@st.cache_data(ttl=3600)
+def get_all_subtopics():
+    try:
+        _ensure_connected()
+        questions_sheet = _connections["spreadsheet"].worksheet("questions")
+        questions_df = pd.DataFrame(questions_sheet.get_all_records())
+        if 'subtopicos' not in questions_df.columns or questions_df.empty:
+            return []
+        subtopics = questions_df['subtopicos'].dropna().str.split(',').explode()
+        unique_subtopics = sorted(list(subtopics.str.strip().unique()))
+        unique_subtopics = [topic for topic in unique_subtopics if topic]
+        return unique_subtopics
+    except Exception as e:
+        st.warning(f"Não foi possível carregar a lista de subtópicos: {e}")
+        return []
+
+# --- PERFORMANCE ANALYSIS FUNCTIONS ---
 
 @st.cache_data(ttl=3600)
 def get_all_specialties():
@@ -401,127 +484,3 @@ def get_global_platform_stats():
     except Exception as e:
         print(f"Erro ao calcular estatísticas globais: {e}")
         return default_stats
-    
-
-def _save_concept(concept_name, explanation):
-    """Salva um novo conceito e sua explicação na planilha 'concepts'."""
-    try:
-        _ensure_connected()
-        # Confirma que o nome da worksheet é "concepts"
-        concept_sheet = _connections["spreadsheet"].worksheet("concepts")
-        concept_sheet.append_row([concept_name, explanation])
-        print(f"INFO: Conceito '{concept_name}' salvo no banco de dados.")
-    except Exception as e:
-        print(f"ERRO: Falha ao salvar o conceito '{concept_name}'. Erro: {e}")
-
-def _generate_concept_with_gemini(concept_name):
-    """Gera a explicação de um conceito médico usando a API do Gemini com um prompt detalhado."""
-    
-    prompt = f"""
-Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
-
-**Tópico Principal:** "{concept_name}"
-
-**Instruções de Geração:**
-Gere uma explicação clara e aprofundada sobre o tópico acima, seguindo estritamente a estrutura de formatação Markdown abaixo. Seja denso, técnico e preciso.
-
----
-
-### 1. Definição Rápida
-* **Conceito:** [Definição concisa do {concept_name} em uma ou duas frases.]
-* **Relevância Clínica:** [Breve explicação de por que este conceito é crucial na prática médica e em provas de residência.]
-
-### 2. Aprofundamento Técnico e Integração
-[Desenvolva o conceito de forma detalhada. Evite isolar o assunto. Conecte-o com a fisiopatologia, farmacologia, semiologia e outras áreas correlatas. Se aplicável, discuta a abordagem diagnóstica (exames de imagem, laboratoriais), opções de tratamento (incluindo classes de medicamentos e posologias comuns), prognóstico e manejo de complicações. Use termos técnicos.]
-
-### 3. Análise 5W2H
-* **What (O quê):** O que é exatamente {concept_name}?
-* **Why (Por quê):** Por que ocorre ou por que é importante?
-* **Who (Quem):** Quem é o grupo de risco ou a população mais afetada?
-* **Where (Onde):** Onde no corpo ou em que contexto clínico se manifesta?
-* **When (Quando):** Quando os sintomas aparecem ou quando a intervenção é necessária?
-* **How (Como):** Como é diagnosticado e tratado?
-* **How Much (Quanto custa):** Qual o impacto (custo para o sistema de saúde, impacto na qualidade de vida)?
-
-### 4. Análise dos 5 Porquês
-[Aplique a técnica dos 5 Porquês para explorar a causa raiz do problema ou da sua principal manifestação clínica. Comece com uma pergunta simples e aprofunde a cada "porquê".]
-* **1. Por que [Pergunta inicial sobre o problema]?**
-    * Porque [Resposta 1].
-* **2. Por que [Pergunta sobre a Resposta 1]?**
-    * Porque [Resposta 2].
-* **3. Por que [Pergunta sobre a Resposta 2]?**
-    * ... e assim por diante até o quinto porquê.
-
-### 5. Pontos-Chave e Analogias
-[Liste 2-3 conceitos mais complexos dentro do tópico e explique-os de forma simplificada, usando analogias se possível.]
-* **Ponto-Chave 1:** [Nome do conceito complexo]
-    * **Explicação:** [Explicação detalhada]
-    * **Analogia:** [Analogia para facilitar o entendimento]
-* **Ponto-Chave 2:** [Nome do conceito complexo]
-    * **Explicação:** [Explicação detalhada]
-    * **Analogia:** [Analogia para facilitar o entendimento]
-
-### 6. Referências
-[Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's Principles of Internal Medicine, diretrizes de sociedades médicas como AHA, SBC, etc.) que embasam as informações. Ex: "De acordo com as diretrizes mais recentes da Sociedade Brasileira de Cardiologia..." ou "O tratamento de primeira linha, conforme consolidado em revisões como o UpToDate..."]
-
----
-"""
-    try:
-        model = get_gemini_model()
-        response = model.generate_content(prompt)
-        # Adiciona verificação de segurança
-        if response.prompt_feedback.block_reason:
-            reason = response.prompt_feedback.block_reason.name
-            return f"**Erro:** A geração de conteúdo foi bloqueada por motivos de segurança ({reason}). Isso pode ocorrer com termos médicos sensíveis. Tente um conceito relacionado."
-        return response.text
-    except Exception as e:
-        return f"**Erro ao contatar a IA:** {e}"
-
-@st.cache_data(ttl=86400) # Cache de 24 horas para os conceitos
-def get_concept_explanation(concept_name: str):
-    """
-    Busca a explicação de um conceito.
-    Primeiro, procura no cache/banco de dados. Se não encontrar, gera com a IA e salva.
-    """
-    _ensure_connected()
-    # Confirma que o nome da worksheet é "concepts"
-    concept_sheet = _connections["spreadsheet"].worksheet("concepts")
-    
-    try:
-        cell = concept_sheet.find(concept_name, in_column=1)
-        explanation = concept_sheet.cell(cell.row, 2).value
-        return explanation
-    except gspread.exceptions.CellNotFound:
-        explanation = _generate_concept_with_gemini(concept_name)
-        if not explanation.startswith("**Erro:**"):
-            _save_concept(concept_name, explanation)
-        return explanation
-    except Exception as e:
-        return f"Ocorreu um erro ao buscar o conceito: {e}"
-            
-@st.cache_data(ttl=3600) # Cache de 1 hora para a lista de subtópicos
-def get_all_subtopics():
-    """
-    Busca todos os subtópicos únicos da planilha de questões para construir a Wiki.
-    """
-    try:
-        _ensure_connected()
-        questions_sheet = _connections["spreadsheet"].worksheet("questions")
-        questions_df = pd.DataFrame(questions_sheet.get_all_records())
-        
-        if 'subtopicos' not in questions_df.columns or questions_df.empty:
-            return []
-        
-        # Pega a coluna, trata valores nulos, separa por vírgula, e "explode"
-        subtopics = questions_df['subtopicos'].dropna().str.split(',').explode()
-        
-        # Remove espaços, pega valores únicos, converte para lista e ordena
-        unique_subtopics = sorted(list(subtopics.str.strip().unique()))
-        
-        # Remove quaisquer entradas vazias que possam ter surgido
-        unique_subtopics = [topic for topic in unique_subtopics if topic]
-        
-        return unique_subtopics
-    except Exception as e:
-        st.warning(f"Não foi possível carregar a lista de subtópicos: {e}")
-        return []
