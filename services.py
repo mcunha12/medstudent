@@ -404,10 +404,11 @@ def get_global_platform_stats():
     
 
 def _save_concept(concept_name, explanation):
-    """Salva um novo conceito e sua explicação na planilha 'concept'."""
+    """Salva um novo conceito e sua explicação na planilha 'concepts'."""
     try:
         _ensure_connected()
-        concept_sheet = _connections["spreadsheet"].worksheet("concept")
+        # CORREÇÃO: "concept" -> "concepts"
+        concept_sheet = _connections["spreadsheet"].worksheet("concepts")
         concept_sheet.append_row([concept_name, explanation])
         print(f"INFO: Conceito '{concept_name}' salvo no banco de dados.")
     except Exception as e:
@@ -483,7 +484,8 @@ def get_concept_explanation(concept_name: str):
     Primeiro, procura no cache/banco de dados. Se não encontrar, gera com a IA e salva.
     """
     _ensure_connected()
-    concept_sheet = _connections["spreadsheet"].worksheet("concept")
+    # CORREÇÃO: "concept" -> "concepts"
+    concept_sheet = _connections["spreadsheet"].worksheet("concepts")
     
     try:
         cell = concept_sheet.find(concept_name, in_column=1) # Procura na coluna A (concept)
@@ -498,7 +500,7 @@ def get_concept_explanation(concept_name: str):
         return explanation
     except Exception as e:
         return f"Ocorreu um erro ao buscar o conceito: {e}"
-    
+        
 @st.cache_data(ttl=3600) # Cache de 1 hora para a lista de subtópicos
 def get_all_subtopics():
     """
