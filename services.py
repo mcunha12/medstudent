@@ -401,3 +401,127 @@ def get_global_platform_stats():
     except Exception as e:
         print(f"Erro ao calcular estatísticas globais: {e}")
         return default_stats
+    
+
+def _save_concept(concept_name, explanation):
+    """Salva um novo conceito e sua explicação na planilha 'concept'."""
+    try:
+        _ensure_connected()
+        concept_sheet = _connections["spreadsheet"].worksheet("concept")
+        concept_sheet.append_row([concept_name, explanation])
+        print(f"INFO: Conceito '{concept_name}' salvo no banco de dados.")
+    except Exception as e:
+        print(f"ERRO: Falha ao salvar o conceito '{concept_name}'. Erro: {e}")
+
+def _generate_concept_with_gemini(concept_name):
+    """Gera a explicação de um conceito médico usando a API do Gemini com um prompt detalhado."""
+    
+    prompt = f"""
+Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
+
+**Tópico Principal:** "{concept_name}"
+
+**Instruções de Geração:**
+Gere uma explicação clara e aprofundada sobre o tópico acima, seguindo estritamente a estrutura de formatação Markdown abaixo. Seja denso, técnico e preciso.
+
+---
+
+### 1. Definição Rápida
+* **Conceito:** [Definição concisa do {concept_name} em uma ou duas frases.]
+* **Relevância Clínica:** [Breve explicação de por que este conceito é crucial na prática médica e em provas de residência.]
+
+### 2. Aprofundamento Técnico e Integração
+[Desenvolva o conceito de forma detalhada. Evite isolar o assunto. Conecte-o com a fisiopatologia, farmacologia, semiologia e outras áreas correlatas. Se aplicável, discuta a abordagem diagnóstica (exames de imagem, laboratoriais), opções de tratamento (incluindo classes de medicamentos e posologias comuns), prognóstico e manejo de complicações. Use termos técnicos.]
+
+### 3. Análise 5W2H
+* **What (O quê):** O que é exatamente {concept_name}?
+* **Why (Por quê):** Por que ocorre ou por que é importante?
+* **Who (Quem):** Quem é o grupo de risco ou a população mais afetada?
+* **Where (Onde):** Onde no corpo ou em que contexto clínico se manifesta?
+* **When (Quando):** Quando os sintomas aparecem ou quando a intervenção é necessária?
+* **How (Como):** Como é diagnosticado e tratado?
+* **How Much (Quanto custa):** Qual o impacto (custo para o sistema de saúde, impacto na qualidade de vida)?
+
+### 4. Análise dos 5 Porquês
+[Aplique a técnica dos 5 Porquês para explorar a causa raiz do problema ou da sua principal manifestação clínica. Comece com uma pergunta simples e aprofunde a cada "porquê".]
+* **1. Por que [Pergunta inicial sobre o problema]?**
+    * Porque [Resposta 1].
+* **2. Por que [Pergunta sobre a Resposta 1]?**
+    * Porque [Resposta 2].
+* **3. Por que [Pergunta sobre a Resposta 2]?**
+    * ... e assim por diante até o quinto porquê.
+
+### 5. Pontos-Chave e Analogias
+[Liste 2-3 conceitos mais complexos dentro do tópico e explique-os de forma simplificada, usando analogias se possível.]
+* **Ponto-Chave 1:** [Nome do conceito complexo]
+    * **Explicação:** [Explicação detalhada]
+    * **Analogia:** [Analogia para facilitar o entendimento]
+* **Ponto-Chave 2:** [Nome do conceito complexo]
+    * **Explicação:** [Explicação detalhada]
+    * **Analogia:** [Analogia para facilitar o entendimento]
+
+### 6. Referências
+[Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's Principles of Internal Medicine, diretrizes de sociedades médicas como AHA, SBC, etc.) que embasam as informações. Ex: "De acordo com as diretrizes mais recentes da Sociedade Brasileira de Cardiologia..." ou "O tratamento de primeira linha, conforme consolidado em revisões como o UpToDate..."]
+
+---
+"""
+    try:
+        model = get_gemini_model()
+        response = model.generate_content(prompt)
+        # Adiciona verificação de segurança
+        if response.prompt_feedback.block_reason:
+            reason = response.prompt_feedback.block_reason.name
+            return f"**Erro:** A geração de conteúdo foi bloqueada por motivos de segurança ({reason}). Isso pode ocorrer com termos médicos sensíveis. Tente um conceito relacionado."
+        return response.text
+    except Exception as e:
+        return f"**Erro ao contatar a IA:** {e}"
+
+@st.cache_data(ttl=86400) # Cache de 24 horas para os conceitos
+def get_concept_explanation(concept_name: str):
+    """
+    Busca a explicação de um conceito.
+    Primeiro, procura no cache/banco de dados. Se não encontrar, gera com a IA e salva.
+    """
+    _ensure_connected()
+    concept_sheet = _connections["spreadsheet"].worksheet("concept")
+    
+    try:
+        cell = concept_sheet.find(concept_name, in_column=1) # Procura na coluna A (concept)
+        explanation = concept_sheet.cell(cell.row, 2).value # Pega o valor da coluna B (explanation)
+        return explanation
+    except gspread.exceptions.CellNotFound:
+        # Se não encontrou no banco, gera com a IA
+        explanation = _generate_concept_with_gemini(concept_name)
+        # Salva o novo conceito no banco para futuras buscas
+        if not explanation.startswith("**Erro:**"):
+            _save_concept(concept_name, explanation)
+        return explanation
+    except Exception as e:
+        return f"Ocorreu um erro ao buscar o conceito: {e}"
+    
+@st.cache_data(ttl=3600) # Cache de 1 hora para a lista de subtópicos
+def get_all_subtopics():
+    """
+    Busca todos os subtópicos únicos da planilha de questões para construir a Wiki.
+    """
+    try:
+        _ensure_connected()
+        questions_sheet = _connections["spreadsheet"].worksheet("questions")
+        questions_df = pd.DataFrame(questions_sheet.get_all_records())
+        
+        if 'subtopicos' not in questions_df.columns or questions_df.empty:
+            return []
+        
+        # Pega a coluna, trata valores nulos, separa por vírgula, e "explode"
+        subtopics = questions_df['subtopicos'].dropna().str.split(',').explode()
+        
+        # Remove espaços, pega valores únicos, converte para lista e ordena
+        unique_subtopics = sorted(list(subtopics.str.strip().unique()))
+        
+        # Remove quaisquer entradas vazias que possam ter surgido
+        unique_subtopics = [topic for topic in unique_subtopics if topic]
+        
+        return unique_subtopics
+    except Exception as e:
+        st.warning(f"Não foi possível carregar a lista de subtópicos: {e}")
+        return []

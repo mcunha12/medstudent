@@ -1,12 +1,12 @@
 import streamlit as st
-import re # Para validação de e-mail
+import re
 from services import authenticate_or_register_user, get_global_platform_stats
 
-# --- CONFIGURAÇÃO DA PÁGINA (DEVE SER O PRIMEIRO COMANDO) ---
+# --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
     layout="wide",
     page_title="Home - MedStudent",
-    initial_sidebar_state="collapsed"  # Sidebar começa fechada
+    initial_sidebar_state="collapsed"
 )
 
 # --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
@@ -33,17 +33,13 @@ if not st.session_state.user_id:
         submitted = st.form_submit_button("Entrar / Cadastrar")
         
         if submitted:
-            # Lógica de validação de input
             is_valid = True
-            
             if not email or not password:
                 st.error("Por favor, preencha o e-mail e a senha.")
                 is_valid = False
-
             elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
                 st.error("Formato de e-mail inválido. Verifique o e-mail digitado.")
                 is_valid = False
-
             elif len(password) < 6:
                 st.error("A senha deve ter no mínimo 6 caracteres.")
                 is_valid = False
@@ -63,72 +59,52 @@ else:
     st.title(f"Bem-vindo de volta! 👋")
     st.markdown("### O que vamos praticar hoje?")
     
-    # Cards de Navegação
-    row1_col1, row1_col2 = st.columns(2)
-    row2_col1, row2_col2 = st.columns(2)
+    st.write("") 
     
-    with row1_col1:
-        st.markdown("""
-        <div class="card">
-            <h2>📝 Simulador de Provas</h2>
-            <p>Filtre por área, prova ou palavra-chave e teste seus conhecimentos com simulados de 20 questões.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.page_link("pages/1_Simulado.py", label="**Ir para o Simulador**", icon="📝")
+    col1, col2, col3, col4, col5 = st.columns(5)
 
-    with row1_col2:
-        st.markdown("""
-        <div class="card">
-            <h2>📊 Meu Perfil</h2>
-            <p>Analise sua performance com gráficos detalhados, identifique pontos fracos e acompanhe sua evolução.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.page_link("pages/2_Meu_Perfil.py", label="**Ver minha performance**", icon="📊")
-
-    with row2_col1:
-        st.markdown("""
-        <div class="card">
-            <h2>🔎 Revisão de Questões</h2>
-            <p>Revise todas as questões que você já respondeu, filtre por acertos, erros, área ou prova.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.page_link("pages/3_Revisão_de_Questões.py", label="**Revisar minhas questões**", icon="🔎")
+    with col1:
+        st.page_link("pages/1_Simulado.py", label="📝 Simulador", icon="📝")
     
-    with row2_col2:
-        st.markdown("""
-        <div class="card">
-            <h2>💊 Calculadora de Posologia</h2>
-            <p>Calcule doses de medicamentos de forma rápida e segura, com insights clínicos gerados por IA.</p>
-        </div>
-        """, unsafe_allow_html=True)
-        st.page_link("pages/4_Posologia.py", label="**Acessar a Calculadora**", icon="💊")
+    with col2:
+        st.page_link("pages/2_Meu_Perfil.py", label="📊 Meu Perfil", icon="📊")
 
+    with col3:
+        st.page_link("pages/3_Revisão_de_Questões.py", label="🔎 Revisão", icon="🔎")
+    
+    with col4:
+        st.page_link("pages/4_Posologia.py", label="💊 Posologia", icon="💊")
+
+    with col5:
+        # --- MUDANÇA AQUI ---
+        st.page_link("pages/5_Wiki_de_Conceitos.py", label="💡 Wiki de Conceitos", icon="💡")
+
+
+    # --- Seção de Estatísticas e Logout ---
     st.markdown("---")
     
     with st.spinner("Buscando dados da comunidade..."):
         stats = get_global_platform_stats()
 
-    with st.container():
+    with st.container(border=True):
         st.markdown("<h3 style='text-align: center;'>Nossa Comunidade em Números</h3>", unsafe_allow_html=True)
-        st.write("")
-
+        
         stat_col1, stat_col2, stat_col3, stat_col4 = st.columns(4)
 
         with stat_col1:
-            st.metric(label="Futuros Médicos na Plataforma", value=f"{stats['total_students']:,}".replace(",", "."))
+            st.metric(label="Futuros Médicos", value=f"{stats['total_students']:,}".replace(",", "."))
         
         with stat_col2:
-            st.metric(label="Estudantes focados nesta Semana", value=f"{stats['active_this_week']:,}".replace(",", "."))
+            st.metric(label="Ativos na Semana", value=f"{stats['active_this_week']:,}".replace(",", "."))
         
         with stat_col3:
-            st.metric(label="Questões Resolvidas (Últimos 7 dias)", value=f"{stats['answered_last_7_days']:,}".replace(",", "."))
+            st.metric(label="Questões Resolvidas (7d)", value=f"{stats['answered_last_7_days']:,}".replace(",", "."))
             
         with stat_col4:
-            st.metric(label="Acertos da Comunidade (Últimos 7 dias)", value=f"{stats['accuracy_last_7_days']:.1f}%")
-        
-        st.markdown("</div>", unsafe_allow_html=True)
+            st.metric(label="Acertos da Comunidade (7d)", value=f"{stats['accuracy_last_7_days']:.1f}%")
 
     with st.sidebar:
+        st.write("")
         st.write("")
         if st.button("Sair da Conta", use_container_width=True):
             st.session_state.clear()

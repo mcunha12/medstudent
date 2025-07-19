@@ -16,7 +16,7 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 3.5rem; /* 56px */
+  height: 3.5rem;
   background-color: var(--primary-color);
   color: var(--white-color);
   display: flex;
@@ -30,7 +30,7 @@
 
 /* Ajuste no corpo principal para não ficar embaixo do header */
 .main .block-container {
-  padding-top: 5rem; /* 80px */
+  padding-top: 5rem;
 }
 
 /* Aplicando as cores nos componentes do Streamlit */
@@ -38,28 +38,18 @@ body {
   background-color: var(--secondary-color);
 }
 
-.st-emotion-cache-1y4p8pa {
-  /* Conteúdo principal */
-  background-color: var(--secondary-color);
-}
-
 .stApp {
   background-color: var(--secondary-color);
 }
 
-/* Cor dos cards */
+/* Cor dos cards (mantido para outras páginas que possam usar) */
 .card {
   background-color: var(--white-color);
   border-radius: 12px;
   padding: 24px;
   margin-bottom: 20px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s ease-in-out;
   flex-grow: 1;
-}
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 .card h2 {
   font-size: 22px;
@@ -71,21 +61,12 @@ body {
   color: var(--text-color);
 }
 
-/* Botões */
+/* Botões Padrão */
 .stButton > button {
   background-color: var(--primary-color);
   color: var(--white-color);
   border-radius: 8px;
   border: none;
-}
-
-/* Métricas */
-.stats-container {
-  text-align: center;
-  background-color: var(--white-color);
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 h1,
@@ -97,5 +78,28 @@ h6,
 p,
 label,
 .st-emotion-cache-1q8dd3e {
+  color: var(--text-color);
+}
+
+/* --- NOVO --- Botões de Navegação (st.page_link) */
+div[data-testid="stPageLink"] a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  padding: 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+div[data-testid="stPageLink"] a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  background-color: var(--light-bg-color);
   color: var(--text-color);
 }
