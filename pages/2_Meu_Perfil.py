@@ -1,11 +1,25 @@
-# ==============================================================================
-# ARQUIVO: pages/1_Meu_Perfil.py (VERSÃO FINAL)
-# ==============================================================================
 import streamlit as st
 import pandas as pd
 import plotly.express as px
-# 1. IMPORTE A NOVA FUNÇÃO JUNTO COM AS OUTRAS
 from services import get_performance_data, get_time_window_metrics, get_temporal_performance, get_areas_performance, get_subtopics_for_review, get_ranking_data
+
+# --- CONFIGURAÇÃO DA PÁGINA ---
+st.set_page_config(
+    layout="wide",
+    page_title="Meu Perfil - MedStudent",
+    initial_sidebar_state="collapsed"
+)
+
+# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Carrega o CSS e o Header Fixo
+load_css("style.css")
+st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
+
+
 st.title("📊 Meu Perfil de Performance")
 st.markdown("---")
 
@@ -16,22 +30,19 @@ if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.stop()
 
 with st.spinner("Analisando seu histórico de performance..."):
-    # Assumindo que get_performance_data() retorna um dict com os dados
     performance_data = get_performance_data(st.session_state.user_id)
-    # Você precisa de um DataFrame com TODAS as respostas para o ranking.
-    # Se get_performance_data não traz tudo, você precisará de outra chamada.
-    # Vamos assumir que `performance_data` contém 'all_answers_for_ranking'
-    # que é o DataFrame completo da tabela 'answers'.
-    all_answers_for_ranking = performance_data["all_answers_for_ranking"] # <-- IMPORTANTE
+    if performance_data:
+        all_answers_for_ranking = performance_data.get("all_answers_for_ranking")
+    else:
+        all_answers_for_ranking = pd.DataFrame() # Define um DF vazio se não houver dados
 
 if performance_data is None:
     st.info("Você ainda não respondeu nenhuma questão. Comece pelo simulado para ver suas estatísticas aqui!")
     st.stop()
 
-all_answers = performance_data["all_answers"]
-areas_exploded = performance_data["areas_exploded"]
-subtopicos_exploded = performance_data["subtopicos_exploded"]
-
+all_answers = performance_data.get("all_answers")
+areas_exploded = performance_data.get("areas_exploded")
+subtopicos_exploded = performance_data.get("subtopicos_exploded")
 
 # --- LINHA 1: GRÁFICOS TEMPORAIS E RANKING ---
 st.subheader("Evolução da Performance")
@@ -44,7 +55,7 @@ periodo_selecionado = st.selectbox(
 period_map = {"Semana": "W", "Dia": "D"}
 period_code = period_map[periodo_selecionado]
 
-col1, col2, col3 = st.columns([2, 2, 1.2]) # Aumentei um pouco a largura da coluna 3
+col1, col2, col3 = st.columns([2, 2, 1.2])
 
 with col1:
     temporal_df = get_temporal_performance(all_answers, period=period_code)
@@ -64,7 +75,6 @@ with col2:
     else:
         st.info(f"Sem dados para o período selecionado.")
 
-# 2. ATUALIZE A LÓGICA DA COLUNA 3 PARA EXIBIR O RANKING
 with col3:
     st.markdown(f"**Ranking ({periodo_selecionado})**")
     
@@ -89,7 +99,6 @@ with col3:
     else:
         st.success("🏆 Você é o primeiro a ser rankeado neste período! Continue assim.")
 
-
 st.markdown("---")
 # --- LINHA 2: ANÁLISE POR ÁREA E SUBTÓPICOS ---
 st.subheader("Análise por Área de Conhecimento")
@@ -100,16 +109,12 @@ with col1:
     if not areas_perf_df.empty:
         top_areas_acerto = areas_perf_df.sort_values('taxa_de_acerto', ascending=False).head(10)
         fig = px.bar(top_areas_acerto, x='areas_principais', y='taxa_de_acerto', title="Áreas com Maior Acerto", labels={'areas_principais': 'Área', 'taxa_de_acerto': 'Taxa de Acerto (%)'})
-        
-        # ALTERAÇÃO APLICADA AQUI: Fixa o eixo Y de 0 a 100
         fig.update_yaxes(range=[0, 100])
-        
         st.plotly_chart(fig, use_container_width=True)
     else:
         st.info("Sem dados de áreas para exibir.")
 
 with col2:
-    # Este gráfico permanece inalterado, pois seu eixo Y não é uma porcentagem
     if not areas_perf_df.empty:
         top_areas_pratica = areas_perf_df.sort_values('total_respondidas', ascending=False).head(10)
         fig = px.bar(top_areas_pratica, x='areas_principais', y='total_respondidas', title="Áreas Mais Praticadas", labels={'areas_principais': 'Área', 'total_respondidas': 'Nº de Questões'})

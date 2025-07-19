@@ -2,8 +2,24 @@ import streamlit as st
 import json
 from services import get_simulado_questions, save_answer, get_all_specialties, get_all_provas, normalize_for_search
 
-# --- Funções Auxiliares da Página ---
+# --- CONFIGURAÇÃO DA PÁGINA ---
+st.set_page_config(
+    layout="wide",
+    page_title="Simulado - MedStudent",
+    initial_sidebar_state="collapsed"
+)
 
+# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Carrega o CSS e o Header Fixo
+load_css("style.css")
+st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
+
+
+# --- Funções Auxiliares da Página ---
 def reset_simulado_state():
     """Função auxiliar para limpar o estado do simulado e voltar à tela de configuração."""
     st.session_state.simulado_stage = 'config'
@@ -107,7 +123,6 @@ def render_results():
                         st.info(f"{full_text}")
                     st.caption(f"Comentário: {comentarios.get(key, 'Sem comentário.')}")
     
-    # Botão para reiniciar na página de resultados
     if st.button("Fazer Novo Simulado", use_container_width=True):
         reset_simulado_state()
 
@@ -132,7 +147,6 @@ if st.session_state.simulado_stage == 'config':
     st.markdown("Selecione os filtros abaixo e clique em 'Gerar Simulado' para começar a praticar.")
 
     with st.container(border=True):
-        # ... (código dos filtros permanece igual)
         st.subheader("Filtros do Simulado")
         st.markdown("**Buscar em:**")
         filter_cols = st.columns(3)
@@ -198,7 +212,6 @@ elif st.session_state.simulado_stage == 'in_progress':
 
     st.title(f"Questão {current_index + 1} de {total_questions}")
     
-    # --- NOVO BOTÃO PARA REINICIAR ---
     if st.button("✖️ Cancelar e Gerar Novo Simulado", type="secondary"):
         reset_simulado_state()
     

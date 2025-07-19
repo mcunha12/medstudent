@@ -2,53 +2,63 @@ import streamlit as st
 import json
 from services import get_gemini_model
 
+# --- CONFIGURAÇÃO DA PÁGINA ---
+st.set_page_config(
+    layout="wide",
+    page_title="Calculadora - MedStudent",
+    initial_sidebar_state="collapsed"
+)
+
+# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
+def load_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+
+# Carrega o CSS e o Header Fixo
+load_css("style.css")
+st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
+
+
 # --- VERIFICAÇÃO DE LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para acessar a calculadora.")
     st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
     st.stop()
 
-# --- CONFIGURAÇÃO E ESTILO DA PÁGINA ---
+# --- TÍTULO DA PÁGINA ---
 st.title("💊 Calculadora de Posologia")
 st.markdown("---")
 
-# (O código de estilo CSS permanece o mesmo, sem necessidade de colar novamente)
+# --- CSS ESPECÍFICO DA PÁGINA (USANDO AS NOVAS VARIÁVEIS) ---
 st.markdown(
     """
     <style>
-      .st-emotion-cache-z5fcl4 { padding-top: 2rem; }
-      .st-emotion-cache-1y4p8pa { padding-top: 2rem; }
       .st-form {
-          background: white;
+          background: var(--white-color);
           border-radius: 12px;
           padding: 24px;
           box-shadow: 0 4px 12px rgba(0,0,0,0.05);
       }
-      .stButton>button {
-          background-color: #007AFF;
-          color: white;
-          border: none;
-          border-radius: 10px;
-          padding: 12px 20px;
-          font-size: 16px;
-          font-weight: 600;
-          width: 100%;
-          margin-top: 16px;
-      }
       .result-card {
-          background-color: #EFEFEF;
-          border-left: 5px solid #007AFF;
+          background-color: var(--light-bg-color);
+          border-left: 5px solid var(--primary-color);
           padding: 16px;
           border-radius: 8px;
           margin-top: 16px;
       }
-      .result-card h3 { margin-top: 0; color: #1C1C1E; }
-      .result-card p { font-size: 18px; font-weight: 500; color: #1C1C1E; }
+      .result-card h3 { 
+          margin-top: 0; 
+          color: var(--text-color); 
+      }
+      .result-card p { 
+          font-size: 18px; 
+          font-weight: 500; 
+          color: var(--text-color); 
+      }
     </style>
     """,
     unsafe_allow_html=True
 )
-
 
 # --- FORMULÁRIO PRINCIPAL ---
 with st.form(key='posologia_form'):
@@ -132,17 +142,11 @@ if submit_button:
             model = get_gemini_model()
             response = model.generate_content(prompt)
             
-            # --- NOVA VERIFICAÇÃO DETALHADA DA RESPOSTA ---
-            # O acesso a 'response.text' pode gerar um erro se a resposta for bloqueada.
-            # Vamos tentar acessá-lo e, se falhar, o bloco 'except' nos dará o motivo.
-            # Se não falhar, mas o texto estiver vazio, também avisaremos.
-            
             ai_report = response.text
             
             if ai_report:
                 st.markdown(ai_report)
             else:
-                # Isso pode acontecer se a resposta for bloqueada por segurança
                 block_reason = response.prompt_feedback.block_reason.name if response.prompt_feedback else "Não especificado"
                 st.error(f"A IA não gerou uma resposta. Motivo provável: **{block_reason}**")
                 st.warning(
@@ -152,6 +156,5 @@ if submit_button:
                 )
 
         except Exception as e:
-            # Este bloco agora pegará erros de forma mais clara, como falhas de autenticação ou bloqueios.
             st.error(f"Ocorreu um erro ao gerar o relatório da IA.")
-            st.exception(e) # st.exception() é ótimo para debugging, pois imprime o traceback completo na tela.
+            st.exception(e)

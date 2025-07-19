@@ -1,0 +1,101 @@
+/* style.css */
+
+/* Definindo as variáveis de cor da nova paleta */
+:root {
+  --primary-color: #487aa1; /* Azul principal */
+  --secondary-color: #b2d9f7; /* Azul claro para fundos/destaques */
+  --text-color: #3d3c3b; /* Cinza escuro para textos */
+  --accent-color: #7c8071; /* Verde/cinza para acentos */
+  --light-bg-color: #dde3ca; /* Fundo mais claro */
+  --white-color: #ffffff;
+}
+
+/* Header Fixo */
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5rem; /* 56px */
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Ajuste no corpo principal para não ficar embaixo do header */
+.main .block-container {
+  padding-top: 5rem; /* 80px */
+}
+
+/* Aplicando as cores nos componentes do Streamlit */
+body {
+  background-color: var(--secondary-color);
+}
+
+.st-emotion-cache-1y4p8pa {
+  /* Conteúdo principal */
+  background-color: var(--secondary-color);
+}
+
+.stApp {
+  background-color: var(--secondary-color);
+}
+
+/* Cor dos cards */
+.card {
+  background-color: var(--white-color);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease-in-out;
+  flex-grow: 1;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+.card h2 {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin-top: 0;
+}
+.card p {
+  color: var(--text-color);
+}
+
+/* Botões */
+.stButton > button {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border-radius: 8px;
+  border: none;
+}
+
+/* Métricas */
+.stats-container {
+  text-align: center;
+  background-color: var(--white-color);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+label,
+.st-emotion-cache-1q8dd3e {
+  color: var(--text-color);
+}
