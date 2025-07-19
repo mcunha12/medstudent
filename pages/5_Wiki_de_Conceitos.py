@@ -1,5 +1,5 @@
 import streamlit as st
-from services import get_all_subtopics, get_concept_explanation
+from services import get_all_subtopics, get_concept_explanation, get_relevant_concepts
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -29,7 +29,6 @@ st.markdown("Uma biblioteca de conhecimento que cresce com o nosso banco de ques
 st.markdown("---")
 
 # --- LÓGICA DA PÁGINA ---
-# Busca todos os subtópicos únicos para listar na Wiki
 all_topics = get_all_subtopics()
 
 if not all_topics:
@@ -38,28 +37,27 @@ if not all_topics:
 
 # --- Barra de Busca ---
 search_query = st.text_input(
-    "Buscar um conceito...",
-    placeholder="Ex: Fibrilação Atrial, Diabetes Mellitus Tipo 2, Penicilinas..."
+    "Buscar um conceito ou fazer uma pergunta...",
+    placeholder="Ex: Qual o tratamento para infarto agudo do miocárdio?"
 )
 
-# Filtra os tópicos com base na busca
+# --- LÓGICA DE BUSCA ---
 if search_query:
-    # Busca case-insensitive
-    filtered_topics = [topic for topic in all_topics if search_query.lower() in topic.lower()]
+    # Usa a nova função de busca semântica com a IA
+    with st.spinner("Buscando conceitos relevantes com a IA..."):
+        filtered_topics = get_relevant_concepts(search_query, all_topics)
 else:
+    # Se a busca estiver vazia, mostra todos os tópicos
     filtered_topics = all_topics
 
 st.markdown(f"**Exibindo {len(filtered_topics)} de {len(all_topics)} conceitos.**")
 
 # --- Listagem dos Conceitos ---
 if not filtered_topics:
-    st.warning("Nenhum conceito encontrado para a sua busca.")
+    st.warning("Nenhum conceito relevante encontrado para a sua busca.")
 else:
     for topic in filtered_topics:
         with st.expander(f"📖 **{topic}**"):
-            # A explicação é carregada sob demanda, apenas quando o usuário expande o card.
-            # Isso torna a página muito mais rápida.
             with st.spinner(f"Buscando material de estudo para '{topic}'..."):
-                # A função get_concept_explanation já contém a lógica de buscar no DB ou gerar com IA
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
