@@ -57,6 +57,8 @@ if not st.session_state.user_id:
 else:
     # Página para usuário logado
     st.title(f"Bem-vindo de volta! 👋")
+    # Carrega apenas a lista de nomes dos tópicos (operação leve e cacheada)
+    all_topics = get_all_subtopics()
     st.markdown("### O que vamos praticar hoje?")
     
     st.write("") 
