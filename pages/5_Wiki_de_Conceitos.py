@@ -10,8 +10,12 @@ st.set_page_config(
 
 # --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
 def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    # 'try-except' para evitar erro se o arquivo não for encontrado
+    try:
+        with open(file_name) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning(f"Arquivo de estilo '{file_name}' não encontrado.")
 
 # Carrega o CSS e o Header Fixo
 load_css("style.css")
@@ -25,7 +29,7 @@ if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.stop()
 
 st.title("💡 Wiki de Conceitos")
-st.markdown("Uma biblioteca de conhecimento que cresce com o nosso banco de questões. Use a busca para encontrar um tópico.")
+st.markdown("Uma biblioteca de conhecimento que cresce com o nosso banco de questões. Use a busca para encontrar um tópico ou fazer uma pergunta.")
 st.markdown("---")
 
 # --- LÓGICA DA PÁGINA ---
@@ -58,6 +62,8 @@ if not filtered_topics:
 else:
     for topic in filtered_topics:
         with st.expander(f"📖 **{topic}**"):
+            # A explicação é carregada sob demanda, apenas quando o usuário expande o card.
             with st.spinner(f"Buscando material de estudo para '{topic}'..."):
+                # A função get_concept_explanation já contém a lógica de buscar no DB ou gerar com IA
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
