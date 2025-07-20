@@ -10,7 +10,6 @@ st.set_page_config(
 
 # --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
 def load_css(file_name):
-    # 'try-except' para evitar erro se o arquivo não for encontrado
     try:
         with open(file_name) as f:
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
@@ -33,6 +32,7 @@ st.markdown("Uma biblioteca de conhecimento que cresce com o nosso banco de ques
 st.markdown("---")
 
 # --- LÓGICA DA PÁGINA ---
+# Carrega apenas a lista de nomes dos tópicos (operação leve e cacheada)
 all_topics = get_all_subtopics()
 
 if not all_topics:
@@ -47,7 +47,7 @@ search_query = st.text_input(
 
 # --- LÓGICA DE BUSCA ---
 if search_query:
-    # Usa a nova função de busca semântica com a IA
+    # Usa a função de busca semântica com a IA
     with st.spinner("Buscando conceitos relevantes com a IA..."):
         filtered_topics = get_relevant_concepts(search_query, all_topics)
 else:
@@ -64,6 +64,6 @@ else:
         with st.expander(f"📖 **{topic}**"):
             # A explicação é carregada sob demanda, apenas quando o usuário expande o card.
             with st.spinner(f"Buscando material de estudo para '{topic}'..."):
-                # A função get_concept_explanation já contém a lógica de buscar no DB ou gerar com IA
+                # A função get_concept_explanation busca no DB ou gera com IA, e o resultado fica em cache.
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
