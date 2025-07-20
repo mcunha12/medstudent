@@ -320,5 +320,95 @@ def get_performance_data(user_id):
     except (KeyError, Exception) as e:
         st.warning(f"Não foi possível processar seus dados de performance: {e}")
         return None
+    
+@st.cache_data(ttl=3600)
+def get_global_platform_stats():
+    default_stats = {'total_students': 0, 'active_this_week': 0, 'answered_last_7_days': 0, 'accuracy_last_7_days': 0.0}
+    try:
+        _ensure_connected()
+        users_sheet = _connections["spreadsheet"].worksheet("users")
+        answers_sheet = _connections["spreadsheet"].worksheet("answers")
+        users_df = pd.DataFrame(users_sheet.get_all_records())
+        answers_df = pd.DataFrame(answers_sheet.get_all_records())
+        total_students = len(users_df) if not users_df.empty else 0
+        if answers_df.empty:
+            default_stats['total_students'] = total_students
+            return default_stats
+        answers_df['answered_at'] = pd.to_datetime(answers_df['answered_at'])
+        answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+        now = datetime.now(answers_df['answered_at'].dt.tz)
+        start_of_week = now - timedelta(days=now.weekday())
+        start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
+        this_week_answers = answers_df[answers_df['answered_at'] >= start_of_week]
+        active_this_week = this_week_answers['user_id'].nunique()
+        seven_days_ago = now - timedelta(days=7)
+        last_7_days_answers = answers_df[answers_df['answered_at'] >= seven_days_ago]
+        answered_last_7_days = len(last_7_days_answers)
+        accuracy_last_7_days = (last_7_days_answers['is_correct'].mean() * 100) if not last_7_days_answers.empty else 0.0
+        return {
+            'total_students': total_students,
+            'active_this_week': active_this_week,
+            'answered_last_7_days': answered_last_7_days,
+            'accuracy_last_7_days': accuracy_last_7_days
+        }
+    except Exception as e:
+        print(f"Erro ao calcular estatísticas globais: {e}")
+        return default_stats
 
-# ... (todas as outras funções de get_global_platform_stats, get_ranking_data, etc. permanecem aqui)
+# Adicione esta nova função ao seu arquivo services.py
+
+def get_relevant_concepts(user_query: str, all_concepts: list[str]) -> list[str]:
+    """
+    Usa a IA para encontrar os conceitos mais relevantes para a pergunta do usuário.
+    
+    Args:
+        user_query: A pergunta ou termo de busca do usuário.
+        all_concepts: A lista completa de todos os conceitos disponíveis na Wiki.
+        
+    Returns:
+        Uma lista de strings contendo os nomes dos conceitos relevantes.
+    """
+    if not user_query or not all_concepts:
+        return all_concepts # Se a busca for vazia, retorna todos
+
+    # Converte a lista de conceitos em uma string formatada
+    concept_list_str = "\n- ".join(all_concepts)
+    
+    prompt = f"""
+Você é um assistente de busca inteligente para uma Wiki médica. Sua tarefa é identificar quais conceitos de uma lista são relevantes para a pergunta de um usuário.
+
+**Pergunta do Usuário:**
+"{user_query}"
+
+**Lista de Conceitos Disponíveis:**
+- {concept_list_str}
+
+**Instruções:**
+1. Analise a "Pergunta do Usuário".
+2. Compare-a com cada item na "Lista de Conceitos Disponíveis".
+3. Retorne APENAS os nomes dos conceitos da lista que são diretamente relevantes para a pergunta.
+4. A sua resposta deve ser uma lista de Python, contendo apenas os nomes exatos dos conceitos. Exemplo: ["Conceito A", "Conceito B", "Conceito C"]
+5. Se nenhum conceito for relevante, retorne uma lista vazia: []
+"""
+    try:
+        model = get_gemini_model()
+        response = model.generate_content(prompt)
+        
+        # A resposta da IA deve ser uma string no formato de lista Python
+        # Ex: '["Fibrilação Atrial", "Flutter Atrial"]'
+        # Usamos json.loads para converter essa string em uma lista real
+        relevant_list = json.loads(response.text)
+        
+        # Validação final para garantir que é uma lista de strings
+        if isinstance(relevant_list, list) and all(isinstance(item, str) for item in relevant_list):
+            return relevant_list
+        else:
+            # Se a IA retornar algo inesperado, voltamos para a busca simples
+            print("WARN: A resposta da IA não foi uma lista de strings. Usando busca padrão.")
+            return [concept for concept in all_concepts if user_query.lower() in concept.lower()]
+
+    except (json.JSONDecodeError, Exception) as e:
+        # Se ocorrer qualquer erro (formato da IA, conexão, etc.),
+        # usamos a busca por filtro de texto como um fallback seguro.
+        print(f"ERRO: Falha na busca semântica com IA: {e}. Usando busca padrão.")
+        return [concept for concept in all_concepts if user_query.lower() in concept.lower()]
