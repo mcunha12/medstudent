@@ -90,6 +90,11 @@ def upload_local_simulados():
     total_questions_in_files = 0
     questions_identical = 0
 
+    # --- INÍCIO DA CORREÇÃO ---
+    # Usaremos um conjunto para rastrear enunciados já processados nesta execução
+    processed_in_this_run = set()
+    # --- FIM DA CORREÇÃO ---
+
     for file_path in json_files:
         print(f"\n--- Processando arquivo: {file_path.name} ---")
         
@@ -103,17 +108,39 @@ def upload_local_simulados():
             prova_name = "N/A"
             print(f"⚠️ Não foi possível extrair o nome da prova de '{filename_stem}'. Usando 'N/A'.")
         
-        with open(file_path, 'r', encoding='utf-8') as f:
-            data = json.load(f)
+        # Corrigindo a leitura do JSON para garantir que é um arquivo válido
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            print(f"❌ ERRO FATAL: O arquivo {file_path.name} não é um JSON válido e não pode ser processado.")
+            continue # Pula para o próximo arquivo
 
         questions_in_file = data if isinstance(data, list) else [data]
         total_questions_in_files += len(questions_in_file)
 
         for question_data in questions_in_file:
+            if isinstance(question_data, list):
+                if not question_data:
+                    print("⚠️ Encontrada lista de questão vazia. Pulando.")
+                    continue
+                question_data = question_data[0]
+
+            if not isinstance(question_data, dict):
+                print(f"⚠️ Item inesperado encontrado que não é um dicionário. Pulando. Item: {question_data}")
+                continue
+
             enunciado = question_data.get("enunciado")
             if not enunciado:
                 print("⚠️ Questão sem 'enunciado' encontrada. Pulando.")
                 continue
+
+            # --- INÍCIO DA CORREÇÃO DE LÓGICA ---
+            # Primeiro, verifica se já processamos essa questão (duplicada local)
+            if enunciado in processed_in_this_run:
+                print(f" duplicates️ Questão duplicada neste lote de arquivos. Pulando: '{enunciado[:50]}...'")
+                continue
+            # --- FIM DA CORREÇÃO DE LÓGICA ---
             
             if enunciado in existing_questions_map:
                 existing_record = existing_questions_map[enunciado]
@@ -121,7 +148,6 @@ def upload_local_simulados():
                     print(f"🔄 Conteúdo diferente detectado. Agendando atualização para: '{enunciado[:50]}...'")
                     question_id = existing_record['data'].get('question_id')
                     
-                    # ORDEM ALTERADA: 'prova_name' movida para o final da lista
                     full_row_values = [
                         question_id,
                         enunciado,
@@ -143,7 +169,6 @@ def upload_local_simulados():
                 print(f"✨ Nova questão encontrada. Agendando adição: '{enunciado[:50]}...'")
                 question_id = str(uuid.uuid4())
                 
-                # ORDEM ALTERADA: 'prova_name' movida para o final da lista
                 new_questions_to_upload.append([
                     question_id,
                     enunciado,
@@ -154,7 +179,9 @@ def upload_local_simulados():
                     ", ".join(question_data.get("subtopicos", [])),
                     prova_name
                 ])
-                existing_questions_map[enunciado] = {} 
+            
+            # Marca o enunciado como processado para esta execução
+            processed_in_this_run.add(enunciado)
 
     if questions_to_update:
         print(f"\n⏳ Atualizando {len(questions_to_update)} questões existentes na planilha...")
