@@ -418,6 +418,9 @@ def get_time_window_metrics(all_answers_df, days=None):
     if all_answers_df is None: return calculate_metrics(None)
     if days is None: return calculate_metrics(all_answers_df)
     
+    # Certifica que a coluna de data está no formato correto
+    all_answers_df['answered_at'] = pd.to_datetime(all_answers_df['answered_at'])
+    
     if all_answers_df['answered_at'].dt.tz:
         cutoff_date = datetime.now(all_answers_df['answered_at'].dt.tz) - timedelta(days=days)
     else:
@@ -427,9 +430,10 @@ def get_time_window_metrics(all_answers_df, days=None):
     return calculate_metrics(window_df)
 
 def get_temporal_performance(all_answers_df, period='W'):
-    """(Sem alterações) Agrega a performance por período (Semana 'W' ou Dia 'D')."""
+    """(Sem alterações) Agrega a performance por período."""
     if all_answers_df is None or all_answers_df.empty: return pd.DataFrame()
     df = all_answers_df.copy()
+    df['answered_at'] = pd.to_datetime(df['answered_at'])
     df['periodo'] = df['answered_at'].dt.to_period(period).dt.start_time
     summary = df.groupby('periodo').agg(
         questoes_respondidas=('question_id', 'count'), 
@@ -451,6 +455,8 @@ def get_areas_performance(areas_exploded_df):
 def get_subtopics_for_review(subtopicos_exploded_df, days=7):
     """(Sem alterações) Identifica os subtópicos com mais erros nos últimos dias."""
     if subtopicos_exploded_df is None or subtopicos_exploded_df.empty: return []
+    
+    subtopicos_exploded_df['answered_at'] = pd.to_datetime(subtopicos_exploded_df['answered_at'])
 
     if subtopicos_exploded_df['answered_at'].dt.tz:
         cutoff_date = datetime.now(subtopicos_exploded_df['answered_at'].dt.tz) - timedelta(days=days)
@@ -467,10 +473,11 @@ def get_subtopics_for_review(subtopicos_exploded_df, days=7):
 
 def get_ranking_data(all_answers_df, period_code, current_user_id):
     """(Sem alterações) Calcula o ranking de performance de um usuário."""
-    if all_answers_df.empty: return None
+    if all_answers_df is None or all_answers_df.empty: return None
     df = all_answers_df.copy()
     df['answered_at'] = pd.to_datetime(df['answered_at'])
     now = datetime.now(df['answered_at'].dt.tz if df['answered_at'].dt.tz else None)
+    
     if period_code == 'D':
         start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
     elif period_code == 'W':
@@ -478,8 +485,10 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
         start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
     else:
         return None
+        
     recent_answers = df[df['answered_at'] >= start_date]
     if recent_answers.empty: return None
+    
     performance = recent_answers.groupby('user_id').agg(
         total_corretas=('is_correct', 'sum'),
         total_respondidas=('is_correct', 'count')
@@ -488,11 +497,14 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
     ranked_users = performance.sort_values(by=['taxa_de_acerto', 'total_respondidas'], ascending=[False, False]).reset_index(drop=True)
     ranked_users['rank'] = ranked_users.index + 1
     user_rank_info = ranked_users[ranked_users['user_id'].astype(str) == str(current_user_id)]
+    
     if user_rank_info.empty:
         return {'rank': None, 'total_users': len(ranked_users), 'percentile': None}
+        
     user_rank = int(user_rank_info['rank'].iloc[0])
     total_users = len(ranked_users)
     percentile = (user_rank / total_users) * 100
+    
     return {'rank': user_rank, 'total_users': total_users, 'percentile': percentile}
 
 @st.cache_data(ttl=600)
@@ -501,17 +513,16 @@ def get_user_answered_questions_details(user_id):
     try:
         conn = get_db_connection()
         query = """
-        SELECT *
-        FROM answers a
+        SELECT * FROM answers a
         LEFT JOIN questions q ON a.question_id = q.question_id
         WHERE a.user_id = ?
         ORDER BY a.answered_at DESC
         """
-        merged_df = pd.read_sql_query(query, conn, params=(str(user_id),))
-        if merged_df.empty:
-            return pd.DataFrame()
-        merged_df['is_correct'] = merged_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
-        return merged_df
+        df = pd.read_sql_query(query, conn, params=(str(user_id),))
+        if df.empty: return pd.DataFrame()
+        
+        df['is_correct'] = df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+        return df
     except Exception as e:
         st.error(f"Erro ao buscar histórico de revisão: {e}")
         return pd.DataFrame()
@@ -543,11 +554,14 @@ def get_global_platform_stats():
             
         answers_df['answered_at'] = pd.to_datetime(answers_df['answered_at'])
         answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+        
         now = datetime.now(answers_df['answered_at'].dt.tz)
         start_of_week = now - timedelta(days=now.weekday())
         start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
+        
         this_week_answers = answers_df[answers_df['answered_at'] >= start_of_week]
         active_this_week = this_week_answers['user_id'].nunique()
+        
         seven_days_ago = now - timedelta(days=7)
         last_7_days_answers = answers_df[answers_df['answered_at'] >= seven_days_ago]
         answered_last_7_days = len(last_7_days_answers)
