@@ -1,0 +1,5 @@
+email,user_id,created_at,password,active
+marceloopcunha@gmail.com,c9ff7b72-1171-4a9f-a5f0-b0ad5eb0b710,2025-07-14T20:10:42.262507,$2b$12$Buw24CsCX/9guuH7XbTJeOAatMjsSO3oJA5P/mgrHDJByllfQovLi,TRUE
+diogocajazeira@gmail.com,aca53442-855b-41dc-a52c-b61991faccb1,2025-07-15T00:36:47.491542,,TRUE
+yasminsalves21@gmail.com,a384a524-19de-4a4f-8b9c-4c168db41bff,2025-07-15T00:37:53.039868,$2b$12$OwqyTFbJ4UKGnbTbexSyZ.m1BXldRqnMVsGNYEe.kPqyBmkz/3JoS,TRUE
+gustavovancini@hotmail.com,40ace825-2807-477d-bc28-957ca3b81e60,2025-07-15T02:19:54.257104,,TRUE
