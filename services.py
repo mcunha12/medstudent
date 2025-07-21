@@ -239,7 +239,7 @@ def get_concept_by_id(concept_id: str):
     except Exception as e:
         st.error(f"Erro ao buscar o conceito: {e}")
         return None
-
+    
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
     Encontra um conceito existente para o usuário ou cria um novo.
@@ -298,31 +298,6 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
         st.error(f"Erro em find_or_create_ai_concept: {e}")
         return {'id': None, 'title': 'Erro', 'explanation': f"Erro: {e}"}
 
-def debug_ai_concepts_table():
-    """
-    Função para debugar a tabela ai_concepts - mostra toda a estrutura
-    """
-    conn = None # Initialize conn to None
-    try:
-        conn = get_db_connection()
-        
-        # Mostra a estrutura da tabela
-        table_info = pd.read_sql_query("PRAGMA table_info(ai_concepts)", conn)
-        print(f"[DEBUG] Estrutura da tabela ai_concepts:")
-        print(table_info)
-        
-        # Mostra todos os registros
-        all_data = pd.read_sql_query("SELECT * FROM ai_concepts", conn)
-        print(f"[DEBUG] Todos os registros na tabela:")
-        print(all_data)
-        
-    except Exception as e:
-        print(f"[DEBUG] Erro ao inspecionar tabela: {e}")
-    finally:
-        if conn:
-            conn.close()
-
-# ---   
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
