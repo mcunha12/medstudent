@@ -483,3 +483,70 @@ def get_global_platform_stats():
     except Exception as e:
         print(f"Erro ao calcular estatísticas globais: {e}")
         return default_stats
+    
+@st.cache_data(ttl=3600)
+def get_all_concepts_with_areas():
+    """
+    Busca todos os subtópicos únicos e suas áreas principais associadas.
+    Retorna um DataFrame com as colunas ['subtopic', 'area'].
+    """
+    try:
+        conn = get_db_connection()
+        # Seleciona apenas as colunas necessárias
+        query = "SELECT areas_principais, subtopicos FROM questions"
+        df = pd.read_sql_query(query, conn)
+        
+        # Remove linhas onde os subtopicos são nulos
+        df.dropna(subset=['subtopicos'], inplace=True)
+        
+        # Transforma as strings separadas por vírgula em listas
+        df['subtopicos'] = df['subtopicos'].str.split(',')
+        df['areas_principais'] = df['areas_principais'].fillna('').str.split(',')
+        
+        # "Explode" para ter uma linha por combinação de área/subtópico
+        df = df.explode('subtopicos')
+        df = df.explode('areas_principais')
+        
+        # Limpa os dados
+        df['subtopicos'] = df['subtopicos'].str.strip()
+        df['areas_principais'] = df['areas_principais'].str.strip()
+        df.dropna(subset=['subtopicos', 'areas_principais'], inplace=True)
+        df = df[df['subtopicos'] != '']
+        df = df[df['areas_principais'] != '']
+        
+        # Renomeia as colunas para um nome mais claro
+        df.rename(columns={'subtopicos': 'concept', 'areas_principais': 'area'}, inplace=True)
+        
+        # Remove duplicatas e ordena
+        return df.drop_duplicates().sort_values(by=['area', 'concept']).reset_index(drop=True)
+        
+    except Exception as e:
+        st.warning(f"Não foi possível carregar a lista de conceitos com áreas: {e}")
+        return pd.DataFrame(columns=['concept', 'area'])
+
+@st.cache_data(ttl=600)
+def get_subtopics_from_incorrect_answers(user_id):
+    """
+    Busca uma lista de subtópicos únicos de questões que um usuário específico errou.
+    """
+    try:
+        conn = get_db_connection()
+        query = """
+        SELECT DISTINCT q.subtopicos
+        FROM answers a
+        JOIN questions q ON a.question_id = q.question_id
+        WHERE a.user_id = ? AND a.is_correct = 'FALSE'
+        """
+        df = pd.read_sql_query(query, conn, params=(str(user_id),))
+        
+        if df.empty or 'subtopicos' not in df.columns:
+            return []
+            
+        # Processamento para extrair a lista única
+        subtopics = df['subtopicos'].dropna().str.split(',').explode()
+        unique_subtopics = subtopics.str.strip().unique().tolist()
+        return [topic for topic in unique_subtopics if topic]
+        
+    except Exception as e:
+        st.warning(f"Não foi possível carregar os subtópicos de questões incorretas: {e}")
+        return []
