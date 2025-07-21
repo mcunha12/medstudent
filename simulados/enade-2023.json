@@ -1,0 +1,1157 @@
+[
+  {
+    "id": "e9a8b1c4-d6e0-4f3a-9a8b-c1d0e9f8a7b2",
+    "enunciado": "A fome e a insegurança alimentar, antigos problemas da sociedade, são agravados em regiões com elevados índices de desigualdade social. Propor soluções para esse quadro requer uma abordagem multidimensional, que possibilite a interação entre as dimensões sociais, culturais, políticas, econômicas e ambientais envolvidas na produção e na distribuição de alimentos.\n\nConsiderando o texto e as imagens apresentados, avalie as asserções a seguir e a relação proposta entre elas.\n\nI. A fome no mundo é um fenômeno biológico e sociológico inevitável.\n\nPORQUE\n\nII. A disponibilidade desigual de alimentos, o acirramento de conflitos geopolíticos, a formação de cadeias agrícolas globais e o aumento das catástrofes climáticas são fatores que impactam a segurança alimentar de um grande número de populações.\n\nA respeito dessas asserções, assinale a opção correta.",
+    "alternativas": {
+      "A": "As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B": "As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C": "A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D": "A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E": "As asserções I e II são proposições falsas."
+    },
+    "comentarios": {
+      "A": "Incorreto. A asserção I é falsa. A fome não é um fenômeno inevitável, mas sim um problema complexo e multifatorial que pode ser mitigado e até mesmo erradicado com políticas públicas eficazes e cooperação internacional. Portanto, a relação de justificativa não se aplica.",
+      "B": "Incorreto. A asserção I é falsa. Embora a asserção II seja verdadeira, o erro fundamental desta alternativa é considerar a asserção I como verdadeira.",
+      "C": "Incorreto. Esta alternativa inverte a validade das proposições. A asserção I é falsa, enquanto a asserção II é verdadeira.",
+      "D": "Correto. A asserção I é falsa, pois a fome, embora tenha componentes biológicos e sociológicos, não é considerada 'inevitável'. Pelo contrário, é um problema que pode ser enfrentado com ações coordenadas, como mencionado no próprio enunciado ('Propor soluções para esse quadro requer uma abordagem multidimensional'). A asserção II é verdadeira, pois descreve com precisão os principais fatores que, segundo a FAO e outras organizações, contribuem para a insegurança alimentar em escala global.",
+      "E": "Incorreto. A asserção II é uma proposição verdadeira, pois os elementos listados (distribuição desigual, conflitos, cadeias agrícolas e catástrofes climáticas) são amplamente reconhecidos como causas e agravantes da fome e da insegurança alimentar no mundo."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Saúde Coletiva", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Determinantes Sociais da Saúde",
+      "Insegurança Alimentar e Nutricional",
+      "Saúde Global",
+      "Desigualdades Sociais em Saúde"
+    ],
+    "createdAt": "2025-07-20T19:17:34Z"
+  },
+  {
+    "id": "f5b9c2a1-e8d3-4a7b-8c6d-e2f1a9b8c5d4",
+    "enunciado": "O crescimento das cidades promove o aumento da demanda por serviços de água tratada, esgotamento sanitário, manejo das águas pluviais, limpeza urbana e coleta de resíduos sólidos. No Brasil, o processo de urbanização ocorreu de forma rápida e desigual, o que resultou no agravamento de injustiças sociais e econômicas. Os serviços de saneamento básico considerados direitos humanos fundamentais não são acessíveis a uma parcela significativa da população, principalmente àquela em que se concentram os segmentos populacionais em situação de vulnerabilidade.\nO atendimento integral e universalizado junto às populações periféricas e em situação de vulnerabilidade constitui um grande desafio, por demandar políticas públicas e investimentos subsidiados e permanentes.\n\nAcerca do saneamento básico no Brasil, avalie as afirmações a seguir.\nI. A grave desigualdade social, evidenciada pela segregação nos espaços urbanos, é uma das barreiras para a universalização do acesso aos serviços de saneamento básico.\nII. O serviço de abastecimento de água no Brasil situa-se no mesmo patamar de fornecimento e de infraestrutura que o sistema de coleta e tratamento do esgoto.\nIII. A universalização do acesso aos serviços de saneamento básico requer investimentos em políticas públicas e em tecnologias sociais que priorizem a democratização e o atendimento às populações em situação de vulnerabilidade.\nIV. O aumento da incidência de doenças transmitidas pela água resulta não somente da inadequação dos serviços de saneamento, mas também da precariedade das condições de moradia da população em situação de vulnerabilidade.\n\nÉ correto apenas o que se afirma em",
+    "alternativas": {
+      "A": "I e II.",
+      "B": "I e IV.",
+      "C": "II e III.",
+      "D": "I, III e IV.",
+      "E": "II, III e IV."
+    },
+    "comentarios": {
+      "A": "Incorreto. A afirmação II é falsa. No Brasil, a cobertura de abastecimento de água tratada é significativamente maior do que a cobertura de coleta e, principalmente, de tratamento de esgoto, representando um dos maiores desafios do saneamento no país.",
+      "B": "Incorreto. Esta alternativa está incompleta, pois omite a afirmação III, que também está correta ao destacar a necessidade de políticas públicas e investimentos direcionados para a universalização do saneamento.",
+      "C": "Incorreto. A afirmação II é falsa, invalidando esta alternativa. A infraestrutura de água e esgoto no Brasil é marcadamente desigual.",
+      "D": "Correto. As afirmações I, III e IV estão corretas. I aponta a desigualdade social como barreira à universalização, o que é um fato central no urbanismo brasileiro. III destaca a necessidade de políticas públicas e investimentos focados nas populações vulneráveis, em linha com o texto-base. IV conecta, de forma acertada, as doenças de veiculação hídrica tanto à falta de saneamento quanto às condições precárias de moradia, abordando os determinantes sociais da saúde.",
+      "E": "Incorreto. A afirmação II é falsa. A disparidade entre o acesso à água e o tratamento de esgoto é um ponto crítico do saneamento básico no Brasil, o que torna esta alternativa incorreta."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Saúde Coletiva", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Saneamento Básico",
+      "Determinantes Sociais da Saúde",
+      "Doenças de Veiculação Hídrica",
+      "Políticas Públicas de Saúde",
+      "Vulnerabilidade Social"
+    ],
+    "createdAt": "2025-07-20T22:18:04Z"
+  },
+  {
+    "id": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+    "enunciado": "Estudos realizados em 2021 pelo Fundo das Nações Unidas para a Infância (Unicef), em parceria com a Organização Mundial da Saúde (OMS), mostraram que, no Brasil, houve uma queda brusca da taxa de vacinação infantil nos últimos anos: entre 2017 e 2021, a taxa caiu de 93,1% para 71,49%, considerando-se crianças com menos de um ano de idade.\n\nEssa redução da cobertura vacinal deixa a população infantil muito vulnerável e exposta a doenças que já estavam praticamente erradicadas, tal como o sarampo, que em 2018 voltou a ser uma preocupação para os brasileiros. Além do sarampo, corre-se o risco de outras doenças voltarem a acometer as crianças, como a poliomielite, a meningite, a rubéola e a difteria.\n\nO gráfico a seguir mostra as taxas de vacinação infantil, em crianças menores de um ano de idade, no período de 2017 a 2021.\n\n**Percentual de vacinação em crianças menores de 1 ano**\n\n| Imunizante | Meta | 2017 | 2018 | 2019 | 2020 | 2021 |\n| :--- | :---: | :---: | :---: | :---: | :---: | :---: |\n| BCG | 90% | 97,98% | 99,72% | 93,12% | 79,57% | 75,02% |\n| Tríplice Viral D1 | 95% | 86,24% | 92,61% | 86,67% | 74,03% | 65,93% |\n| Tríplice Viral D2 | 95% | 72,94% | 76,89% | 81,55% | 62,82% | 49,62% |\n| Tetraviral (SRC+VZ) | 95% | 35,44% | 33,26% | 34,24% | 20,71% | 5,70% |\n| Poliomielite | 95% | 84,24% | 89,54% | 82,69% | 76,05% | 67,13% |\n| Febre Amarela | 95% | 47,37% | 59,50% | 84,19% | 57,20% | 55,56% |\n| Hepatite A | 95% | 78,94% | 82,69% | 85,02% | 79,57% | 64,50% |\n\nConsiderando as informações apresentadas no texto e no gráfico, assinale a opção correta.",
+    "alternativas": {
+      "A": "O percentual de vacinação com o imunizante da poliomielite se manteve constante na maior parte do período de 2017 a 2021.",
+      "B": "A baixa cobertura vacinal de crianças menores de um ano de idade é um dos indicadores de baixo desempenho das políticas públicas de atenção primária em saúde.",
+      "C": "A cobertura vacinal de crianças menores de um ano de idade foi muito variável, com alto índice vacinal da BCG e média cobertura da vacina tetraviral, no período de 2017 a 2021.",
+      "D": "O aumento da taxa de vacinação infantil contra a febre amarela em 2021, em comparação com o índice registrado em 2017, revela que as campanhas de conscientização da população foram bem-sucedidas quanto ao alcance da meta de vacinação contra essa enfermidade.",
+      "E": "A pandemia de Covid-19, ao ampliar a conscientização da população sobre a necessidade de manter alto índice vacinal para evitar o reaparecimento de doenças infectocontagiosas, contribuiu para o aumento da cobertura vacinal contra outras doenças, conforme indicado no gráfico."
+    },
+    "comentarios": {
+      "A": "Incorreto. Conforme a tabela, os percentuais da vacina contra a poliomielite foram 84,24% (2017), 89,54% (2018), 82,69% (2019), 76,05% (2020) e 67,13% (2021). Houve uma queda acentuada, e não uma manutenção constante.",
+      "B": "Correto. O Programa Nacional de Imunizações (PNI) é uma das estratégias mais importantes e bem-sucedidas da Atenção Primária à Saúde (APS) no Brasil. A queda nas coberturas vacinais, como a demonstrada no gráfico e no texto, reflete diretamente dificuldades na APS, seja por problemas de acesso, desinformação, sobrecarga do sistema ou gestão, sendo um importante indicador de desempenho das políticas de saúde pública.",
+      "C": "Incorreto. A cobertura da vacina tetraviral foi consistentemente muito baixa durante todo o período (variando de 35,44% a apenas 5,70%), muito abaixo da meta de 95%. Não pode ser considerada uma 'média cobertura'.",
+      "D": "Incorreto. Embora a vacinação contra a febre amarela tenha apresentado um aumento de 2017 (47,37%) para 2021 (55,56%), o valor está muito distante da meta de 95%. Portanto, não se pode afirmar que as campanhas foram bem-sucedidas em alcançar a meta.",
+      "E": "Incorreto. O gráfico evidencia uma tendência geral de queda na cobertura da maioria das vacinas no período da pandemia (2020-2021). A pandemia de Covid-19 é frequentemente associada à desmobilização e dificuldade de acesso aos serviços de vacinação de rotina, e não a um aumento da cobertura para outras doenças."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": [
+      "Pediatria",
+      "Saúde Coletiva",
+      "Medicina de Família e Comunidade"
+    ],
+    "subtopicos": [
+      "Programa Nacional de Imunizações (PNI)",
+      "Cobertura Vacinal",
+      "Atenção Primária à Saúde",
+      "Vigilância Epidemiológica",
+      "Doenças Imunopreveníveis"
+    ],
+    "createdAt": "2025-07-20T22:20:15Z"
+  },
+  {
+    "id": "b2c3d4e5-f6g7-8901-2345-67890abcdef1",
+    "enunciado": "TEXTO 1\nA Inteligência Artificial (IA) generativa é capaz de criar novos dados, únicos, que possibilitam aprender por conta própria, indo além do que a tecnologia tradicional proporciona, visto que esta precisa de intervenção humana. Um exemplo da IA generativa é o ChatGPT, que pode gerar imagens, músicas e textos completamente novos. Entre outras coisas, por meio da IA generativa, é possível elaborar modelos de previsão de testes clínicos, realizar a identificação de padrões em exames médicos e, ainda, auxiliar no diagnóstico de doenças.\n\nTEXTO 2\nAcredita-se que a tecnologia de IA generativa será disruptiva e, portanto, capaz de alterar drasticamente a maneira como o ser humano se relaciona com as máquinas. O uso da IA generativa pode causar importante revolução no segmento de produção de conteúdo. Muitas dessas consequências poderão ser maléficas para diversos setores da sociedade. Além do mau uso dessa tecnologia e das questões éticas, avalia-se que ela pode agravar a desigualdade econômico-social, tanto entre nações quanto entre indivíduos da mesma nação.\n\nConsiderando os textos apresentados, é correto afirmar que a IA generativa",
+    "alternativas": {
+      "A": "proporciona novos recursos de linguagem que geram tecnologias capazes de realizar interações próprias dos seres humanos.",
+      "B": "restringe o aprendizado ao que é legalmente estabelecido e útil ao ser humano, o que facilita seu modo de agir no mundo do conhecimento e do trabalho.",
+      "C": "promove a igualdade econômico-social ao substituir o ser humano no exercício de profissões cujas atividades sejam repetitivas e exijam pouco conhecimento.",
+      "D": "gera pouco impacto socioeconômico em países com elevado desenvolvimento tecnológico, pois, neles, os processos de criação e inovação já estão bem consolidados.",
+      "E": "estimula o desenvolvimento intelectual dos seres humanos, uma vez que ela assume parte do conhecimento, resolvendo problemas antes delegados apenas a especialistas."
+    },
+    "comentarios": {
+      "A": "Correto. O Texto 1 afirma que a IA generativa pode 'gerar imagens, músicas e textos completamente novos', e o Texto 2 diz que ela pode 'alterar drasticamente a maneira como o ser humano se relaciona com as máquinas'. Juntas, essas ideias apoiam a conclusão de que a IA proporciona novos recursos (criação de conteúdo textual e de outras mídias) que permitem interações que antes eram exclusivas dos seres humanos (como diálogo, resumo e criação artística).",
+      "B": "Incorreto. Os textos não mencionam nenhuma restrição legal ou utilitária inerente ao aprendizado da IA. Pelo contrário, o Texto 2 levanta preocupações sobre 'mau uso' e 'questões éticas', indicando que essas barreiras não são intrínsecas à tecnologia, mas sim desafios sociais e regulatórios a serem enfrentados.",
+      "C": "Incorreto. Esta alternativa contradiz diretamente o Texto 2, que afirma que a IA generativa 'pode agravar a desigualdade econômico-social'.",
+      "D": "Incorreto. O Texto 2 descreve a tecnologia como 'disruptiva' e capaz de causar uma 'importante revolução', o que sugere um impacto significativo em todas as sociedades, incluindo as tecnologicamente avançadas, e não um 'pouco impacto'.",
+      "E": "Incorreto. Embora a IA possa resolver problemas complexos, os textos não fornecem base para afirmar que ela necessariamente 'estimula o desenvolvimento intelectual dos seres humanos'. O Texto 2, ao mencionar 'consequências maléficas', sugere que os impactos podem ser negativos ou, no mínimo, ambíguos, não garantindo um estímulo intelectual."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Saúde Coletiva"],
+    "subtopicos": [
+      "Inteligência Artificial em Saúde",
+      "Tecnologia e Sociedade",
+      "Ética Médica",
+      "Inovação em Saúde"
+    ],
+    "createdAt": "2025-07-20T22:21:44Z"
+  },
+  {
+    "id": "c4d5e6f7-g8h9-0123-4567-890abcdef12",
+    "enunciado": "Os seguintes ícones foram utilizados em um estudo realizado por um grupo de trabalho de monitoramento da relação das mulheres com a mobilidade urbana na cidade de São Paulo. Na pesquisa, perguntou-se às mulheres como elas se sentiam nas situações representadas por tais imagens.\n\nAs respostas relativas a cada tipo de mobilidade urbana são apresentadas a seguir.\n\n| Situação de Mobilidade | Sentimentos Associados |\n| :--- | :--- |\n| **Ando a pé** | Atenta, **Insegura**, Cansada, Ansiosa |\n| **Pego o ônibus** | Desconfortável, **Insegura**, Péssima |\n| **Ando de bicicleta** | **Não ando**, Livre |\n| **Ando de Metrô** | Atenta aos assédios, Observada, **Desconfiada**, Um pouco mais segura |\n| **Ando de trem** | **Em pânico**, Apertada |\n| **Frequento o espaço público** | Nem fico, tenho medo, **Passo correndo**, Em alerta |\n\nConsiderando o estudo apresentado e relacionando o trabalho de monitoramento social das necessidades de mulheres no contexto urbano aos pressupostos do direito à cidade, avalie as afirmações a seguir.\n\nI. A predominância de comentários negativos indica o medo generalizado que as mulheres sentem ao se deslocarem ativamente pela cidade, inclusive quanto à percepção de seu corpo no espaço urbano.\n\nII. Os comentários negativos sobre os modos coletivos de transporte estão relacionados à lotação nesses meios e a situações de assédio, tendo sido o metrô avaliado como um espaço um pouco mais seguro para as mulheres, em comparação com outras formas de mobilidade.\n\nIII. Os comentários negativos refletem a percepção das mulheres quanto ao perigo a que se expõem e sugerem que o medo relacionado à vulnerabilidade de gênero aponta para uma geografia particular nas cidades, em que os meios de transporte afetam os movimentos rotineiros das mulheres no espaço urbano.\n\nÉ correto o que se afirma em",
+    "alternativas": {
+      "A": "I, apenas.",
+      "B": "III, apenas.",
+      "C": "I e II, apenas.",
+      "D": "II e III, apenas.",
+      "E": "I, II e III."
+    },
+    "comentarios": {
+      "A": "Incorreto. A afirmação I está correta, mas a alternativa está incompleta, pois as afirmações II e III também são conclusões válidas a partir dos dados apresentados na tabela.",
+      "B": "Incorreto. A afirmação III está correta, mas a alternativa está incompleta, pois as afirmações I e II também são conclusões válidas e diretamente observáveis nos dados.",
+      "C": "Incorreto. As afirmações I e II estão corretas, mas a alternativa omite a afirmação III, que também é uma interpretação correta dos dados ao relacionar o medo à criação de uma 'geografia particular' que limita a mobilidade feminina no exercício do seu direito à cidade.",
+      "D": "Incorreto. As afirmações II e III estão corretas, mas a alternativa omite a afirmação I, que corretamente aponta para o medo generalizado das mulheres no espaço urbano com base na predominância de sentimentos negativos em quase todas as situações.",
+      "E": "Correto. Todas as três afirmações são interpretações válidas dos dados. (I) A grande quantidade de respostas como 'Insegura', 'Em pânico' e 'Passo correndo' demonstra um medo generalizado. (II) As respostas para transporte coletivo apontam para problemas de assédio ('Atenta aos assédios') e lotação ('Apertada'), com o metrô sendo percebido como 'um pouco mais seguro'. (III) O conjunto de dados mostra como o medo associado ao gênero molda o uso do espaço urbano ('Não ando', 'Passo correndo'), afetando as rotinas e criando barreiras, o que limita o pleno direito à cidade para as mulheres."
+    },
+    "alternativa_correta": "E",
+    "areas_principais": [
+      "Saúde Coletiva",
+      "Medicina de Família e Comunidade",
+      "Saúde Mental"
+    ],
+    "subtopicos": [
+      "Determinantes Sociais da Saúde",
+      "Violência de Gênero",
+      "Saúde e Espaço Urbano",
+      "Direito à Cidade",
+      "Saúde Mental e Sociedade"
+    ],
+    "createdAt": "2025-07-20T22:22:38Z"
+  },
+  {
+    "id": "e8f9a0b1-c2d3-4e5f-6g7h-8i9j0k1l2m3n",
+    "enunciado": "No Brasil, os idosos têm sido cada vez mais obrigados a permanecer no trabalho formal ou informal, mesmo após a aposentadoria, visto que os recursos provenientes desta, na maioria dos casos, são insuficientes para a manutenção dos indivíduos. Um fator que pode ter agravado essa situação foi a aprovação da reforma previdenciária de 2019, que modificou as regras de idade e contribuição para o acesso ao direito ao benefício da aposentadoria. Tal mudança pode ter resultado em um número ainda maior de idosos que disputam com as populações jovens e com sistemas de automação, no mercado atual, o trabalho precarizado. Essa situação contribui para o acirramento do preconceito contra essa faixa etária, denominado etarismo.\n\nConsiderando o texto apresentado, avalie as afirmações a seguir.\nI. O conceito de etarismo fundamenta-se no fato de os idosos terem capacidade de trabalho reduzida e imporem custo elevado à previdência social, o que compromete a sua sustentabilidade econômica.\nII. As ações legislativas que visem ao prolongamento do tempo de atuação da população idosa no mercado de trabalho devem ser acompanhadas por uma política de promoção da saúde e da qualidade de vida.\nIII. As ações intergeracionais no mercado de trabalho têm como premissa o desenvolvimento de tecnologias que dotem o idoso de capacidade de trabalho equivalente à de seus colegas jovens.\n\nÉ correto o que se afirma em",
+    "alternativas": {
+      "A": "II, apenas.",
+      "B": "III, apenas.",
+      "C": "I e II, apenas.",
+      "D": "I e III, apenas.",
+      "E": "I, II e III."
+    },
+    "comentarios": {
+      "A": "Correto. A afirmação II está correta, pois o envelhecimento ativo e saudável pressupõe que a extensão da vida laboral seja sustentada por políticas que garantam a saúde e o bem-estar do idoso, permitindo que ele continue a trabalhar de forma digna e produtiva. As afirmações I e III estão incorretas.",
+      "B": "Incorreto. A afirmação III é falsa. A premissa das ações intergeracionais é a troca de experiências e a colaboração mútua entre diferentes faixas etárias, valorizando a diversidade, e não simplesmente a tentativa de equalizar a capacidade de trabalho do idoso à do jovem por meio da tecnologia.",
+      "C": "Incorreto. A afirmação I é falsa. Ela descreve os estereótipos que constituem o preconceito etarista como se fossem fatos. O etarismo é a discriminação baseada nesses estereótipos (preconceito), e não um conceito fundamentado na veracidade deles.",
+      "D": "Incorreto. Ambas as afirmações I e III são falsas. A afirmação I confunde o preconceito com o fato, e a III distorce o conceito de ações intergeracionais no ambiente de trabalho.",
+      "E": "Incorreto. Apenas a afirmação II está correta. As afirmações I e III contêm erros conceituais sobre o que é etarismo e o que são ações intergeracionais, respectivamente."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": [
+      "Saúde Coletiva",
+      "Clínica Médica",
+      "Medicina de Família e Comunidade"
+    ],
+    "subtopicos": [
+      "Etarismo (Ageism)",
+      "Envelhecimento Ativo e Saudável",
+      "Saúde do Idoso",
+      "Previdência Social e Saúde",
+      "Políticas Públicas para a População Idosa"
+    ],
+    "createdAt": "2025-07-20T19:25:30Z"
+  },
+  {
+    "id": "g2h3i4j5-k6l7-m8n9-o0p1-q2r3s4t5u6v7",
+    "enunciado": "Recentemente, a população carcerária feminina do Brasil tornou-se a terceira maior do mundo. A situação do encarceramento feminino por tráfico de drogas e outras situações que circundam o assunto foi tema de discussão da Secretaria de Políticas sobre Drogas do Ministério da Justiça e Segurança Pública (Senad/MJSP), em seminário realizado em abril de 2023. O evento contou com a participação de 23 países. Segundo os dados apresentados pela Senad, a incidência penal sobre drogas no Brasil é uma das principais causas de prisão de mulheres, chegando a 54% dos casos de encarceramento, contra 28% dos homens, índice que impacta em aspectos como maternidade e primeira infância.\n\nAcerca do tema apresentado, avalie as asserções a seguir e a relação proposta entre elas.\n\nI. A maioria das mulheres envolvidas em atividades do tráfico encontra-se em posições hierarquicamente inferiores, sendo classificadas como “mulas e aviões”, o que revela a reprodução, no mercado ilegal, da divisão sexual do trabalho observada no mercado formal.\n\nPORQUE\n\nII. O sistema penal agrava a situação de vulnerabilidade das mulheres encarceradas, seja pela invisibilização com que as trata, seja por meio da violência institucional que reproduz a violência estrutural das relações sociais patriarcais.\n\nA respeito dessas asserções, assinale a opção correta.",
+    "alternativas": {
+      "A": "As asserções I e II são proposições verdadeiras, e a II é uma justificativa correta da I.",
+      "B": "As asserções I e II são proposições verdadeiras, mas a II não é uma justificativa correta da I.",
+      "C": "A asserção I é uma proposição verdadeira, e a II é uma proposição falsa.",
+      "D": "A asserção I é uma proposição falsa, e a II é uma proposição verdadeira.",
+      "E": "As asserções I e II são proposições falsas."
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora ambas as asserções sejam verdadeiras, a II não é uma justificativa correta da I. A asserção I trata do papel da mulher na estrutura do crime (mercado ilegal), enquanto a asserção II trata do tratamento da mulher pelo sistema penal (após a prisão). A forma como o sistema penal agrava a vulnerabilidade não é a causa da posição subalterna da mulher na hierarquia do tráfico.",
+      "B": "Correto. Ambas as asserções são verdadeiras, mas não possuem uma relação de causalidade direta. A asserção I descreve corretamente a posição subalterna da mulher na hierarquia do tráfico de drogas, refletindo a desigualdade de gênero presente na sociedade. A asserção II descreve corretamente como o sistema prisional, com sua violência institucional e invisibilidade às questões de gênero, agrava a vulnerabilidade feminina. São dois fenômenos distintos e verdadeiros, porém um não justifica o outro.",
+      "C": "Incorreto. A asserção II é verdadeira. O sistema penal é amplamente criticado por suas falhas no tratamento das especificidades da mulher encarcerada (saúde ginecológica, maternidade, etc.), perpetuando a violência de gênero.",
+      "D": "Incorreto. A asserção I é verdadeira. Estudos sociológicos e criminológicos confirmam que mulheres ocupam, majoritariamente, posições de menor poder e maior risco no tráfico de drogas, como 'mulas' ou pequenas vendedoras.",
+      "E": "Incorreto. Ambas as asserções são proposições verdadeiras, pois descrevem com precisão dois aspectos críticos e bem documentados da relação entre gênero, crime e o sistema de justiça criminal no Brasil."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": [
+      "Saúde Coletiva",
+      "Medicina de Família e Comunidade",
+      "Saúde Mental"
+    ],
+    "subtopicos": [
+      "Saúde no Sistema Prisional",
+      "Gênero e Saúde",
+      "Política sobre Drogas",
+      "Violência Institucional",
+      "Determinantes Sociais da Saúde"
+    ],
+    "createdAt": "2025-07-20T19:26:31Z"
+  },
+  {
+    "id": "h3i4j5k6-l7m8-n9o0-p1q2-r3s4t5u6v7w8",
+    "enunciado": "A sociedade do século XXI não é mais uma sociedade disciplinar, mas, sim, uma sociedade do desempenho. Os seus habitantes também não se chamam mais sujeitos de obediência, mas, sim, sujeitos de desempenho e produção. São empresários de si mesmos.\nBYUNG-CHUL HAN. Sociedade do Cansaço. Petrópolis: Vozes, 2015 (adaptado).\n\nConsiderando o texto apresentado, avalie as afirmações a seguir.\nI. Os recursos tecnológicos, como notificações de mensagens em tempo real e controle da velocidade de áudio em redes de mensagens, são fatores que podem contribuir para a precarização das relações de trabalho na sociedade contemporânea.\nII. As medidas pessoais de proteção à saúde mental e de promoção da qualidade de vida incluem a desativação de aplicativos e mecanismos de notificações instantâneas, bem como a fixação de horários para uso profissional e uso recreativo das tecnologias digitais.\nIII. As medidas públicas de prevenção das doenças e dos danos sociais associados ao uso excessivo dos recursos tecnológicos de comunicação envolvem estímulos ao letramento digital, à alfabetização midiática e à regulamentação do uso de plataformas digitais no ambiente de trabalho.\n\nÉ correto o que se afirma em",
+    "alternativas": {
+      "A": "I, apenas.",
+      "B": "III, apenas.",
+      "C": "I e II, apenas.",
+      "D": "II e III, apenas.",
+      "E": "I, II e III."
+    },
+    "comentarios": {
+      "A": "Incorreto. A afirmação I está correta, mas a alternativa está incompleta, pois as afirmações II (medidas de proteção pessoal) e III (medidas de prevenção pública) também são afirmações válidas e coerentes com o problema apresentado.",
+      "B": "Incorreto. A afirmação III está correta, mas a alternativa está incompleta, pois as afirmações I (descrição do problema tecnológico) e II (soluções individuais) também são corretas.",
+      "C": "Incorreto. As afirmações I e II estão corretas, mas a alternativa omite a afirmação III, que amplia a discussão para o nível das políticas públicas de prevenção, complementando a análise do problema e as soluções individuais.",
+      "D": "Incorreto. As afirmações II e III estão corretas, mas a alternativa omite a afirmação I, que estabelece a conexão entre os recursos tecnológicos específicos e a precarização do trabalho na sociedade do desempenho.",
+      "E": "Correto. Todas as três afirmações são corretas e se complementam. A afirmação I identifica como as tecnologias (notificações, aceleração de áudio) contribuem para a pressão por desempenho e a precarização do trabalho. A afirmação II apresenta estratégias individuais de mitigação (higiene digital) para proteger a saúde mental. A afirmação III aborda as necessárias respostas coletivas e de políticas públicas (educação e regulamentação, como o direito à desconexão) para lidar com o problema em nível social."
+    },
+    "alternativa_correta": "E",
+    "areas_principais": [
+      "Saúde Mental",
+      "Saúde Coletiva",
+      "Medicina de Família e Comunidade"
+    ],
+    "subtopicos": [
+      "Saúde Mental e Trabalho",
+      "Síndrome de Burnout",
+      "Tecnologia e Saúde Mental",
+      "Precarização do Trabalho",
+      "Letramento Digital"
+    ],
+    "createdAt": "2025-07-20T19:27:18Z"
+  },
+  {
+    "id": "i4j5k6l7-m8n9-o0p1-q2r3-s4t5u6v7w8x9",
+    "enunciado": "Um paciente com 55 anos de idade, portador de hepatite C, chega a um hospital acompanhado por familiares devido a sonolência excessiva e desorientação. Os acompanhantes não sabem informar a respeito da diurese ou evacuação e negam sangramento aparente. Ao exame físico, o paciente encontra-se ictérico (+1/+4), apresenta Glasgow de 11 (AO:3; RV:3; RM:5), sem déficits motores. Verificam-se ainda: aranhas vasculares no tórax, presença de flapping e eritema palmar; abdome globoso, tenso e doloroso difusamente à palpação, apresentando circulação colateral e sinal de piparote positivo.\n\nRealizada a paracentese, obteve-se o resultado a seguir.\n\n| Categoria | Análise | Resultado | Referência |\n| :--- | :--- | :--- | :--- |\n| **Aspecto** | - | Amarelo citrino | - |\n| **Citometria**| Hemácias | 50 U/L | < 150 U/L |\n| | Leucócitos | 720 U/L | < 500 U/L |\n| **Citologia** | Neutrófilos | 65% (470) | < 50% |\n| | Linfócitos | 28% (201) | < 50% |\n| | Monócitos | 4% (28) | < 20% |\n| | Eosinófilos | 3% (21) | < 10% |\n| **Bioquímica**| Glicose | 80 mg/dL | 70 a 110 mg/dL |\n| | Proteína total | 4,5 g/dL | < 3,0 g/dL |\n| | Amilase | 75 U/L | Até 300,0 U/L |\n| | Triglicerídeos | 110 U/L | Até 200,0 U/L |\n| | DHL | 200 U/L | Até 200,0 U/L |\n| **Bacterioscopia**| - | Negativa | Negativa |\n\nCom base na história clínica do paciente e na análise do líquido ascítico, assinale a opção que apresenta a conduta inicial mais completa e adequada.",
+    "alternativas": {
+      "A": "Passar sonda nasogástrica; iniciar lactulona, antibiótico de ação intraluminal, como metronidazol, e espironolactona.",
+      "B": "Passar sonda nasogástrica; iniciar lactulona, cefalosporina de 3ª geração endovenosa, associada a albumina e espironolactona.",
+      "C": "Administrar flumazenil endovenoso; iniciar cefalosporina de 3ª geração endovenosa, associada a albumina e diurético de alça endovenoso.",
+      "D": "Administrar flumazenil endovenoso; iniciar lactulona, antibiótico de ação intraluminal, como metronidazol, e diurético de alça endovenoso.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora a lactulona para encefalopatia hepática e a espironolactona para ascite estejam indicadas, o metronidazol não é o antibiótico de primeira linha para PBE (a escolha são cefalosporinas de 3ª geração). Além disso, a conduta omite a reposição de albumina, crucial para prevenir a síndrome hepatorrenal.",
+      "B": "Correto. Esta é a conduta mais completa. O paciente apresenta Encefalopatia Hepática (EH) e Peritonite Bacteriana Espontânea (PBE), confirmada pelo achado de 470 neutrófilos/mm³ no líquido ascítico (> 250/mm³). O tratamento consiste em: 1) Lactulona (via SNG se necessário) para a EH; 2) Cefalosporina de 3ª geração (ex: Ceftriaxone) para a PBE; 3) Albumina para reduzir o risco de síndrome hepatorrenal e mortalidade na PBE; 4) Espironolactona como início do manejo da ascite a longo prazo.",
+      "C": "Incorreto. O uso de flumazenil não é rotina na encefalopatia hepática, sendo restrito a casos de suspeita de intoxicação por benzodiazepínicos. A conduta omite a lactulona, que é a base do tratamento para a EH. O diurético de alça não é a primeira escolha para o manejo da ascite cirrótica.",
+      "D": "Incorreto. A conduta erra ao indicar flumazenil e um antibiótico que não é o de primeira linha para PBE (metronidazol). Omite também a reposição de albumina, que é fundamental no tratamento da PBE.",
+      "E": "Questão com apenas quatro alternativas."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Cirrose Hepática",
+      "Hipertensão Portal",
+      "Encefalopatia Hepática",
+      "Peritonite Bacteriana Espontânea (PBE)",
+      "Ascite"
+    ],
+    "createdAt": "2025-07-20T22:30:11Z"
+  },
+  {
+    "id": "c1a2b3d4-e5f6-a7b8-c9d0-e1f2a3b4c5d6",
+    "enunciado": "Uma paciente com 32 anos de idade, branca, procura ambulatório com queixa de nervosismo e palpitações, relata ter percebido que seus olhos estão arregalados e que perdeu peso, embora esteja com apetite aumentado. Relata, ainda, discreta intolerância ao calor e o fato de uma amiga ter notado algo estranho em seu pescoço, o que a levou a passar a mão no local e sentir um caroço na região. Nega disfagia ou dispneia.\n\nConsiderando o caso clínico, assinale a opção que apresenta, respectivamente, o procedimento correto do exame físico e a alteração esperada, compatível com o caso.",
+    "alternativas": {
+      "A": "Pedir à paciente que fique de frente, posicionar as duas mãos na região anterior do pescoço dela, pedindo-lhe que degluta e respire; alteração esperada: nodulação única móvel.",
+      "B": "Pedir à paciente que fique em decúbito dorsal, posicionar a mão na região anterior do pescoço dela, solicitando-lhe que não degluta ou respire; alteração esperada: aumento difuso da glândula.",
+      "C": "Pedir à paciente que degluta enquanto observa o contorno do pescoço, depois posicionar-se atrás da paciente e palpar o pescoço dela com os dedos de ambas as mãos; alteração esperada: aumento difuso da glândula.",
+      "D": "Pedir à paciente que sente, observar lateralmente a região anterior do pescoço durante a deglutição e, na mesma posição lateral e, com os dedos indicadores, palpar o pescoço dela; alteração esperada: nodulação única móvel.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A técnica descrita é inadequada (pedir para respirar durante a palpação não faz parte da manobra). Além disso, o achado de 'nodulação única' é menos provável que o bócio difuso no quadro clínico sugestivo de Doença de Graves.",
+      "B": "Incorreto. A posição em decúbito dorsal não é a ideal para o exame da tireoide, que é feito com o paciente sentado. Impedir a deglutição é um erro, pois este movimento é fundamental para delimitar a glândula e avaliar sua mobilidade.",
+      "C": "Correto. Esta alternativa descreve a técnica semiológica clássica e mais adequada para o exame da tireoide (Manobra de Lahey): inspeção seguida de palpação posterior. A palpação por trás do paciente permite um melhor relaxamento da musculatura cervical. O achado de 'aumento difuso da glândula' (bócio difuso) é o esperado para a principal hipótese diagnóstica, a Doença de Graves.",
+      "D": "Incorreto. A abordagem puramente lateral não é a técnica padrão, e a palpação apenas com os dedos indicadores é menos eficaz que a manobra bimanual. O achado de 'nodulação única' também é menos provável neste contexto.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Hipertireoidismo",
+      "Doença de Graves",
+      "Exame Físico da Tireoide",
+      "Semiologia Médica",
+      "Endocrinologia"
+    ],
+    "createdAt": "2025-07-20T19:31:52Z"
+  },
+  {
+    "id": "e5f6a7b8-c9d0-e1f2-a3b4-c5d6e7f8a9b0",
+    "enunciado": "Uma paciente com 66 anos de idade comparece à consulta na unidade básica de saúde, com queixa de tosse produtiva, com escarro amarelado, fadiga, calafrios e mal-estar. Relata dispneia de decúbito e que, nas duas últimas noites, precisou usar dois travesseiros para conseguir dormir, embora, normalmente, use somente um. Afirma que sentiu piora dos sintomas nos últimos dias. Nega dor precordial, dor no ombro ou braço, mialgia, hemoptise, artralgia, náuseas, vômitos, alteração no hábito intestinal. Informa que não fuma e que é portadora de hipertensão arterial diagnosticada há 10 anos, controlada com uso de losartana 50 mg, duas vezes ao dia; que tem história de asma brônquica na infância; que não usa outros medicamentos e que nunca fez cirurgia. Informa, ainda, uso social de bebidas alcoólicas. Realizam-se os exames necessários, cujos resultados são descritos a seguir.\nAo exame físico, apresenta: IMC de 25 kg/m2; T. Ax de 37,5 °C; PA de 136 × 80 mmHg; FC de 88 bpm. À ausculta cardíaca, verificam-se ritmo cardíaco regular, bulhas normofonéticas, sem sopros, sem atrito pericárdico. À ausculta pulmonar, verifica-se murmúrio vesicular presente em ambos os pulmões, presença de estertores crepitantes na base do pulmão esquerdo, inalterados pela tosse ou respiração. Os exames da cavidade oral e do abdome apresentam-se sem alterações, verificando-se ainda ausência de edema de membros inferiores e saturação de O2 de 98% (VR: > 95%).\nOs resultados dos exames laboratoriais, apresentam leucograma: leucócitos = 9 500 mm3 (VR: 4 500 a 11 000 mm3); neutrófilos = 80% (VR: 40 a 70%); linfócitos = 13% (VR: 23 a 33%); monócitos = 3% (VR: 3 a 7%); eosinófilos = 3% (VR: 1 a 3%); basófilos = 1% (VR: 0,5 a 1%).\nA radiografia de tórax, visualizou-se infiltrado na base do pulmão esquerdo, sem outros achados.\n\nConsiderando-se o caso apresentado, a hipótese diagnóstica e a conduta esperada correspondem, respectivamente, a",
+    "alternativas": {
+      "A": "derrame pleural; realização de toracocentese.",
+      "B": "pneumotórax; realização de drenagem pleural fechada em selo d’água.",
+      "C": "insuficiência cardíaca; hospitalização e diurético de alça por via venosa.",
+      "D": "pneumonia; prescrição de claritomicina, via oral, 250 mg duas vezes ao dia, por sete dias.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A presença de estertores crepitantes e um infiltrado na radiografia são característicos de consolidação parenquimatosa (pneumonia), e não de derrame pleural, que se apresentaria com outros sinais clínicos (macicez à percussão, abolição do murmúrio vesicular) e radiológicos (velamento do seio costofrênico).",
+      "B": "Incorreto. O quadro clínico e radiológico não é compatível com pneumotórax, que se manifestaria com dor torácica súbita, dispneia e ausência de murmúrio vesicular no lado afetado, além de hipertransparência na radiografia.",
+      "C": "Incorreto. Embora a paciente tenha ortopneia (sugestivo de congestão), o quadro é predominantemente infeccioso (tosse produtiva, febrícula, calafrios, neutrofilia) com achados focais no pulmão (estertores e infiltrado). A hipótese principal é pneumonia. Tratar apenas para insuficiência cardíaca seria um erro.",
+      "D": "Correto. O conjunto de sinais, sintomas (tosse produtiva, febrícula), exame físico (estertores crepitantes focais), exames laboratoriais (neutrofilia) e radiografia (infiltrado focal) firmam o diagnóstico de Pneumonia Adquirida na Comunidade (PAC). Pelo escore de gravidade CURB-65 (pontuação = 1, pela idade), a paciente tem baixo risco e pode ser tratada ambulatorialmente. A prescrição de um macrolídeo, como a claritomicina, é uma das opções terapêuticas de primeira linha para este cenário.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Clínica Médica", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Pneumonia Adquirida na Comunidade (PAC)",
+      "Diagnóstico Diferencial de Dispneia",
+      "Interpretação de Exames Laboratoriais",
+      "Antibioticoterapia",
+      "Escores de Gravidade (CURB-65)"
+    ],
+    "createdAt": "2025-07-20T19:33:34Z"
+  },
+  {
+    "id": "f6a7b8c9-d0e1-f2a3-b4c5-d6e7f8a9b0c1",
+    "enunciado": "Um paciente com 78 anos de idade, tabagista, é trazido à sala de emergência por apresentar insuficiência respiratória aguda. Está em tratamento de câncer e apresenta Diretiva Antecipada de Vontade (Testamento Vital) que manifesta o desejo de não ser entubado. Foi iniciado suporte não invasivo com oxigênio e morfina e foram chamados os acompanhantes. Na presença do paciente e da família, esposa e filhos, é confirmado o diagnóstico de adenocarcinoma de pulmão, sem resposta à quimioterapia, com metástase óssea e hepática. O paciente repete que não gostaria de ser entubado. A filha, advogada, deseja que se faça tudo para manter o pai vivo e informa que, caso isso não seja feito, irá processar o hospital e os médicos por omissão de socorro.\n\nConsiderando o caso apresentado e aspectos éticos envolvidos, conclui-se que",
+    "alternativas": {
+      "A": "a vontade do paciente, caso ele apresente metástase cerebral, não poderá ser considerada e, portanto, ele deverá ser entubado conforme a vontade da família.",
+      "B": "o plantonista deverá entrar em contato com o diretor clínico do hospital para a tomada de decisão quanto ao tratamento, em conjunto com a família do paciente.",
+      "C": "o paciente, caso necessário, deverá ser entubado e levado à unidade de terapia intensiva para se evitar processo judicial na esfera civil e criminal.",
+      "D": "as medidas de conforto para o paciente deverão ser adotadas e os familiares orientados quanto à vontade do paciente e à terminalidade da doença.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A autonomia do paciente, expressa em sua Diretiva Antecipada de Vontade e reafirmada verbalmente enquanto lúcido, prevalece sobre a vontade da família, conforme a Resolução CFM nº 1.995/2012. Uma eventual perda de capacidade futura não invalida a diretiva feita previamente.",
+      "B": "Incorreto. A decisão final sobre o plano de cuidados, neste caso, cabe ao paciente em conjunto com a equipe médica. Embora a comunicação com a família seja crucial, a decisão não deve ser delegada ao diretor clínico nem negociada contra a vontade expressa e legalmente amparada do paciente.",
+      "C": "Incorreto. Praticar a medicina defensiva, ou seja, indicar um procedimento fútil (considerado distanásia) e contrário à vontade do paciente para evitar um processo, é uma grave infração ética. A conduta médica deve ser pautada pela bioética e pela lei, não pelo medo de litígio.",
+      "D": "Correto. Esta conduta respeita a autonomia do paciente e sua Diretiva Antecipada de Vontade. Diante de uma doença terminal e da recusa de medidas invasivas e fúteis, a indicação correta é a implementação de Cuidados Paliativos, focando em medidas de conforto (como oxigênio e morfina). A comunicação clara e empática com a família sobre a terminalidade e o respeito aos desejos do paciente é parte essencial da boa prática médica.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": [
+      "Clínica Médica",
+      "Medicina de Família e Comunidade",
+      "Saúde Coletiva"
+    ],
+    "subtopicos": [
+      "Bioética",
+      "Diretivas Antecipadas de Vontade (Testamento Vital)",
+      "Cuidados Paliativos",
+      "Autonomia do Paciente",
+      "Terminalidade da Vida",
+      "Distanásia"
+    ],
+    "createdAt": "2025-07-20T19:34:25Z"
+  },
+  {
+    "id": "a7b8c9d0-e1f2-g3h4-i5j6-k7l8m9n0o1p2",
+    "enunciado": "Um agente comunitário de uma unidade de estratégia de saúde da família, em visita a uma puérpera, encontra a situação apresentada a seguir.\nA família é formada por: um pai, com 32 anos de idade, trabalhador em empresa de embalagens plásticas, registrado; uma mãe, com 28 anos de idade, diarista, autônoma, com ensino fundamental incompleto; a avó materna, com 58 anos de idade, do lar, hipertensa, diabética, cuidadora das quatro crianças do casal; uma menina de 2 anos de idade; três meninos, um de 7 anos de idade, outro de 4 anos de idade, e um recém-nascido (peso de nascimento de 2 150 g, Apgar de 7-10). A mãe, G5P5A0, relata ter perdido um filho de 2 anos de idade por pneumonia e bronquite, há 3 anos.\n\nConsiderando essa situação, assinale a opção correta.",
+    "alternativas": {
+      "A": "O emprego regular dos adultos e a existência de três gerações apontam para estrutura familiar organizada e de baixo risco.",
+      "B": "A família conta com dois adultos trabalhando, apresenta organização doméstica e quatro filhos saudáveis, o que a classifica como sem riscos para observação próxima.",
+      "C": "O baixo peso ao nascimento do recém-nascido, o óbito de criança com idade inferior a cinco anos, e a mãe com escolaridade inferior a oito anos são fatores de risco.",
+      "D": "A família, apesar da morte da criança, é classificada como sem riscos, visto que só há risco quando a idade de óbito da criança é inferior a dois anos e prioriza-se o período perinatal.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. Esta afirmação ignora múltiplos e graves fatores de risco, como a baixa escolaridade materna, o baixo peso do recém-nascido e a história de óbito de um filho. A presença de um emprego formal e três gerações não anula esses riscos, que classificam a família como de alto risco.",
+      "B": "Incorreto. A família não pode ser classificada como de baixo risco. O trabalho da mãe é autônomo e precário, o recém-nascido tem baixo peso e há uma história de óbito infantil, o que exige acompanhamento intensivo pela equipe de saúde da família.",
+      "C": "Correto. Esta alternativa lista corretamente três dos principais indicadores de risco para a saúde materno-infantil: 1) Baixo peso ao nascer (< 2.500 g), um preditor de morbimortalidade infantil; 2) Óbito de um filho com menos de 5 anos, que indica vulnerabilidade familiar; e 3) Escolaridade materna inferior a 8 anos, um importante determinante social da saúde. A presença desses fatores classifica a família como de alto risco.",
+      "D": "Incorreto. A morte de uma criança com menos de cinco anos é um marcador de risco significativo, independentemente da idade exata (seja 1, 2 ou 4 anos). A alegação de que o risco só existe para óbitos abaixo de dois anos está errada e minimiza a gravidade da situação familiar.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": [
+      "Medicina de Família e Comunidade",
+      "Pediatria",
+      "Saúde Coletiva"
+    ],
+    "subtopicos": [
+      "Estratégia de Saúde da Família (ESF)",
+      "Risco Familiar",
+      "Determinantes Sociais da Saúde",
+      "Saúde Materno-Infantil",
+      "Vigilância em Saúde",
+      "Puericultura"
+    ],
+    "createdAt": "2025-07-20T19:35:10Z"
+  },
+  {
+    "id": "b8c9d0e1-f2g3-h4i5-j6k7-l8m9n0o1p2q3",
+    "enunciado": "Uma secundigesta com 30 anos de idade e 20 semanas de gravidez, comparece a consulta de pré-natal na unidade básica de saúde do seu bairro. Está assintomática e traz consigo o resultado do exame de glicemia de jejum, cujo resultado foi 120 mg/dL. Sabe-se que, na gestação anterior, seu filho nasceu de parto cesariana, pesando 4,4 kg.\n\nQue conduta deve ser a adotada pelo médico no referido atendimento?",
+    "alternativas": {
+      "A": "Indicar dieta com redução de carboidratos e monitorar glicemia.",
+      "B": "Solicitar teste oral de tolerância à glicose após duas semanas de dieta.",
+      "C": "Prescrever metformina associada à dieta com redução de carboidratos.",
+      "D": "Orientar dieta hipocalórica, prescrever insulinoterapia e monitorar glicemia.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Correto. O diagnóstico de Diabetes Mellitus Gestacional (DMG) é feito com glicemia de jejum entre 92 e 125 mg/dL. Com o resultado de 120 mg/dL, a paciente já tem o diagnóstico firmado, não necessitando de outros testes. A conduta inicial para DMG é sempre a mudança de estilo de vida, que inclui orientação dietética e atividade física, associada ao monitoramento da glicemia capilar.",
+      "B": "Incorreto. O Teste Oral de Tolerância à Glicose (TOTG) não é necessário, pois o valor da glicemia de jejum (120 mg/dL) já é suficiente para diagnosticar DMG, segundo as diretrizes do Ministério da Saúde e da Sociedade Brasileira de Diabetes.",
+      "C": "Incorreto. A terapia medicamentosa (seja com metformina ou insulina) não é a primeira linha de tratamento. Ela é indicada apenas se as metas glicêmicas não forem atingidas com a mudança do estilo de vida (dieta e exercícios).",
+      "D": "Incorreto. A insulinoterapia é reservada para os casos em que a mudança do estilo de vida não é suficiente para o controle glicêmico. Iniciar a insulina neste primeiro momento, sem antes tentar a abordagem não farmacológica, seria inadequado.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Ginecologia e Obstetrícia", "Clínica Médica"],
+    "subtopicos": [
+      "Diabetes Mellitus Gestacional (DMG)",
+      "Pré-natal de Alto Risco",
+      "Rastreamento e Diagnóstico de DMG",
+      "Endocrinopatias na Gestação"
+    ],
+    "createdAt": "2025-07-20T19:36:03Z"
+  },
+  {
+    "id": "c9d0e1f2-g3h4-i5j6-k7l8-m9n0o1p2q3r4",
+    "enunciado": "Um menino com 4 anos de idade chega, trazido pela família, para atendimento na emergência devido a prostração e febre nas últimas seis horas. Os familiares relatam que ele apresentou episódios de vômito e irritabilidade, tendo recusado alimentos nos dois últimos dias. Ao exame físico do paciente, verificam-se: T. Ax. de 38,5 °C, FC de 120 bpm e FR de 20 irpm. Apresenta-se desidratado (+2/+4), hipocorado (+1/+4), acianótico, com petéquias em região do tornozelo direito, irritado, choroso, pouco ativo, com rigidez à flexão cervical; com bulhas cardíacas normofonéticas; murmúrio vesicular diminuído em bases, sem crepitações ou sibilos.\n\nConsiderando-se o caso clínico apresentado, deve-se realizar",
+    "alternativas": {
+      "A": "punção lombar diagnóstica, seguida de tratamento empírico com antiviral, antieméticos e antipiréticos, e reavaliação.",
+      "B": "hidratação endovenosa vigorosa, seguida de tratamento com sintomáticos, como antieméticos e antipiréticos, e reavaliação.",
+      "C": "punção lombar diagnóstica, iniciar antibioticoterapia empírica e notificar o caso, pois se trata de agravo de notificação compulsória.",
+      "D": "hidratação endovenosa vigorosa, seguida de tratamento empírico com antibioticoterapia de amplo espectro para infecção respiratória.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A suspeita principal é de meningite bacteriana, especialmente pela presença de petéquias. Iniciar tratamento apenas com antiviral seria um erro grave. A antibioticoterapia empírica é mandatória e deve ser iniciada imediatamente.",
+      "B": "Incorreto. Esta conduta é perigosamente incompleta. Tratar apenas os sintomas e a desidratação, sem abordar a suspeita de meningite bacteriana com antibióticos, levaria a um desfecho fatal. A antibioticoterapia é a medida mais urgente.",
+      "C": "Correto. O quadro clínico (febre, prostração, vômitos, rigidez de nuca) e a presença de petéquias são altamente sugestivos de meningite bacteriana (provavelmente meningocócica). A conduta correta é iniciar antibioticoterapia empírica para o SNC o mais rápido possível (idealmente após coleta de hemoculturas), realizar a punção lombar para confirmação diagnóstica e, por se tratar de doença meningocócica (principal suspeita) ou outras meningites bacterianas, notificar compulsoriamente o caso à vigilância epidemiológica.",
+      "D": "Incorreto. Embora a antibioticoterapia seja necessária, o foco não é uma infecção respiratória. O esquema antibiótico deve ter boa penetração no sistema nervoso central para tratar a meningite.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Pediatria", "Saúde Coletiva"],
+    "subtopicos": [
+      "Meningites Bacterianas",
+      "Doença Meningocócica",
+      "Emergências Pediátricas",
+      "Vigilância Epidemiológica",
+      "Doenças de Notificação Compulsória"
+    ],
+    "createdAt": "2025-07-20T19:36:03Z"
+  },
+  {
+    "id": "g8h9i0j1-k2l3-m4n5-o6p7-q8r9s0t1u2v3",
+    "enunciado": "Um rapaz com 17 anos de idade, vítima de acidente automobilístico, é admitido na emergência com fratura de bacia e traumatismo craniano, com possível fratura de base de crânio. Ao exame físico, apresenta Glasgow de 11, FC de 120 bpm, pressão arterial normal, boa perfusão periférica, pulsos de boa amplitude; saturação de O2 de 95%. Enquanto se aguardava a realização da tomografia computadorizada, o pulso do paciente tornou-se fino, houve rebaixamento do sensório (Glasgow de 8) e queda da saturação de O2.\n\nCom relação ao caso clínico apresentado, a conduta prioritária é a",
+    "alternativas": {
+      "A": "administração de duas unidades de concentrado de hemácias.",
+      "B": "estabilização da fratura de bacia e administração de cristaloides.",
+      "C": "pré-oxigenação com oxigênio a 100% seguida de entubação orotraqueal.",
+      "D": "ventilação não invasiva na tentativa de se evitar a entubação orotraqueal.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A reposição volêmica com hemoderivados é uma medida para o manejo da circulação (o 'C' do ABCDE), que é importante devido à fratura de bacia. No entanto, a prioridade máxima neste momento é a via aérea (o 'A'), que está comprometida pela queda do nível de consciência (Glasgow ≤ 8).",
+      "B": "Incorreto. A estabilização da fratura de bacia e a infusão de cristaloides são condutas importantes para o 'C' (Circulação), mas a via aérea comprometida (Glasgow ≤ 8) tem prioridade absoluta sobre a circulação no manejo do trauma, conforme o protocolo ATLS.",
+      "C": "Correto. A queda do nível de consciência para uma Escala de Coma de Glasgow ≤ 8 é uma indicação formal de via aérea definitiva. A intubação orotraqueal (IOT) é a conduta prioritária para proteger a via aérea contra aspiração, permitir a ventilação e oxigenação adequadas (combatendo a queda da saturação) e facilitar o manejo do traumatismo craniano grave. A pré-oxigenação é um passo essencial da sequência rápida de intubação.",
+      "D": "Incorreto. A ventilação não invasiva (VNI) é contraindicada em pacientes com rebaixamento do nível de consciência (risco de aspiração) e em casos de trauma facial ou suspeita de fratura de base de crânio. A via aérea definitiva (IOT) é a conduta correta.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Cirurgia Geral"],
+    "subtopicos": [
+      "Atendimento Inicial ao Politraumatizado (ATLS)",
+      "Manejo de Via Aérea no Trauma",
+      "Traumatismo Cranioencefálico (TCE)",
+      "Choque Hemorrágico",
+      "Trauma Pélvico"
+    ],
+    "createdAt": "2025-07-20T19:37:05Z"
+  },
+  {
+    "id": "h9i0j1k2-l3m4-n5o6-p7q8-r9s0t1u2v3w4",
+    "enunciado": "Um paciente com 47 anos de idade, que mora sozinho e é alcoolista há 20 anos (15 doses de aguardente/dia), foi atendido em um hospital e, após o diagnóstico de gastrite, cessou o uso de álcool. Dois dias depois, apresentou tremores de extremidades, ansiedade, náuseas, insônia, irritabilidade e sudorese. No terceiro dia, evoluiu com piora dos sintomas, tremores grosseiros generalizados, agitação, alucinações visuais, auditivas e táteis, vômitos, sudorese profusa, hipertermia, taquicardia, sendo levado ao pronto atendimento pelos bombeiros. Na avaliação inicial apresentou hemograma, função renal e creatinofosfoquinase normais.\n\nPara o caso do referido paciente, a conduta indicada é",
+    "alternativas": {
+      "A": "internação em unidade de terapia intensiva e prescrição de tiamina e de diazepam em altas doses, para o tratamento de delirium tremens.",
+      "B": "internação em enfermaria e prescrição de altas doses de diazepam associado a tiamina, para tratamento de síndrome de abstinência de álcool.",
+      "C": "internação em unidade de terapia intensiva e prescrição de bromocriptina com resfriamento corporal, para tratamento de síndrome neuroléptica maligna.",
+      "D": "prescrição de diazepam, tiamina e hidratação, com retorno em 24 horas para reavaliação e encaminhamento para tratamento no centro de atenção psicossocial.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Correto. O paciente apresenta um quadro clássico de Delirium Tremens (DT), a forma mais grave da síndrome de abstinência alcoólica, caracterizada por rebaixamento do nível de consciência, alucinações multissensoriais e instabilidade autonômica (taquicardia, hipertermia, sudorese). O DT é uma emergência médica com alta mortalidade e exige internação em Unidade de Terapia Intensiva (UTI) para monitoramento e suporte. O tratamento de escolha é a sedação com altas doses de benzodiazepínicos (como o diazepam) e a reposição de tiamina para prevenção da Encefalopatia de Wernicke.",
+      "B": "Incorreto. A internação em enfermaria é insuficiente e perigosa para um paciente com Delirium Tremens. A gravidade do quadro, com instabilidade autonômica e risco de convulsões e morte, exige monitoramento intensivo que só pode ser oferecido em uma UTI ou unidade similar.",
+      "C": "Incorreto. O diagnóstico é Delirium Tremens, e não Síndrome Neuroléptica Maligna. A SNM tem uma fisiopatologia e apresentação clínica diferentes (geralmente associada ao uso de antipsicóticos, com rigidez muscular e CPK muito elevada), e o tratamento com bromocriptina está incorreto para este caso.",
+      "D": "Incorreto. Esta conduta é extremamente perigosa e representa negligência. Um paciente em Delirium Tremens não pode, em hipótese alguma, ser manejado ambulatorialmente. A falta de internação e monitoramento intensivo colocaria a vida do paciente em risco iminente.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Clínica Médica", "Saúde Mental"],
+    "subtopicos": [
+      "Síndrome de Abstinência Alcoólica",
+      "Delirium Tremens",
+      "Transtornos por Uso de Álcool",
+      "Encefalopatia de Wernicke",
+      "Emergências Psiquiátricas"
+    ],
+    "createdAt": "2025-07-20T22:38:00Z"
+  },
+  {
+    "id": "i0j1k2l3-m4n5-o6p7-q8r9-s0t1u2v3w4x5",
+    "enunciado": "Uma paciente com 31 anos de idade, preta, solteira, mãe de dois filhos (um de 5 e outro de 3 anos de idade), procura seu médico de família na unidade básica de saúde solicitando a suspensão da fluoxetina (40 mg/dia), que resultou na remissão dos sintomas do terceiro episódio depressivo. Relata que permanece assintomática e em uso regular da medicação.\n\nConsiderando o caso apresentado, assinale a opção que explicita, com base científica, o plano terapêutico a ser discutido pelo médico e pactuado entre ele e a paciente.",
+    "alternativas": {
+      "A": "Redução da dose da fluoxetina para 20 mg/dia, dose a ser mantida por pelo menos 5 anos, já que o risco de recorrência da depressão é de 60 a 70%.",
+      "B": "Redução da dose de fluoxetina para 20 mg/dia, por 30 dias e, após esse prazo, suspensão do uso, uma vez que o risco de recorrência da depressão é de 30 a 40%.",
+      "C": "Manutenção da dose de fluoxetina em 40 mg/dia, por tempo indeterminado ou pelo menos por 5 anos, já que o risco de recorrência da depressão é superior a 80%.",
+      "D": "Manutenção da fluoxetina na dose de 40 mg/dia, por pelo menos mais um ano e, após esse prazo, suspensão gradual, já que o risco de recorrência da depressão é de 50 a 60%.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A dose de manutenção do antidepressivo deve ser a mesma que levou à remissão do episódio agudo (40 mg/dia). Reduzir a dose para 20 mg/dia aumentaria o risco de recaída. Além disso, o risco de recorrência após três episódios é maior que 60-70%.",
+      "B": "Incorreto. A suspensão do antidepressivo após um terceiro episódio depressivo é fortemente desaconselhada. O risco de um novo episódio é muito alto (>80-90%), e não 30-40%. O tratamento de manutenção a longo prazo é indicado.",
+      "C": "Correto. Após três ou mais episódios depressivos, o risco de recorrência é superior a 80-90%. As diretrizes atuais recomendam a terapia de manutenção por tempo indeterminado (ou pelo menos por vários anos) para prevenir novos episódios. A medicação deve ser mantida na dose que foi eficaz para tratar o episódio agudo, neste caso, 40 mg/dia.",
+      "D": "Incorreto. O tempo de manutenção de apenas mais um ano é inadequado para uma paciente com histórico de três episódios depressivos. A recomendação é de tratamento a longo prazo ou por tempo indeterminado. O risco de recorrência também está subestimado.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Saúde Mental", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Transtorno Depressivo Maior (TDM)",
+      "Tratamento de Manutenção em Psiquiatria",
+      "Psicofarmacologia",
+      "Uso de Antidepressivos",
+      "Prevenção de Recaída e Recorrência"
+    ],
+    "createdAt": "2025-07-20T19:38:37Z"
+  },
+  {
+    "id": "j1k2l3m4-n5o6-p7q8-r9s0-t1u2v3w4x5y6",
+    "enunciado": "Um paciente com 21 anos de idade, previamente hígido, comparece a uma unidade básica de saúde, relatando que descobriu que a ex-parceira, com quem se relacionou por 3 anos, está infectada pelo HIV. Ele afirma que, no início do relacionamento, faziam uso de preservativo em todas as relações, mas que, com o tempo, pararam de usar. Conta que teve outras parceiras ocasionais, mas sempre com uso de preservativo nas relações. Afirma que nunca realizou sorologia para HIV e que doou sangue há 3 anos.\nO paciente está muito ansioso e chora durante a consulta, manifesta ter muito medo de estar com AIDS, pois comenta que “todo mundo que tem AIDS morre”, e que tem medo de ser discriminado pelos amigos e familiares. Ao exame físico, não apresenta nenhuma alteração. Após acalmá-lo e fazer o aconselhamento, o médico solicita realização de dois testes rápidos para HIV de fabricantes diferentes – ambos com resultado positivo.\n\nConsiderando esse caso, assinale a opção que indica a conduta médica correta a partir dos resultados dos referidos testes.",
+    "alternativas": {
+      "A": "Iniciar tratamento antirretroviral de imediato.",
+      "B": "Solicitar exames complementares para estadiar a infecção.",
+      "C": "Realizar genotipagem para orientar o tratamento antirretroviral.",
+      "D": "Solicitar o exame de Western-Blot para a confirmação diagnóstica.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Correto. De acordo com o protocolo do Ministério da Saúde do Brasil e as diretrizes da OMS ('tratar todos'), a terapia antirretroviral (TARV) deve ser iniciada o mais brevemente possível após a confirmação do diagnóstico de HIV, independentemente da contagem de linfócitos T-CD4 ou da fase clínica. Os dois testes rápidos positivos já confirmam o diagnóstico, permitindo o início imediato do tratamento.",
+      "B": "Incorreto. Embora exames complementares como a contagem de CD4 e a carga viral sejam fundamentais para o estadiamento e monitoramento basal, eles não devem atrasar o início da terapia antirretroviral. A recomendação atual é iniciar a TARV e coletar os exames simultaneamente ou logo após.",
+      "C": "Incorreto. A genotipagem pré-tratamento não é recomendada de rotina para pacientes virgens de tratamento no Brasil. Ela é indicada em situações específicas, como falha virológica ou em gestantes, mas não para guiar a primeira escolha de esquema terapêutico neste paciente.",
+      "D": "Incorreto. Esta conduta está desatualizada. O fluxograma diagnóstico do Ministério da Saúde estabelece que dois testes rápidos positivos de diferentes fabricantes já são suficientes para confirmar o diagnóstico de infecção pelo HIV. O Western-Blot não é mais utilizado como teste confirmatório de rotina.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": [
+      "Clínica Médica",
+      "Medicina de Família e Comunidade",
+      "Saúde Coletiva"
+    ],
+    "subtopicos": [
+      "Infecção pelo HIV",
+      "Diagnóstico de HIV",
+      "Terapia Antirretroviral (TARV)",
+      "Aconselhamento em IST",
+      "Protocolos Clínicos e Diretrizes Terapêuticas (PCDT)"
+    ],
+    "createdAt": "2025-07-20T19:39:54Z"
+  },
+  {
+    "id": "k2l3m4n5-o6p7-q8r9-s0t1-u2v3w4x5y6z7",
+    "enunciado": "Uma mulher com 64 anos de idade leva o neto recém-nascido, com 5 dias de vida, a uma avaliação em unidade básica de saúde. Ela diz que será a cuidadora da criança, pois a filha, dependente química, abandonou o bebê logo após seu nascimento em parto hospitalar. Conta que a mãe, no pré-natal, realizou as sorologias para infecções sexualmente transmissíveis (ISTs), que se mostraram negativas ao início e ao final da gestação. O bebê apresenta baixo peso, sem outras alterações ao exame físico.\n\nConsiderando-se o caso apresentado, conclui-se que a avó do recém-nascido deve ser orientada a",
+    "alternativas": {
+      "A": "realizar aleitamento com fórmulas infantis, chás e água ou leite integral, levar o bebê para cumprir o calendário de vacinação básica e para fazer o teste do pezinho.",
+      "B": "convencer a mãe do bebê a fornecer leite materno, repetir as sorologias do bebê e de sua mãe e encaminhar o bebê para vacinação e realização do teste do pezinho.",
+      "C": "buscar meios legais para adquirir a guarda da criança, levar o bebê para ser vacinado, realizar teste do pezinho e proceder a aleitamento artificial com fórmulas fortificadas.",
+      "D": "repetir as sorologias do bebê para ISTs, procurar bancos de leite materno, para recuperação nutricional da criança, e adotar o aleitamento artificial com fórmulas fortificadas.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora a orientação para vacinação, teste do pezinho e uso de fórmula infantil esteja correta, a sugestão de oferecer chás, água ou leite integral a um recém-nascido é perigosa, contraindicada e pode levar a desnutrição, distúrbios hidroeletrolíticos e sobrecarga renal.",
+      "B": "Incorreto. Esta conduta é irrealista e potencialmente prejudicial. Tentar convencer a mãe, que abandonou o bebê e é dependente química, a amamentar não é um plano de cuidados seguro ou estável. A prioridade é garantir a nutrição do bebê de forma confiável.",
+      "C": "Correto. Esta é a orientação mais completa e adequada. Aborda os três pilares essenciais da situação: 1) O aspecto legal/social, orientando a avó a buscar a guarda para garantir a segurança e os direitos da criança; 2) As ações de saúde imediatas e obrigatórias (vacinação e teste do pezinho); e 3) A nutrição segura e adequada através do aleitamento artificial com fórmula infantil, que é a única opção viável e recomendada neste cenário.",
+      "D": "Incorreto. Não há indicação imediata para repetir as sorologias, uma vez que foram negativas durante o pré-natal. Além disso, embora o leite de banco de leite humano seja uma excelente opção, ele nem sempre é acessível, e a família precisa de um plano de alimentação primário e estável, que é a fórmula infantil.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": [
+      "Pediatria",
+      "Medicina de Família e Comunidade",
+      "Saúde Coletiva"
+    ],
+    "subtopicos": [
+      "Puericultura",
+      "Aleitamento Artificial",
+      "Triagem Neonatal (Teste do Pezinho)",
+      "Imunização Infantil",
+      "Vulnerabilidade Social na Infância",
+      "Direitos da Criança e do Adolescente"
+    ],
+    "createdAt": "2025-07-20T22:40:32Z"
+  },
+  {
+    "id": "cuid-toxo-gest-001",
+    "enunciado": "Uma primigesta com 30 anos de idade, na oitava semana de gestação, comparece a consulta de pré-natal relatando estar apreensiva devido ao resultado de alguns exames laboratoriais, que acusaram IgG e IgM positivos para toxoplasmose.\n\nConsiderando-se esse caso, que conduta deve ser adotada nesse momento?",
+    "alternativas": {
+      "A": "Repetir, em três meses, os exames de dosagens de IgG e IgM.",
+      "B": "Solicitar teste de avidez para IgG para definir a próxima conduta.",
+      "C": "Programar cordocentese após 16ª semana de gestação para o diagnóstico.",
+      "D": "Iniciar o tratamento medicamentoso com esquema tríplice para toxoplasmose.",
+      "E": "Tranquilizar a paciente, pois a presença de IgG indica imunidade antiga e não há risco para o feto."
+    },
+    "comentarios": {
+      "A": "Incorreto. A conduta expectante de repetir a sorologia em três meses é inadequada. Se a infecção for aguda e recente, a demora no diagnóstico e início do tratamento (se necessário) aumenta significativamente o risco de transmissão vertical e de sequelas para o feto. A investigação deve ser ágil.",
+      "B": "Correto. Diante de um resultado com IgG e IgM reagentes para toxoplasmose durante a gestação, é fundamental diferenciar uma infecção aguda (adquirida recentemente, com alto risco de transmissão para o feto) de uma infecção pregressa com IgM residual (que pode permanecer positivo por meses ou até mais de um ano). O teste de avidez do IgG é o exame de escolha para essa diferenciação. Uma alta avidez sugere infecção ocorrida há mais de 12-16 semanas, afastando o risco de infecção aguda no período gestacional. Uma baixa avidez indica infecção recente, confirmando a necessidade de tratamento.",
+      "C": "Incorreto. A cordocentese é um procedimento invasivo para diagnóstico de infecção fetal e não é o primeiro passo na investigação materna. Ela só seria considerada em casos específicos, após a confirmação de infecção aguda na mãe, para avaliar a transmissão ao feto, e geralmente a amniocentese com pesquisa de DNA do parasita por PCR é preferível por ser menos arriscada.",
+      "D": "Incorreto. O esquema tríplice (sulfadiazina, pirimetamina e ácido folínico) é indicado para o tratamento da toxoplasmose fetal confirmada, não para a profilaxia da transmissão vertical na fase inicial. Além disso, a pirimetamina tem potencial teratogênico e deve ser evitada no primeiro trimestre. O tratamento inicial para infecção materna aguda confirmada (pelo teste de avidez) é a espiramicina.",
+      "E": "Incorreto. Embora o IgG positivo possa indicar imunidade, a presença simultânea do IgM torna impossível, sem investigação adicional, afastar uma infecção recente. Assumir que se trata de imunidade antiga sem confirmar com o teste de avidez é uma conduta perigosa que pode negligenciar uma infecção aguda ativa com risco real para o feto."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": [
+      "Ginecologia e Obstetrícia",
+      "Medicina de Família e Comunidade"
+    ],
+    "subtopicos": [
+      "Toxoplasmose na gestação",
+      "Assistência pré-natal",
+      "Infecções congênitas (STORCH/TORCHS)",
+      "Interpretação de exames sorológicos"
+    ],
+    "createdAt": "2024-07-21T18:30:00Z"
+  },
+  {
+    "id": "cuid.clz4k9o9v000008l430yxhh5g",
+    "enunciado": "Uma criança com 4 anos de idade, acompanhada da mãe, chega a um ambulatório com história de estado gripal, febre e anorexia há dois dias. Ao exame físico, apresenta-se letárgica, com eritema difuso e uniforme em face, tronco e membros superiores; pele áspera, com finas pápulas avermelhadas sobrepostas; linfoadenomegalia discreta em região cervical e, à oroscopia, observam-se papilas linguais avermelhadas e aumentadas. Os resultados dos exames laboratoriais da criança apresentam: leucócitos = 15 500 mm³ (VR: 4 500 a 11 000 mm³); neutrófilos = 80% (VR: 40 a 70%); proteína C reativa = 55 (VR: < 8 mg/dL). Para o tratamento da enfermidade descrita, a primeira escolha é utilizar",
+    "alternativas": {
+      "A": "aciclovir.",
+      "B": "penicilina.",
+      "C": "ceftriaxone.",
+      "D": "clindamicina.",
+      "E": "oseltamivir."
+    },
+    "comentarios": {
+      "A": "Incorreto. O aciclovir é um fármaco antiviral, utilizado principalmente para o tratamento de infecções causadas por vírus da família Herpesviridae (como herpes simples e varicela-zóster). O quadro clínico apresentado, com leucocitose com neutrofilia e PCR elevada, sugere uma infecção bacteriana, não viral.",
+      "B": "Correto. O quadro clínico é clássico de escarlatina, uma doença causada por uma toxina eritrogênica produzida pelo *Streptococcus pyogenes* (Estreptococo beta-hemolítico do grupo A). Os achados-chave são: febre, faringite (evidenciada pela linfadenomegalia cervical e língua em framboesa), e o exantema micropapular difuso (pele em lixa). A penicilina (ou amoxicilina) é o antibiótico de primeira escolha para erradicar a bactéria e, crucialmente, prevenir a febre reumática aguda.",
+      "C": "Incorreto. A ceftriaxona é uma cefalosporina de terceira geração e de amplo espectro. Embora seja eficaz contra o *S. pyogenes*, não é a primeira linha de tratamento para faringoamigdalite estreptocócica ou escarlatina não complicadas. Seu uso é reservado para casos mais graves, complicações ou em situações específicas onde a penicilina não pode ser usada.",
+      "D": "Incorreto. A clindamicina é um antibiótico de segunda linha, geralmente indicado para o tratamento de infecções por *S. pyogenes* em pacientes com alergia grave à penicilina. Não é a primeira escolha para a população geral devido ao perfil de resistência e risco de efeitos adversos, como colite pseudomembranosa.",
+      "E": "Incorreto. O oseltamivir é um antiviral específico para o tratamento do vírus Influenza. Embora a história inicial mencione um 'estado gripal', os sinais clínicos específicos como a pele áspera (em lixa) e a língua em framboesa são patognomônicos da escarlatina, uma infecção bacteriana, descartando a gripe como diagnóstico principal."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Pediatria", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Escarlatina",
+      "Doenças Exantemáticas na Infância",
+      "Faringoamigdalite Estreptocócica",
+      "Uso de Antimicrobianos em Pediatria"
+    ],
+    "createdAt": "2024-07-21T00:41:04.571Z"
+  },
+  {
+    "id": "l3m4n5o6-p7q8-r9s0-t1u2-v3w4x5y6z7a8",
+    "enunciado": "Um menino com 5 anos de idade, acompanhado da mãe, comparece a consulta médica com história de sibilância, tosse e dispneia, em crises, geralmente, mensais. A mãe relata que, no último mês, ele apresentou tais sintomas mais de três vezes por semana e que, nas crises intensas, é levado ao pronto-atendimento e realiza nebulizações com fenoterol, o que resulta em melhora. Informa que o menino nunca realizou tratamento preventivo, que ela é tabagista há 10 anos e que tem sintomas semelhantes aos do filho, desde criança, mas nunca realizou tratamento contínuo por não apresentar boa resposta ao tratamento de nebulização com fenoterol. O paciente, ao exame físico, apresenta-se em bom estado geral, eupneico, com expansibilidade torácica simétrica, sem deformidades e sem tiragens; a ausculta pulmonar não mostra alterações.\n\nCom relação à situação apresentada, assinale a opção correta.",
+    "alternativas": {
+      "A": "O menino apresenta quadro de asma e deve iniciar tratamento com broncodilatador inalatório de demanda.",
+      "B": "Os dados fornecidos na história são insuficientes para o diagnóstico de asma, devendo-se solicitar espirometria.",
+      "C": "Os dados clínicos sugerem o diagnóstico de asma, sendo necessária a realização de peak-flow para orientação terapêutica.",
+      "D": "O menino apresenta quadro de asma, deve iniciar o uso de corticoide inalatório em dose baixa, associado a broncodilatador",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora o paciente tenha asma, o tratamento apenas com broncodilatador de demanda (SABA) não é mais recomendado como monoterapia, mesmo em casos leves. Dado que o paciente tem sintomas frequentes (mais de 3x/semana), ele necessita de um medicamento controlador para a inflamação, como um corticoide inalatório.",
+      "B": "Incorreto. Em crianças com 5 anos de idade, o diagnóstico de asma é predominantemente clínico, baseado na história de sintomas recorrentes de obstrução brônquica que respondem a broncodilatadores. A espirometria não é essencial para o diagnóstico nesta faixa etária e muitas vezes é de difícil execução.",
+      "C": "Incorreto. A medida do pico de fluxo expiratório (peak-flow) é uma ferramenta útil para o monitoramento da asma em crianças mais velhas e adultos, mas não é utilizada para o diagnóstico inicial ou para guiar a terapia em uma criança de 5 anos. A decisão terapêutica se baseia na frequência e gravidade dos sintomas clínicos.",
+      "D": "Correto. O diagnóstico de asma é clínico e está bem estabelecido pela história. Como o paciente apresenta sintomas frequentes (indicando asma não controlada), a conduta correta, segundo as diretrizes atuais (como GINA), é iniciar um tratamento de controle para a inflamação das vias aéreas com um corticoide inalatório (CI) em dose baixa. O broncodilatador de curta ação é mantido para alívio dos sintomas agudos (de demanda).",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Pediatria", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Asma na Infância",
+      "Diagnóstico de Asma",
+      "Tratamento da Asma (GINA)",
+      "Corticoides Inalatórios",
+      "Broncodilatadores",
+      "Educação em Saúde"
+    ],
+    "createdAt": "2025-07-20T22:41:17Z"
+  },
+
+  {
+    "id": "cuid-toxo-gest-001",
+    "enunciado": "Uma primigesta com 30 anos de idade, na oitava semana de gestação, comparece a consulta de pré-natal relatando estar apreensiva devido ao resultado de alguns exames laboratoriais, que acusaram IgG e IgM positivos para toxoplasmose.\n\nConsiderando-se esse caso, que conduta deve ser adotada nesse momento?",
+    "alternativas": {
+      "A": "Repetir, em três meses, os exames de dosagens de IgG e IgM.",
+      "B": "Solicitar teste de avidez para IgG para definir a próxima conduta.",
+      "C": "Programar cordocentese após 16ª semana de gestação para o diagnóstico.",
+      "D": "Iniciar o tratamento medicamentoso com esquema tríplice para toxoplasmose.",
+      "E": "Tranquilizar a paciente, pois a presença de IgG indica imunidade antiga e não há risco para o feto."
+    },
+    "comentarios": {
+      "A": "Incorreto. A conduta expectante de repetir a sorologia em três meses é inadequada. Se a infecção for aguda e recente, a demora no diagnóstico e início do tratamento (se necessário) aumenta significativamente o risco de transmissão vertical e de sequelas para o feto. A investigação deve ser ágil.",
+      "B": "Correto. Diante de um resultado com IgG e IgM reagentes para toxoplasmose durante a gestação, é fundamental diferenciar uma infecção aguda (adquirida recentemente, com alto risco de transmissão para o feto) de uma infecção pregressa com IgM residual (que pode permanecer positivo por meses ou até mais de um ano). O teste de avidez do IgG é o exame de escolha para essa diferenciação. Uma alta avidez sugere infecção ocorrida há mais de 12-16 semanas, afastando o risco de infecção aguda no período gestacional. Uma baixa avidez indica infecção recente, confirmando a necessidade de tratamento.",
+      "C": "Incorreto. A cordocentese é um procedimento invasivo para diagnóstico de infecção fetal e não é o primeiro passo na investigação materna. Ela só seria considerada em casos específicos, após a confirmação de infecção aguda na mãe, para avaliar a transmissão ao feto, e geralmente a amniocentese com pesquisa de DNA do parasita por PCR é preferível por ser menos arriscada.",
+      "D": "Incorreto. O esquema tríplice (sulfadiazina, pirimetamina e ácido folínico) é indicado para o tratamento da toxoplasmose fetal confirmada, não para a profilaxia da transmissão vertical na fase inicial. Além disso, a pirimetamina tem potencial teratogênico e deve ser evitada no primeiro trimestre. O tratamento inicial para infecção materna aguda confirmada (pelo teste de avidez) é a espiramicina.",
+      "E": "Incorreto. Embora o IgG positivo possa indicar imunidade, a presença simultânea do IgM torna impossível, sem investigação adicional, afastar uma infecção recente. Assumir que se trata de imunidade antiga sem confirmar com o teste de avidez é uma conduta perigosa que pode negligenciar uma infecção aguda ativa com risco real para o feto."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": [
+      "Ginecologia e Obstetrícia",
+      "Medicina de Família e Comunidade"
+    ],
+    "subtopicos": [
+      "Toxoplasmose na gestação",
+      "Assistência pré-natal",
+      "Infecções congênitas (STORCH/TORCHS)",
+      "Interpretação de exames sorológicos"
+    ],
+    "createdAt": "2024-07-21T18:30:00Z"
+  },
+  {
+    "id": "cuid-ped-snefritica-001",
+    "enunciado": "Um paciente com 7 anos de idade chega à emergência pediátrica por edema de surgimento súbito nas últimas 48 horas. A mãe refere que o edema surgiu inicialmente na face, progredindo para os membros superiores e inferiores. Refere ainda redução significativa do volume urinário e urina avermelhada. Relata também que, há 15 dias, o paciente apresentou odinofagia importante, febre elevada persistente e queda do estado geral, e que esses sintomas foram tratados com remédios caseiros.\nAo exame físico apresentou: edema bipalpebral; edema de membros superiores e inferiores; FC de 120 bpm; PA sistólica no percentil 99 para a idade. À ausculta pulmonar, verificam-se: estertores bolhosos em ambas as bases, sem outras alterações significativas.\nO resultado do exame qualitativo de urina, apresentou: pH = 6,0 (VR: 5 a 9); densidade da urina = 1 030 (VR: 1 005 a 1 025); nitrito = negativo (VR: negativo); piócitos = 2-3/campo (VR: ausentes); hemácias = 40-50/campo (VR: 2-3/campo); proteínas = ausentes (VR: ausentes); presença de cilindros hemáticos (VR: ausentes).\nConsiderando essas informações, assinale a opção que apresenta, respectivamente, o diagnóstico do paciente e o tratamento adequado para a febre e a odinofagia ocorridas nos 15 dias que precederam a consulta pediátrica.",
+    "alternativas": {
+      "A": "Síndrome nefrítica; sintomáticos.",
+      "B": "Síndrome nefrótica; anti-inflamatórios.",
+      "C": "Síndrome nefrítica; penicilina benzatina.",
+      "D": "Síndrome nefrótica; sulfametoxazol-trimetropima.",
+      "E": "Pielonefrite aguda; ceftriaxona."
+    },
+    "comentarios": {
+      "A": "Incorreto. O diagnóstico de síndrome nefrítica está correto, mas o tratamento da infecção de garganta prévia apenas com 'sintomáticos' foi a causa da complicação renal. O tratamento adequado para a faringoamigdalite estreptocócica requer antibioticoterapia.",
+      "B": "Incorreto. O diagnóstico é de síndrome nefrítica, e não nefrótica. A síndrome nefrótica cursa classicamente com proteinúria maciça (ausente no exame), hipoalbuminemia e lipidúria, enquanto o quadro descrito (hematúria, hipertensão, edema, oligúria, cilindros hemáticos) é característico da síndrome nefrítica. Além disso, anti-inflamatórios não tratam a infecção bacteriana de base.",
+      "C": "Correto. O quadro clínico é clássico de Glomerulonefrite Pós-Estreptocócica (GNPE), a principal causa de síndrome nefrítica na infância. Ela se manifesta com edema, hipertensão e hematúria, tipicamente 1 a 2 semanas após uma faringite (odinofagia e febre). O exame de urina com hematúria e cilindros hemáticos confirma a inflamação glomerular. O tratamento adequado para a infecção estreptocócica que a precedeu, e que deveria ter sido instituído, é com Penicilina benzatina para erradicar o *Streptococcus pyogenes*.",
+      "D": "Incorreto. O diagnóstico é de síndrome nefrítica, não nefrótica, pelos motivos já expostos. Adicionalmente, sulfametoxazol-trimetropima não é o antibiótico de primeira escolha para o tratamento de faringites estreptocócicas.",
+      "E": "Incorreto. Pielonefrite aguda é uma infecção do trato urinário alto que cursa com febre e dor lombar. O exame de urina tipicamente mostraria leucocitúria (piócitos) e nitrito positivo, e não cilindros hemáticos, que são específicos de dano glomerular. O quadro clínico e laboratorial é incompatível com pielonefrite."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Pediatria", "Clínica Médica"],
+    "subtopicos": [
+      "Síndrome Nefrítica Aguda",
+      "Glomerulonefrite Pós-Estreptocócica (GNPE)",
+      "Faringoamigdalite Estreptocócica",
+      "Hipertensão Arterial na Infância",
+      "Diagnóstico Diferencial das Síndromes Glomerulares"
+    ],
+    "createdAt": "2024-07-21T18:45:00Z"
+  },
+  {
+    "id": "m4n5o6p7-q8r9-s0t1-u2v3-w4x5y6z7a8b9",
+    "enunciado": "Um paciente com 54 anos de idade, com queixa de dor em abdome superior há dois dias, procura pronto-atendimento para avaliação por piora progressiva da dor, sem alívio com uso de analgésicos comuns. Refere não ter tido náuseas ou vômitos e que o hábito intestinal esteve normal até um dia antes da consulta. Relata também que teve febre não aferida nos últimos dois dias. O paciente tem histórico de obesidade, com IMC de 33 kg/m2, de etilismo crônico (uma garrafa de destilado/dia) e de hipertensão arterial sistêmica em uso irregular de hidroclorotiazida e losartana.\nAo exame físico, o paciente apresenta-se descorado (+2/+4); desidratado (+2/+4); anictérico, com FC de 112 bpm; PA de 90 × 60 mmHg; FR de 18 irpm; T.Ax. de 37,5 °C. À ausculta cardíaca, revelam-se bulhas rítmicas hipofonéticas globalmente, sem sopros. À ausculta pulmonar, verifica-se redução de murmúrio vesicular em bases, sem ruídos adventícios. O abdome apresenta-se globoso e flácido; à ausculta, verificam-se redução de ruídos hidroaéreos e ausência de alterações à percussão; observa-se, ainda, dor à palpação superficial em região epigástrica com descompressão brusca dolorosa; o fígado apresenta-se palpável e não doloroso.\n\nCom relação ao caso clínico apresentado, assinale a opção correta.",
+    "alternativas": {
+      "A": "O tratamento deve ser iniciado com antibióticos e sintomáticos, diante da possibilidade de peritonite bacteriana espontânea.",
+      "B": "A enfermidade deve ser tratada como pneumonia de base bilateral, sendo necessário tratamento empírico com antibiótico.",
+      "C": "O paciente deverá ser mantido em jejum com hidratação venosa, estendendo-se a propedêutica, com a inclusão de eletrocardiograma e dosagem de troponina.",
+      "D": "A ausência de febre ao exame físico contribui para a eliminação diagnóstica de patologias inflamatórias ou infecciosas, como hepatites, colecistite ou pancreatite.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A Peritonite Bacteriana Espontânea (PBE) é uma infecção do líquido ascítico, e não há sinais claros de ascite no exame físico (como sinal do piparote positivo). A dor localizada com peritonismo em epigástrio sugere outro foco. Iniciar antibióticos sem abordar a instabilidade hemodinâmica e o diagnóstico diferencial cardíaco não é a melhor conduta.",
+      "B": "Incorreto. Embora os achados pulmonares precisem de atenção, os sinais e sintomas predominantes são abdominais (dor epigástrica com peritonismo). Tratar como pneumonia seria ignorar o provável foco principal e a gravidade do quadro abdominal.",
+      "C": "Correto. O paciente apresenta-se com um quadro de abdome agudo e sinais de choque (hipotensão, taquicardia). A conduta inicial prioritária é o suporte (jejum e hidratação venosa para ressuscitação) e a investigação diagnóstica. Dado os fatores de risco do paciente (idade, obesidade, HAS) e a localização da dor, é mandatório excluir uma Síndrome Coronariana Aguda, que pode mimetizar um quadro abdominal. Portanto, a realização de ECG e a dosagem de troponina são essenciais e urgentes.",
+      "D": "Incorreto. Esta afirmação é perigosa e falsa. O paciente apresenta febre baixa (37,5°C) e história de febre. Mesmo que estivesse afebril, a ausência de febre alta não exclui patologias infecciosas/inflamatórias graves, especialmente em pacientes com comorbidades como o etilismo crônico.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Clínica Médica", "Cirurgia Geral"],
+    "subtopicos": [
+      "Abdome Agudo",
+      "Pancreatite Aguda",
+      "Síndrome Coronariana Aguda (SCA)",
+      "Sepse",
+      "Avaliação Inicial do Paciente Grave",
+      "Diagnóstico Diferencial da Dor Epigástrica"
+    ],
+    "createdAt": "2025-07-20T22:42:26Z"
+  },
+
+  {
+    "id": "cuid-toxo-gest-001",
+    "enunciado": "Uma primigesta com 30 anos de idade, na oitava semana de gestação, comparece a consulta de pré-natal relatando estar apreensiva devido ao resultado de alguns exames laboratoriais, que acusaram IgG e IgM positivos para toxoplasmose.\n\nConsiderando-se esse caso, que conduta deve ser adotada nesse momento?",
+    "alternativas": {
+      "A": "Repetir, em três meses, os exames de dosagens de IgG e IgM.",
+      "B": "Solicitar teste de avidez para IgG para definir a próxima conduta.",
+      "C": "Programar cordocentese após 16ª semana de gestação para o diagnóstico.",
+      "D": "Iniciar o tratamento medicamentoso com esquema tríplice para toxoplasmose.",
+      "E": "Tranquilizar a paciente, pois a presença de IgG indica imunidade antiga e não há risco para o feto."
+    },
+    "comentarios": {
+      "A": "Incorreto. A conduta expectante de repetir a sorologia em três meses é inadequada. Se a infecção for aguda e recente, a demora no diagnóstico e início do tratamento (se necessário) aumenta significativamente o risco de transmissão vertical e de sequelas para o feto. A investigação deve ser ágil.",
+      "B": "Correto. Diante de um resultado com IgG e IgM reagentes para toxoplasmose durante a gestação, é fundamental diferenciar uma infecção aguda (adquirida recentemente, com alto risco de transmissão para o feto) de uma infecção pregressa com IgM residual (que pode permanecer positivo por meses ou até mais de um ano). O teste de avidez do IgG é o exame de escolha para essa diferenciação. Uma alta avidez sugere infecção ocorrida há mais de 12-16 semanas, afastando o risco de infecção aguda no período gestacional. Uma baixa avidez indica infecção recente, confirmando a necessidade de tratamento.",
+      "C": "Incorreto. A cordocentese é um procedimento invasivo para diagnóstico de infecção fetal e não é o primeiro passo na investigação materna. Ela só seria considerada em casos específicos, após a confirmação de infecção aguda na mãe, para avaliar a transmissão ao feto, e geralmente a amniocentese com pesquisa de DNA do parasita por PCR é preferível por ser menos arriscada.",
+      "D": "Incorreto. O esquema tríplice (sulfadiazina, pirimetamina e ácido folínico) é indicado para o tratamento da toxoplasmose fetal confirmada, não para a profilaxia da transmissão vertical na fase inicial. Além disso, a pirimetamina tem potencial teratogênico e deve ser evitada no primeiro trimestre. O tratamento inicial para infecção materna aguda confirmada (pelo teste de avidez) é a espiramicina.",
+      "E": "Incorreto. Embora o IgG positivo possa indicar imunidade, a presença simultânea do IgM torna impossível, sem investigação adicional, afastar uma infecção recente. Assumir que se trata de imunidade antiga sem confirmar com o teste de avidez é uma conduta perigosa que pode negligenciar uma infecção aguda ativa com risco real para o feto."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": [
+      "Ginecologia e Obstetrícia",
+      "Medicina de Família e Comunidade"
+    ],
+    "subtopicos": [
+      "Toxoplasmose na gestação",
+      "Assistência pré-natal",
+      "Infecções congênitas (STORCH/TORCHS)",
+      "Interpretação de exames sorológicos"
+    ],
+    "createdAt": "2024-07-21T18:30:00Z"
+  },
+  {
+    "id": "cuid-ped-snefritica-001",
+    "enunciado": "Um paciente com 7 anos de idade chega à emergência pediátrica por edema de surgimento súbito nas últimas 48 horas. A mãe refere que o edema surgiu inicialmente na face, progredindo para os membros superiores e inferiores. Refere ainda redução significativa do volume urinário e urina avermelhada. Relata também que, há 15 dias, o paciente apresentou odinofagia importante, febre elevada persistente e queda do estado geral, e que esses sintomas foram tratados com remédios caseiros.\nAo exame físico apresentou: edema bipalpebral; edema de membros superiores e inferiores; FC de 120 bpm; PA sistólica no percentil 99 para a idade. À ausculta pulmonar, verificam-se: estertores bolhosos em ambas as bases, sem outras alterações significativas.\nO resultado do exame qualitativo de urina, apresentou: pH = 6,0 (VR: 5 a 9); densidade da urina = 1 030 (VR: 1 005 a 1 025); nitrito = negativo (VR: negativo); piócitos = 2-3/campo (VR: ausentes); hemácias = 40-50/campo (VR: 2-3/campo); proteínas = ausentes (VR: ausentes); presença de cilindros hemáticos (VR: ausentes).\nConsiderando essas informações, assinale a opção que apresenta, respectivamente, o diagnóstico do paciente e o tratamento adequado para a febre e a odinofagia ocorridas nos 15 dias que precederam a consulta pediátrica.",
+    "alternativas": {
+      "A": "Síndrome nefrítica; sintomáticos.",
+      "B": "Síndrome nefrótica; anti-inflamatórios.",
+      "C": "Síndrome nefrítica; penicilina benzatina.",
+      "D": "Síndrome nefrótica; sulfametoxazol-trimetropima.",
+      "E": "Pielonefrite aguda; ceftriaxona."
+    },
+    "comentarios": {
+      "A": "Incorreto. O diagnóstico de síndrome nefrítica está correto, mas o tratamento da infecção de garganta prévia apenas com 'sintomáticos' foi a causa da complicação renal. O tratamento adequado para a faringoamigdalite estreptocócica requer antibioticoterapia.",
+      "B": "Incorreto. O diagnóstico é de síndrome nefrítica, e não nefrótica. A síndrome nefrótica cursa classicamente com proteinúria maciça (ausente no exame), hipoalbuminemia e lipidúria, enquanto o quadro descrito (hematúria, hipertensão, edema, oligúria, cilindros hemáticos) é característico da síndrome nefrítica. Além disso, anti-inflamatórios não tratam a infecção bacteriana de base.",
+      "C": "Correto. O quadro clínico é clássico de Glomerulonefrite Pós-Estreptocócica (GNPE), a principal causa de síndrome nefrítica na infância. Ela se manifesta com edema, hipertensão e hematúria, tipicamente 1 a 2 semanas após uma faringite (odinofagia e febre). O exame de urina com hematúria e cilindros hemáticos confirma a inflamação glomerular. O tratamento adequado para a infecção estreptocócica que a precedeu, e que deveria ter sido instituído, é com Penicilina benzatina para erradicar o *Streptococcus pyogenes*.",
+      "D": "Incorreto. O diagnóstico é de síndrome nefrítica, não nefrótica, pelos motivos já expostos. Adicionalmente, sulfametoxazol-trimetropima não é o antibiótico de primeira escolha para o tratamento de faringites estreptocócicas.",
+      "E": "Incorreto. Pielonefrite aguda é uma infecção do trato urinário alto que cursa com febre e dor lombar. O exame de urina tipicamente mostraria leucocitúria (piócitos) e nitrito positivo, e não cilindros hemáticos, que são específicos de dano glomerular. O quadro clínico e laboratorial é incompatível com pielonefrite."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Pediatria", "Clínica Médica"],
+    "subtopicos": [
+      "Síndrome Nefrítica Aguda",
+      "Glomerulonefrite Pós-Estreptocócica (GNPE)",
+      "Faringoamigdalite Estreptocócica",
+      "Hipertensão Arterial na Infância",
+      "Diagnóstico Diferencial das Síndromes Glomerulares"
+    ],
+    "createdAt": "2024-07-21T18:45:00Z"
+  },
+  {
+    "id": "cuid-trauma-torax-001",
+    "enunciado": "Um homem com 35 anos de idade, vítima de politraumatismo por colisão de veículo com uma árvore, em uso de cinto de segurança, foi retirado das ferragens e levado ao pronto-socorro pelo SAMU. Ao exame físico do paciente, verifica-se: PA de 100 × 80 mmHg; FC de 118 bpm; FR de 26 irpm; e Glasgow de 12. À ausculta pulmonar: via aérea pérvia, sons respiratórios diminuídos à esquerda, com dor e crepitação à palpação de parede torácica à esquerda. À ausculta cardíaca: bulhas cardíacas normais, sem sinais de distensão jugular. A avaliação abdominal e pélvica não demonstrou anormalidades, verificando-se fratura exposta em terço médio de fêmur à direita. Com relação ao caso clínico apresentado, considerando a conduta imediata a ser adotada, conclui-se tratar-se de paciente com",
+    "alternativas": {
+      "A": "hemopneumotórax, devendo ser submetido a radiografia de tórax para confirmação diagnóstica, e ser realizada drenagem de tórax em quinto espaço intercostal esquerdo na linha axilar anterior.",
+      "B": "tamponamento cardíaco, devendo ser submetido a radiografia de tórax para confirmação diagnóstica, e ser realizada punção com agulha no segundo espaço intercostal esquerdo paraesternal.",
+      "C": "fratura de arcos costais, sendo necessária entubação orotraqueal e, após a estabilização clínica, ser realizada radiografia de tórax para confirmação diagnóstica, além de imobilização por seis semanas.",
+      "D": "trauma torácico fechado e fratura exposta de fêmur, sendo necessário manter aporte de oxigênio em máscara e analgesia forte, e ser encaminhado, o mais rápido possível, ao centro cirúrgico, para tratamento da fratura de fêmur.",
+      "E": "pneumotórax hipertensivo, devendo ser submetido à toracocentese de alívio imediata, sem necessidade de confirmação radiológica."
+    },
+    "comentarios": {
+      "A": "Correto. O quadro clínico com trauma torácico, taquipneia (FR 26), taquicardia (FC 118), hipotensão limítrofe (PA 100x80), crepitação e sons respiratórios diminuídos à esquerda é altamente sugestivo de hemopneumotórax. Como o paciente não apresenta sinais de pneumotórax hipertensivo (desvio de traqueia, turgência jugular, hipotensão refratária) e ainda mantém a via aérea pérvia, a conduta preconizada pelo ATLS é a confirmação diagnóstica com uma radiografia de tórax (ou e-FAST) seguida da drenagem torácica em selo d'água, que é o tratamento definitivo. O local descrito (5º EIC na linha axilar anterior) está correto para a inserção do dreno.",
+      "B": "Incorreto. O diagnóstico de tamponamento cardíaco é improvável, pois o paciente apresenta bulhas cardíacas normais e ausência de distensão jugular, não preenchendo a Tríade de Beck (hipotensão, hipofonese de bulhas, turgência jugular). A conduta proposta (pericardiocentese) seria inadequada.",
+      "C": "Incorreto. Embora a fratura de arcos costais seja provável (devido à crepitação), o problema principal é a sua consequência, o hemopneumotórax. A intubação orotraqueal não é a primeira medida, pois o paciente tem via aérea pérvia e Glasgow 12. A prioridade é resolver o problema na ventilação ('B' do ABCDE).",
+      "D": "Incorreto. Esta opção ignora a prioridade do atendimento ao politraumatizado (ABCDE). A lesão torácica ('B' - Breathing) que causa instabilidade respiratória e hemodinâmica deve ser tratada antes do encaminhamento para tratamento definitivo da fratura de fêmur. O paciente deve ser estabilizado primeiro.",
+      "E": "Incorreto. O diagnóstico de pneumotórax hipertensivo não é o mais provável pela ausência de sinais clássicos como turgência jugular, desvio de traqueia ou hipotensão severa. Portanto, a toracocentese de alívio imediata (punção com agulha) não é indicada, pois é um procedimento para o pneumotórax hipertensivo e não está isenta de riscos."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Cirurgia Geral"],
+    "subtopicos": [
+      "Atendimento Inicial ao Politraumatizado (ATLS)",
+      "Trauma Torácico",
+      "Pneumotórax e Hemotórax",
+      "Choque no Trauma",
+      "Avaliação Primária (ABCDE)",
+      "Drenagem Torácica"
+    ],
+    "createdAt": "2025-07-20T22:42:00Z"
+  },
+  {
+    "id": "n5o6p7q8-r9s0-t1u2-v3w4-x5y6z7a8b9c0",
+    "enunciado": "Uma paciente com 19 anos de idade retorna a uma unidade de saúde para consulta ginecológica. Em consulta inicial, apresentava queixa de corrimento havia duas semanas. A paciente relata que sua menarca ocorreu aos 13 anos de idade, que teve a primeira relação sexual aos 15 anos de idade com o ex-namorado, e que a última relação ocorreu há 90 dias com o mesmo parceiro, sem uso de camisinha. Ela nega parceria sexual eventual assim como outras queixas e doenças crônicas. Ao exame ginecológico, verificam-se ausência de corrimento e estruturas anatômicas normais ao toque.\nOs resultados dos exames laboratoriais, apresentaram: Citopatológico = negativo para células malignas; HIV = negativo; hepatite C = negativo; hepatite B = negativo; anti-HBsAg = positivo; beta-HCG = negativo; teste não treponêmico (RPR) = 1:128; teste treponômico (Fta-ABS) = positivo.\n\nNesse caso, a conduta recomendada é",
+    "alternativas": {
+      "A": "notificar caso confirmado de sífilis e instituir tratamento de sífilis primária, prescrevendo-se penicilina benzatina 2,4 milhões UI, IM, dose única (1,2 milhão UI em cada glúteo).",
+      "B": "notificar a suspeita clínica de sífilis e instituir tratamento de sífilis secundária, prescrevendo-se penicilina benzatina 2,4 milhões UI, IM, dose única (1,2 milhão UI em cada glúteo).",
+      "C": "repetir os exames para confirmação diagnóstica de sífilis e realizar verificação de comportamento da titulação de anticorpos, além de definir o tratamento e notificar o caso, se confirmado.",
+      "D": "notificar caso confirmado de sífilis e instituir tratamento de sífilis latente com duração ignorada, prescrevendo-se penicilina benzatina 2,4 milhões UI, IM, semanal, por 3 semanas (dose total: 7,2 milhões).",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A paciente não apresenta sinais de sífilis primária (cancro duro). O tratamento com dose única de penicilina benzatina é inadequado para o estágio da doença, que é classificada como latente de duração ignorada.",
+      "B": "Incorreto. A paciente está assintomática e sem lesões ao exame, o que descarta sífilis secundária. O diagnóstico já está confirmado pelos exames, não sendo uma suspeita. O tratamento com dose única também está incorreto.",
+      "C": "Incorreto. A combinação de um teste não treponêmico reagente (RPR 1:128) com um teste treponêmico reagente (FTA-ABS) confirma o diagnóstico de sífilis. Repetir os exames para confirmar apenas atrasaria o tratamento de uma infecção ativa.",
+      "D": "Correto. O diagnóstico de sífilis está confirmado. Como a paciente está assintomática e não é possível determinar a data da infecção, ela é classificada como portadora de sífilis latente de duração ignorada. O tratamento preconizado pelo Ministério da Saúde para este estágio é Penicilina G benzatina 2,4 milhões UI, via intramuscular, uma vez por semana, por três semanas. A notificação compulsória do caso é obrigatória.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": [
+      "Ginecologia e Obstetrícia",
+      "Medicina de Família e Comunidade",
+      "Saúde Coletiva"
+    ],
+    "subtopicos": [
+      "Sífilis",
+      "Infecções Sexualmente Transmissíveis (IST)",
+      "Diagnóstico e Estadiamento da Sífilis",
+      "Tratamento da Sífilis",
+      "Vigilância Epidemiológica",
+      "Saúde da Mulher"
+    ],
+    "createdAt": "2025-07-20T22:42:48Z"
+  },
+  {
+    "id": "p7q8r9s0-t1u2-v3w4-x5y6-z7a8b9c0d1e2",
+    "enunciado": "Uma adolescente com 15 anos de idade comparece a uma consulta dizendo estar preocupada por ainda não ter a menarca. Relata que começou a namorar e que deseja iniciar a vida sexual, por isso quer usar pílula anticoncepcional. Ela conta, ainda, que sua mãe e irmã mais velha tiveram a menarca aos 13 anos de idade. Ao exame físico, apresenta caracteres sexuais secundários compatíveis com a idade cronológica.\n\nConsiderando o quadro clínico apresentado, assinale a opção correta.",
+    "alternativas": {
+      "A": "O diagnóstico sindrômico é de amenorreia secundária, pois apresenta caracteres sexuais secundários compatíveis com a idade cronológica.",
+      "B": "Se a adolescente apresentar útero e ovários normais ao exame de ultrassom, a dosagem de FSH baixa será sugestiva de disgenesia gonadal ou insuficiência ovariana.",
+      "C": "O diagnóstico sindrômico é de amenorreia primária, devendo ser contemplados, na investigação inicial, o cariótipo, a dosagem de FSH e a ultrassonografia, para avaliação de útero e ovários.",
+      "D": "Se a adolescente não apresentar útero ao ultrassom, o cariótipo será necessário, pois, se for 46 XY, o diagnóstico sugestivo é de malformação mulleriana e, se for 46 XX, de insensibilidade androgênica.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. O diagnóstico é de amenorreia primária, definida pela ausência de menarca aos 15 anos na presença de caracteres sexuais secundários. Amenorreia secundária ocorreria se a paciente já tivesse menstruado e depois parado.",
+      "B": "Incorreto. A dosagem de FSH baixa ou normal, na presença de útero e ovários, aponta para uma causa central de amenorreia (hipogonadismo hipogonadotrópico), como disfunção hipotalâmica ou hipofisária. Disgenesia gonadal e insuficiência ovariana cursam com FSH elevado (hipogonadismo hipergonadotrópico).",
+      "C": "Correto. A paciente preenche o critério para amenorreia primária. A investigação inicial deve ser ampla para diferenciar as possíveis causas anatômicas, ovarianas e centrais. Portanto, a ultrassonografia pélvica (para avaliar a presença e morfologia do útero e ovários) e as dosagens hormonais (FSH para avaliar a função ovariana) são passos fundamentais. O cariótipo também faz parte da investigação, especialmente se houver alterações anatômicas ou FSH elevado.",
+      "D": "Incorreto. A alternativa inverte os diagnósticos. Em uma paciente com fenótipo feminino e ausência de útero, o cariótipo 46,XY sugere Síndrome da Insensibilidade Androgênica. Já o cariótipo 46,XX sugere Agenesia Mülleriana (Síndrome de Rokitansky).",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Ginecologia e Obstetrícia"],
+    "subtopicos": [
+      "Amenorreia Primária",
+      "Puberdade",
+      "Endocrinologia Ginecológica",
+      "Ginecologia Infantopuberal",
+      "Síndrome da Insensibilidade Androgênica",
+      "Agenesia Mülleriana"
+    ],
+    "createdAt": "2025-07-20T22:43:26Z"
+  },
+  {
+    "id": "n5o6p7q8-r9s0-t1u2-v3w4-x5y6z7a8b9c0",
+    "enunciado": "Uma paciente com 19 anos de idade retorna a uma unidade de saúde para consulta ginecológica. Em consulta inicial, apresentava queixa de corrimento havia duas semanas. A paciente relata que sua menarca ocorreu aos 13 anos de idade, que teve a primeira relação sexual aos 15 anos de idade com o ex-namorado, e que a última relação ocorreu há 90 dias com o mesmo parceiro, sem uso de camisinha. Ela nega parceria sexual eventual assim como outras queixas e doenças crônicas. Ao exame ginecológico, verificam-se ausência de corrimento e estruturas anatômicas normais ao toque.\nOs resultados dos exames laboratoriais, apresentaram: Citopatológico = negativo para células malignas; HIV = negativo; hepatite C = negativo; hepatite B = negativo; anti-HBsAg = positivo; beta-HCG = negativo; teste não treponêmico (RPR) = 1:128; teste treponômico (Fta-ABS) = positivo.\n\nNesse caso, a conduta recomendada é",
+    "alternativas": {
+      "A": "notificar caso confirmado de sífilis e instituir tratamento de sífilis primária, prescrevendo-se penicilina benzatina 2,4 milhões UI, IM, dose única (1,2 milhão UI em cada glúteo).",
+      "B": "notificar a suspeita clínica de sífilis e instituir tratamento de sífilis secundária, prescrevendo-se penicilina benzatina 2,4 milhões UI, IM, dose única (1,2 milhão UI em cada glúteo).",
+      "C": "repetir os exames para confirmação diagnóstica de sífilis e realizar verificação de comportamento da titulação de anticorpos, além de definir o tratamento e notificar o caso, se confirmado.",
+      "D": "notificar caso confirmado de sífilis e instituir tratamento de sífilis latente com duração ignorada, prescrevendo-se penicilina benzatina 2,4 milhões UI, IM, semanal, por 3 semanas (dose total: 7,2 milhões).",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A paciente não apresenta sinais de sífilis primária (cancro duro). O tratamento com dose única de penicilina benzatina é inadequado para o estágio da doença, que é classificada como latente de duração ignorada.",
+      "B": "Incorreto. A paciente está assintomática e sem lesões ao exame, o que descarta sífilis secundária. O diagnóstico já está confirmado pelos exames, não sendo uma suspeita. O tratamento com dose única também está incorreto.",
+      "C": "Incorreto. A combinação de um teste não treponêmico reagente (RPR 1:128) com um teste treponêmico reagente (FTA-ABS) confirma o diagnóstico de sífilis. Repetir os exames para confirmar apenas atrasaria o tratamento de uma infecção ativa.",
+      "D": "Correto. O diagnóstico de sífilis está confirmado. Como a paciente está assintomática e não é possível determinar a data da infecção, ela é classificada como portadora de sífilis latente de duração ignorada. O tratamento preconizado pelo Ministério da Saúde para este estágio é Penicilina G benzatina 2,4 milhões UI, via intramuscular, uma vez por semana, por três semanas. A notificação compulsória do caso é obrigatória.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": [
+      "Ginecologia e Obstetrícia",
+      "Medicina de Família e Comunidade",
+      "Saúde Coletiva"
+    ],
+    "subtopicos": [
+      "Sífilis",
+      "Infecções Sexualmente Transmissíveis (IST)",
+      "Diagnóstico e Estadiamento da Sífilis",
+      "Tratamento da Sífilis",
+      "Vigilância Epidemiológica",
+      "Saúde da Mulher"
+    ],
+    "createdAt": "2025-07-20T22:42:48Z"
+  },
+  {
+    "id": "q8r9s0t1-u2v3-w4x5-y6z7-a8b9c0d1e2f3",
+    "enunciado": "Um homem com 32 anos de idade, vítima de acidente automobilístico há 40 dias, sofreu traumatismo cranioencefálico grave e contusão pulmonar em base direita, tendo recebido tratamento conservador para ambos. Sofreu, ainda, trauma de baço com choque hipovolêmico, tendo sido realizada esplenectomia de emergência, e fratura de fêmur, cujo tratamento foi cirúrgico. Durante a internação, teve infecção de trato urinário e pneumonia, tendo evoluído com choque séptico refratário às medicações e óbito.\n\nNesse caso, com relação à declaração de óbito do paciente, o médico-assistente deve",
+    "alternativas": {
+      "A": "fazer um relatório médico e encaminhar o corpo ao Instituto Médico Legal, por se tratar de morte por causas externas.",
+      "B": "incluir no item “Condições e Causa do Óbito” o código de Classificação Internacional de Doenças (CID), obrigatório para padronização.",
+      "C": "atestar como causas a sepse e a pneumonia, já que não houve relação entre o trauma e o óbito, pois o tempo decorrido ultrapassou 30 dias.",
+      "D": "preencher o item “Condições e Causa do Óbito” com informações na seguinte ordem: sepse, pneumonia, contusão pulmonar, politrauma.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A morte, embora decorrente de causa externa (acidente), ocorreu com assistência médica e por complicações conhecidas do trauma. Neste caso, o médico assistente tem a responsabilidade de preencher a Declaração de Óbito (DO), não devendo encaminhar o corpo ao IML, a menos que haja suspeita de crime ou solicitação da autoridade policial.",
+      "B": "Incorreto. O médico deve descrever as causas da morte por extenso na DO. A codificação pelo CID (Classificação Internacional de Doenças) é uma etapa posterior, realizada pelos serviços de vigilância e estatística, não sendo uma obrigação do médico no momento do preenchimento.",
+      "C": "Incorreto. A relação entre o trauma e o óbito é clara e direta. As complicações infecciosas (pneumonia, sepse) foram consequência do trauma inicial e da longa internação. Não existe um limite de tempo (como 30 dias) que desvincule a causa básica (o acidente) do óbito.",
+      "D": "Correto. A Declaração de Óbito deve ser preenchida com a sequência lógica dos eventos que levaram à morte. A ordem apresentada (sepse como causa imediata, devida à pneumonia, que foi uma complicação da contusão pulmonar, sendo esta parte do politrauma - a causa básica) está correta e segue as normas de preenchimento da Parte I da DO, do efeito mais recente para a causa original.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Saúde Coletiva", "Clínica Médica", "Cirurgia Geral"],
+    "subtopicos": [
+      "Declaração de Óbito (Atestado de Óbito)",
+      "Medicina Legal",
+      "Causas de Morte",
+      "Vigilância Epidemiológica",
+      "Politraumatismo"
+    ],
+    "createdAt": "2025-07-20T22:44:40Z"
+  },
+  {
+    "id": "s0t1u2v3-w4x5-y6z7-a8b9-c0d1e2f3g4h5",
+    "enunciado": "Um paciente com 61 anos de idade chega para atendimento em pronto-socorro com queixa de dor abdominal difusa, do tipo cólica, há dois dias, relatando que, há poucas horas, sentiu aumento da intensidade da dor associada a vômitos de conteúdo gástrico, que pioravam com a ingesta de alimentos. Nega febre, tabagismo ou consumo de bebida alcoólica. Afirma ter hábito intestinal irregular, com evacuação a cada três dias e fezes endurecidas, mas, dessa vez, não evacua há seis dias. Informa também que faz uso regular de varfarina, losartana e metformina. O paciente tem antecedente de fibrilação atrial crônica, hipertensão arterial sistêmica, diabetes mellitus e cirurgia para correção de hérnia umbilical, realizada há seis anos.\nAo exame físico, registram-se: FC de 110 bpm, FR de 16 irpm, PA de 94 × 62 mmHg. O paciente apresenta-se em regular estado geral, descorado (+1/+4), desidratado (+2/+4), eupneico, anictérico, acianótico e afebril. À ausculta cardíaca, notam-se bulhas hipofonéticas, arrítmicas, sem sopros; a ausculta pulmonar não apresenta alterações; o abdome está distendido com massa visível em cicatriz cirúrgica periumbilical, ruídos hidroaéreos reduzidos globalmente, hipertimpanismo à percussão em todo o abdome, principalmente na região mesogástrica, e palpação de massa dolorosa em região periumbilical, não redutível, sem pulsatilidade.\n\nConsiderando-se esse caso, a hipótese diagnóstica e o exame complementar adequados são, respectivamente,",
+    "alternativas": {
+      "A": "isquemia mesentérica aguda; angiorressonância de abdome com contraste.",
+      "B": "neoplasia de retossigmóide; ressonância magnética de abdome com contraste.",
+      "C": "aneurisma de aorta abdominal; tomografia computadorizada de abdome sem contraste.",
+      "D": "obstrução aguda de intestino delgado; tomografia computadorizada de abdome sem contraste.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. Embora a isquemia mesentérica seja um diagnóstico diferencial importante em um paciente com fibrilação atrial, o quadro clínico e o exame físico (massa irredutível em cicatriz cirúrgica, distensão, hipertimpanismo) são altamente sugestivos de obstrução intestinal por hérnia encarcerada. A angio-RM não é o exame de primeira linha em uma emergência de abdome agudo.",
+      "B": "Incorreto. A obstrução por neoplasia de cólon geralmente se manifesta de forma mais insidiosa e afeta o intestino grosso. O quadro agudo e o achado de hérnia encarcerada apontam para uma obstrução de intestino delgado. A ressonância magnética não é o exame de escolha para esta emergência.",
+      "C": "Incorreto. A massa é descrita como não pulsátil, o que torna o diagnóstico de aneurisma de aorta abdominal menos provável. A hipótese principal é obstrução intestinal.",
+      "D": "Correto. A hipótese diagnóstica mais provável é obstrução aguda de intestino delgado, causada por uma hérnia incisional encarcerada, como evidenciado pela história de cirurgia prévia e a massa irredutível e dolorosa em cicatriz umbilical. A tomografia computadorizada de abdome é o exame de imagem de escolha para confirmar a obstrução, identificar a causa e avaliar possíveis complicações como sofrimento de alça. Um estudo sem contraste pode ser realizado rapidamente na emergência para confirmar a dilatação de alças e o ponto de transição.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "D",
+    "areas_principais": ["Cirurgia Geral"],
+    "subtopicos": [
+      "Abdome Agudo Obstrutivo",
+      "Obstrução de Intestino Delgado",
+      "Hérnia Incisional",
+      "Hérnia Encarcerada",
+      "Tomografia Computadorizada de Abdome"
+    ],
+    "createdAt": "2025-07-20T22:46:11Z"
+  },
+  {
+    "id": "t1u2v3w4-x5y6-z7a8-b9c0-d1e2f3g4h5i6",
+    "enunciado": "Um paciente com 48 anos de idade, obeso e portador de diabetes mellitus, com mau controle metabólico, foi admitido no setor de emergência com diagnóstico clínico e de imagem de apendicite aguda. Indicada cirurgia de urgência, foi submetido à apendicectomia aberta, com boa evolução clínica, tendo recebido alta após 48 horas. No quarto dia de pós-operatório, procura a clínica da família por ter apresentado um episódio febril. Ao exame físico, observa-se presença de eritema e calor na porção inferior da cicatriz cirúrgica do paciente.\n\nDiante desse quadro clínico, é correto afirmar, em relação ao diagnóstico, que se trata de infecção",
+    "alternativas": {
+      "A": "profunda de sítio operatório, sendo indicada a reoperação para lavagem da cavidade abdominal.",
+      "B": "superficial de sítio operatório, sendo indicada a reoperação para lavagem da cavidade abdominal.",
+      "C": "superficial de sítio operatório, para a qual a obesidade e o diabetes mellitus descompensado podem ter contribuído.",
+      "D": "profunda de sítio operatório, abaixo da camada aponeurótica, para a qual a obesidade e o diabetes mellitus descompensado podem ter contribuído.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. Os sinais descritos (eritema e calor na cicatriz) são característicos de uma infecção superficial. A indicação de reoperação com lavagem da cavidade é para infecções de órgão/espaço (abscesso intra-abdominal), um quadro muito mais grave e não sugerido pelo exame.",
+      "B": "Incorreto. Embora a classificação como infecção superficial esteja correta, a conduta proposta (reoperação para lavagem da cavidade) é inadequada. O tratamento para infecção superficial de sítio cirúrgico geralmente envolve a abertura de pontos, drenagem local e antibioticoterapia, se necessário.",
+      "C": "Correto. O quadro de eritema e calor confinado à ferida operatória, que envolve pele e subcutâneo, define uma infecção superficial de sítio operatório. A obesidade e o diabetes mellitus mal controlado são fatores de risco bem estabelecidos para o desenvolvimento desse tipo de complicação, por comprometerem a cicatrização e a resposta imune.",
+      "D": "Incorreto. A infecção é classificada como superficial, pois os sinais estão restritos à pele e ao tecido subcutâneo da incisão. Uma infecção profunda envolveria as camadas fasciais e musculares, o que não é sugerido pelo exame físico descrito.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "C",
+    "areas_principais": ["Cirurgia Geral"],
+    "subtopicos": [
+      "Infecção de Sítio Cirúrgico (ISC)",
+      "Complicações Pós-operatórias",
+      "Apendicite Aguda",
+      "Fatores de Risco em Cirurgia",
+      "Diabetes Mellitus e Cirurgia"
+    ],
+    "createdAt": "2025-07-20T22:47:57Z"
+  },
+  {
+    "id": "u2v3w4x5-y6z7-a8b9-c0d1-e2f3g4h5i6j7",
+    "enunciado": "Uma paciente com 34 anos de idade, com diagnóstico do diabetes mellitus há 25 anos, apresentou tromboembolismo pulmonar há um mês. A paciente é casada e tem um filho, porém ainda não definiu se pretende ter outros. Ela procura a unidade básica de saúde para se aconselhar sobre qual método anticoncepcional deve utilizar.\n\nConsiderando-se os critérios de elegibilidade da Organização Mundial de Saúde, o método contraceptivo mais indicado para essa paciente é o",
+    "alternativas": {
+      "A": "anticoncepcional combinado oral.",
+      "B": "dispositivo intrauterino (DIU) de cobre.",
+      "C": "anticoncepcional com progesterona isolada.",
+      "D": "dispositivo intrauterino (DIU) com progesterona.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. O anticoncepcional combinado oral (ou qualquer método contendo estrogênio) é absolutamente contraindicado (Categoria 4 da OMS) em pacientes com história de tromboembolismo pulmonar, devido ao elevado risco de recorrência de eventos trombóticos.",
+      "B": "Correto. O dispositivo intrauterino (DIU) de cobre é o método mais seguro e indicado para esta paciente. Por não conter hormônios, ele não interfere no sistema de coagulação nem no metabolismo glicêmico, sendo classificado como Categoria 1 pelos critérios de elegibilidade da OMS para mulheres com história de tromboembolismo e diabetes de longa data.",
+      "C": "Incorreto. Embora os anticoncepcionais com progesterona isolada (pílulas, injetáveis, implantes) sejam uma opção mais segura que os combinados (Categoria 2 da OMS), eles não são a *mais* indicada. O DIU de cobre (Categoria 1) é preferível, pois não possui qualquer efeito hormonal sistêmico, eliminando qualquer risco teórico associado.",
+      "D": "Incorreto. O DIU com progesterona (levonorgestrel) é uma boa opção, classificada como Categoria 2 da OMS. A absorção sistêmica do hormônio é mínima. No entanto, o DIU de Cobre é classificado como Categoria 1 (sem restrições), tornando-o a opção mais segura e, portanto, a mais indicada neste cenário de alto risco trombótico.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": [
+      "Ginecologia e Obstetrícia",
+      "Medicina de Família e Comunidade",
+      "Clínica Médica"
+    ],
+    "subtopicos": [
+      "Planejamento Familiar",
+      "Contracepção Hormonal",
+      "Dispositivo Intrauterino (DIU)",
+      "Critérios de Elegibilidade da OMS para Contraceptivos",
+      "Tromboembolismo Venoso",
+      "Diabetes Mellitus e Contracepção"
+    ],
+    "createdAt": "2025-07-20T22:48:47Z"
+  },
+  {
+    "id": "w4x5y6z7-a8b9-c0d1-e2f3-g4h5i6j7k8l9",
+    "enunciado": "Um homem com 56 anos de idade, hipertenso, procura uma unidade de saúde apresentando quadro de dispneia em atividades físicas moderadas, associada a edema de membros inferiores há seis meses. Relata que faz uso de losartana 50 mg, duas vezes ao dia, e furosemida 40 mg/dia.\nAo exame físico, apresentou PA de 140 × 90 mmHg; o ecocardiograma mostrou fração de ejeção de ventrículo esquerdo de 51% e disfunção diastólica moderada; além disso, o nível de peptídeo natriurético atrial encontra-se elevado.\n\nConsiderando o caso apresentado, assinale a opção correta.",
+    "alternativas": {
+      "A": "A inclusão de digoxina ao tratamento desse paciente é indicada para reversão da evolução da falência cardíaca.",
+      "B": "O acréscimo de inibidor de transportador de sódio glicose de tipo 2 (SGLT2) é indicado ao tratamento atual desse paciente.",
+      "C": "O paciente se beneficiará do acréscimo de antagonistas de canais de cálcio, para regressão da hipertrofia ventricular e melhora do inotropismo cardíaco.",
+      "D": "Os esforços para controlar a pressão arterial devem ser parcimoniosos porque, nesse tipo doença, manter a pressão um pouco mais elevada pode ser benéfico.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Incorreto. A digoxina não tem indicação no tratamento de base da Insuficiência Cardíaca com Fração de Ejeção Preservada (ICFEp) e não demonstrou reverter a evolução da doença. Seu uso é restrito a cenários específicos, como controle de frequência em fibrilação atrial associada.",
+      "B": "Correto. O paciente apresenta um quadro clínico e ecocardiográfico clássico de Insuficiência Cardíaca com Fração de Ejeção Preservada (ICFEp). Estudos recentes de grande impacto (como EMPEROR-Preserved e DELIVER) demonstraram que os inibidores do SGLT2 (ex: empagliflozina, dapagliflozina) reduzem significativamente as hospitalizações por insuficiência cardíaca e a mortalidade cardiovascular nesses pacientes, sendo hoje uma indicação formal e pilar no tratamento da ICFEp.",
+      "C": "Incorreto. Os antagonistas de canais de cálcio, especialmente os não diidropiridínicos (verapamil, diltiazem), podem ter efeito inotrópico negativo e piorar a insuficiência cardíaca. Não são uma classe de medicamentos recomendada para o tratamento da ICFEp.",
+      "D": "Incorreto. Esta afirmação é falsa e perigosa. O controle rigoroso da pressão arterial é um dos pilares do tratamento da ICFEp, pois a hipertensão é um dos principais fatores que levam à disfunção diastólica e à hipertrofia ventricular. Manter a pressão elevada é prejudicial.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "B",
+    "areas_principais": ["Clínica Médica"],
+    "subtopicos": [
+      "Insuficiência Cardíaca com Fração de Ejeção Preservada (ICFEp)",
+      "Disfunção Diastólica",
+      "Peptídeos Natriuréticos",
+      "Inibidores de SGLT2",
+      "Tratamento da Insuficiência Cardíaca"
+    ],
+    "createdAt": "2025-07-20T19:49:58Z"
+  },
+  {
+    "id": "x5y6z7a8-b9c0-d1e2-f3g4-h5i6j7k8l9m0",
+    "enunciado": "Uma paciente com 78 anos de idade, com oito anos de escolaridade, vem apresentando, ao longo dos últimos 12 meses, alterações de humor, atenção e memória, passando a ter prejuízos nas atividades instrumentais de vida diária. Há cerca de dois anos, apresentou acidente vascular encefálico cardioembólico e está em anticoagulação plena. Faz uso de antidepressivo há seis meses, sem melhora do quadro.\nNo MiniExame do Estado Mental (MiniMental), obteve 1 ponto em orientação temporal, 1 ponto em orientação de espaço e 17 pontos no total. Os testes de funções executivas e de atenção (fluência verbal, categoria animais e teste de trilha A e B) demonstraram disfunção importante.\nOs exames laboratoriais da paciente: hemograma, funções renal, hepática e tireoidiana; dosagem de sódio e de vitamina B12, apresentaram-se todos sem alterações. O resultado das sorologias para HIV, hepatites B e C e sífilis foram negativos, e o da ressonância magnética mostrou sinais de microangiopatia pronunciada e áreas de encefalomalácia ocipitotemporal à direita.\n\nConsiderando-se esse caso, o diagnóstico mais provável é",
+    "alternativas": {
+      "A": "demência vascular.",
+      "B": "doença de Alzheimer.",
+      "C": "demência frontotemporal.",
+      "D": "demência com corpos de Lewy.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Correto. O diagnóstico mais provável é demência vascular. A paciente possui múltiplos fatores que sustentam essa hipótese: 1) uma clara história de acidente vascular encefálico (AVE); 2) uma relação temporal entre o evento vascular e o declínio cognitivo; 3) achados na ressonância magnética que mostram doença cerebrovascular significativa (microangiopatia e área de encefalomalácia pós-AVE); e 4) um perfil neuropsicológico com disfunção executiva proeminente.",
+      "B": "Incorreto. Na Doença de Alzheimer, o quadro clássico é de início insidioso com predomínio de déficit de memória episódica. Embora a memória da paciente esteja afetada, a disfunção executiva e de atenção é proeminente, e a forte evidência de doença vascular torna a demência vascular a principal hipótese.",
+      "C": "Incorreto. A demência frontotemporal geralmente se manifesta em idade mais precoce e é caracterizada por alterações proeminentes de comportamento, personalidade ou linguagem, o que não é o foco do quadro clínico descrito.",
+      "D": "Incorreto. A demência com corpos de Lewy tem como características centrais a flutuação cognitiva, alucinações visuais recorrentes e parkinsonismo, nenhum dos quais foi relatado no caso.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Clínica Médica", "Saúde Mental"],
+    "subtopicos": [
+      "Demência Vascular",
+      "Doença de Alzheimer",
+      "Diagnóstico Diferencial das Demências",
+      "Avaliação Cognitiva",
+      "Acidente Vascular Encefálico (AVE)",
+      "Neuroimagem"
+    ],
+    "createdAt": "2025-07-20T22:50:32Z"
+  },
+  {
+    "id": "y6z7a8b9-c0d1-e2f3-g4h5-i6j7k8l9m0n1",
+    "enunciado": "Uma paciente com 38 anos de idade chega para consulta em uma unidade básica de saúde com queixa de cefaleia há três semanas, temporal à direita, de caráter contínuo, pulsátil, intensidade de 9 em 10, sem melhora com uso de analgésicos comuns ou opioides. Relata que apresenta despertar noturno devido à dor e que não há fatores de melhora ou de piora da dor. Nega febre, conta que apresenta ciclo menstrual regular e que faz uso regular de anticoncepcional oral combinado há 9 anos. Acrescenta que, há 15 anos, tem migrânea perimenstrual, com alívio da dor com analgésicos simples, que é hipertensa há dois anos, obtendo boa resposta ao tratamento com atenolol 50 mg/dia e hidroclorotiazida 25 mg/dia.\nAo exame físico, registram-se: FC de 76 bpm, FR de 18 irpm, PA de 144 × 96 mmHg. A paciente apresenta fácies de dor, corada, hidratada, eupneica, acianótica e anictérica. Não apresentam alterações os resultados dos exames cardiovascular, respiratório e abdominal, assim como o de pares cranianos e de fundo de olho, registrando-se ainda ausência de rigidez nucal.\n\nConsiderando-se esse caso clínico, é correto afirmar que deve-se",
+    "alternativas": {
+      "A": "realizar tomografia de crânio com contraste, pois a paciente apresenta sinais de alerta.",
+      "B": "introduzir nova medicação anti-hipertensiva, com retorno ambulatorial em duas semanas.",
+      "C": "substituir a medicação anticoncepcional oral para uma com menor concentração de progesterona.",
+      "D": "descartar neoplasia intracraniana ou glaucoma, já que o exame de fundo de olho se encontra normal.",
+      "E": ""
+    },
+    "comentarios": {
+      "A": "Correto. A paciente apresenta múltiplos sinais de alerta ('red flags') para cefaleia secundária: mudança no padrão de uma dor pré-existente, caráter progressivo, intensidade severa, e despertar noturno. Diante desses sinais, a investigação com neuroimagem é mandatória e urgente para excluir causas graves, como neoplasias, trombose venosa cerebral ou outras lesões estruturais. A tomografia de crânio é um exame inicial apropriado.",
+      "B": "Incorreto. Atribuir a cefaleia à pressão arterial e adiar a investigação é uma conduta de risco. A hipertensão pode ser uma consequência da dor intensa. A prioridade é investigar a causa da cefaleia, que apresenta características alarmantes.",
+      "C": "Incorreto. Embora o uso de anticoncepcional combinado seja um fator de risco para eventos vasculares, a simples troca do método, sem uma investigação diagnóstica da causa desta nova e grave cefaleia, é uma conduta inadequada e arriscada.",
+      "D": "Incorreto. Esta afirmação contém um erro clássico e perigoso. Um exame de fundo de olho normal não exclui a presença de uma neoplasia intracraniana ou de outras causas de hipertensão intracraniana, pois o papiledema pode não estar presente. A presença de sinais de alerta exige a realização de neuroimagem independentemente do resultado da fundoscopia.",
+      "E": "A questão original apresenta apenas quatro alternativas (A-D). Esta alternativa foi incluída para manter a conformidade com o schema."
+    },
+    "alternativa_correta": "A",
+    "areas_principais": ["Clínica Médica", "Medicina de Família e Comunidade"],
+    "subtopicos": [
+      "Cefaleia (Dor de Cabeça)",
+      "Sinais de Alerta para Cefaleia (Red Flags)",
+      "Cefaleia Secundária",
+      "Migrânea (Enxaqueca)",
+      "Neuroimagem em Cefaleia"
+    ],
+    "createdAt": "2025-07-20T19:51:13Z"
+  }
+]
