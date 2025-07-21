@@ -531,3 +531,16 @@ def get_subtopics_from_incorrect_answers(user_id):
     except Exception as e:
         st.warning(f"Não foi possível carregar os subtópicos de questões incorretas: {e}")
         return []
+    
+@st.cache_data(ttl=2592000) # Cache de 1 mês
+def load_concepts_df():
+    """
+    Carrega toda a tabela 'concepts' do SQLite para um DataFrame cacheado.
+    O cache dura 1 mês, mas é invalidado por _save_concept.
+    """
+    try:
+        conn = get_db_connection()
+        return pd.read_sql_query("SELECT * FROM concepts", conn)
+    except Exception as e:
+        st.error(f"Não foi possível carregar os conceitos do banco de dados: {e}")
+        return pd.DataFrame()
