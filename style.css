@@ -1,0 +1,129 @@
+/* style.css */
+
+/* Definindo as variáveis de cor da nova paleta */
+:root {
+  --primary-color: #487aa1; /* Azul principal */
+  --secondary-color: #b2d9f7; /* Azul claro para fundos/destaques */
+  --text-color: #3d3c3b; /* Cinza escuro para textos */
+  --accent-color: #7c8071; /* Verde/cinza para acentos */
+  --light-bg-color: #dde3ca; /* Fundo mais claro */
+  --white-color: #ffffff;
+}
+
+/* Header Fixo */
+.fixed-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5rem;
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 999;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+/* Ajuste no corpo principal para não ficar embaixo do header */
+.main .block-container {
+  padding-top: 5rem;
+  padding-bottom: 3rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Estilos Globais */
+.stApp {
+  background-color: var(--white-color);
+}
+h1,
+h2,
+h3,
+p,
+label {
+  color: var(--text-color);
+}
+
+/* Botões Padrão */
+.stButton > button {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border-radius: 8px;
+  border: none;
+}
+
+/* Botões de Navegação (Home) */
+div[data-testid="stPageLink"] a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--white-color);
+  color: var(--primary-color);
+  padding: 1rem;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+div[data-testid="stPageLink"] a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  background-color: var(--light-bg-color);
+  color: var(--text-color);
+}
+
+/* --- WIKI PAGE STYLES --- */
+
+/* Remove o fundo pesado do expander de filtros */
+div[data-testid="stExpander"] div[data-baseweb="card"] {
+  background-color: #f0f0f0; /* Um cinza bem claro */
+  border-radius: 12px;
+  border: none;
+}
+
+/* Container para cada item da lista da Wiki */
+.concept-item {
+  border-bottom: 1px solid #e0e0e0; /* Linha separadora fina */
+}
+
+/* Remove todos os estilos padrão do expander para criar um visual de lista */
+.concept-item div[data-testid="stExpander"] {
+  border: none !important;
+  box-shadow: none !important;
+  background-color: transparent !important;
+  padding: 0.75rem 0.25rem; /* Espaçamento vertical */
+}
+
+/* Estiliza o título do expander (o nome do conceito) */
+.concept-item div[data-testid="stExpander"] summary {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-color);
+  transition: color 0.2s ease;
+}
+.concept-item div[data-testid="stExpander"] summary:hover {
+  color: var(--primary-color);
+}
+
+/* Estiliza o conteúdo dentro do expander */
+.concept-item div[data-testid="stExpander"] div.st-emotion-cache-1h9usn1 {
+  padding-top: 1rem;
+}
+
+/* Controles de Paginação */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+.page-indicator {
+  color: var(--accent-color);
+  font-weight: 500;
+}

@@ -1,0 +1,25 @@
+{
+  "folders": [
+	{
+		"name": "medstudent",
+		"path": "."
+	},
+	{
+		"name": "pages",
+		"path": "../Downloads/medstudent-main/medstudent-main/pages"
+	},
+	{
+		"name": ".devcontainer",
+		"path": "../Downloads/medstudent-main/medstudent-main/.devcontainer"
+	},
+	{
+		"name": "simulados",
+		"path": "../Downloads/medstudent-main/medstudent-main/simulados"
+	},
+	{
+		"name": "tests",
+		"path": "../Downloads/medstudent-main/medstudent-main/tests"
+	}
+],
+  "settings": {}
+}
