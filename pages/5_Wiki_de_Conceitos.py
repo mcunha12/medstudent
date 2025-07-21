@@ -1,4 +1,5 @@
 import streamlit as st
+import pandas as pd
 from services import find_or_create_ai_concept, get_user_search_history
 
 st.set_page_config(
