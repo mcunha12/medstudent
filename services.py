@@ -177,7 +177,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 * **Why (Por quê):** Por que ocorre/é importante?
 * **Who (Quem):** Quem afeta?
 * **Where (Onde):** Onde se manifesta?
-* **When (Quando): Quando ocorre?
+* **When (Quando):** Quando ocorre?
 * **How (Como):** Como é o manejo?
 * **How Much (Quanto custa):** Qual o impacto?
 ### 4. Análise dos 5 Porquês
@@ -202,12 +202,39 @@ Você é um médico especialista e educador, criando material de estudo para um(
             return {'title': 'Erro', 'explanation': f"**Erro:** A geração de conteúdo foi bloqueada ({reason})."}
         
         full_text = response.text
-        title = full_text.split('<title>')[1].split('</title>')[0].strip()
-        explanation = full_text.split('<explanation>')[1].split('</explanation>')[0].strip()
-        
-        return {'title': title, 'explanation': explanation}
+        # Garante que os delimitadores existem antes de tentar dividir
+        if '<title>' in full_text and '</title>' in full_text and \
+           '<explanation>' in full_text and '</explanation>' in full_text:
+            title = full_text.split('<title>')[1].split('</title>')[0].strip()
+            explanation = full_text.split('<explanation>')[1].split('</explanation>')[0].strip()
+            return {'title': title, 'explanation': explanation}
+        else:
+            return {'title': 'Erro', 'explanation': "**Erro:** Formato de resposta da IA inesperado. Tente novamente."}
     except Exception as e:
-        return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}"}
+        return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}. Verifique sua conexão e configurações do Gemini."}
+
+def _save_ai_concept(concept_data: dict, user_id: str):
+    """
+    Salva um novo conceito de IA no banco de dados.
+    """
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        concept_id = str(uuid.uuid4()) # Gera um ID único para o novo conceito
+        created_at = datetime.datetime.now().isoformat() # Timestamp da criação
+        cursor.execute(
+            """
+            INSERT INTO ai_concepts (id, users, title, explanation, created_at)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (concept_id, user_id, concept_data['title'], concept_data['explanation'], created_at)
+        )
+        conn.commit()
+        # Retorna o conceito salvo com o ID gerado (incluindo explicação para manter o padrão)
+        return {'id': concept_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
+    except Exception as e:
+        st.error(f"Erro ao salvar o conceito no banco de dados: {e}")
+        return None
 
 def get_user_search_history(user_id: str):
     """
@@ -215,6 +242,7 @@ def get_user_search_history(user_id: str):
     """
     try:
         conn = get_db_connection()
+        # Ordena por created_at para mostrar os mais recentes primeiro no histórico
         query = "SELECT id, title FROM ai_concepts WHERE users = ? ORDER BY created_at DESC"
         user_concepts = pd.read_sql_query(query, conn, params=(user_id,))
         if user_concepts.empty:
@@ -224,7 +252,6 @@ def get_user_search_history(user_id: str):
         st.error(f"Erro ao buscar o histórico de conceitos: {e}")
         return []
 
-# NOVA FUNÇÃO para buscar um conceito por ID
 def get_concept_by_id(concept_id: str):
     """
     Busca um único conceito de IA pelo seu ID.
@@ -237,67 +264,8 @@ def get_concept_by_id(concept_id: str):
             return None
         return concept_df.to_dict('records')[0]
     except Exception as e:
-        st.error(f"Erro ao buscar o conceito: {e}")
+        st.error(f"Erro ao buscar o conceito por ID: {e}")
         return None
-    
-def find_or_create_ai_concept(user_query: str, user_id: str):
-    """
-    Encontra um conceito existente para o usuário ou cria um novo.
-    """
-    try:
-        conn = get_db_connection()
-        # Busca por conceitos que o user_id atual possui
-        all_user_ai_concepts = pd.read_sql_query(
-            "SELECT id, title, explanation, users FROM ai_concepts WHERE users = ?",
-            conn, params=(user_id,)
-        )
-        
-        if not all_user_ai_concepts.empty:
-            search_corpus = "\n".join(
-                [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
-                 for index, row in all_user_ai_concepts.iterrows()]
-            )
-            prompt = f"""
-Você é um motor de busca semântica. Analise a "Pergunta do Usuário" e o "Conteúdo Existente".
-Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
-**Pergunta do Usuário:** "{user_query}"
-**Conteúdo Existente (exclusivo deste usuário):**
-{search_corpus}
-**Instruções:**
-- Se encontrar um conteúdo altamente relevante, retorne APENAS o seu ID. Exemplo: "abc-123-def-456"
-- Se nada for relevante, retorne a palavra "NENHUM".
-"""
-            model = get_gemini_model()
-            response = model.generate_content(prompt)
-            found_id = response.text.strip().replace("ID:", "").strip()
-            
-            if found_id != "NENHUM":
-                concept_data_list = all_user_ai_concepts[all_user_ai_concepts['id'] == found_id]
-                if not concept_data_list.empty:
-                    concept_data = concept_data_list.iloc[0]
-                    return {'id': concept_data['id'], 'title': concept_data['title'], 'explanation': concept_data['explanation']}
-
-        # Se não encontrou, cria um novo
-        with st.spinner(f"Gerando uma nova explicação para '{user_query}'..."):
-            ai_result = _generate_title_and_explanation(user_query)
-        
-        if ai_result['title'] == 'Erro':
-            return {'id': None, 'title': 'Erro na Geração', 'explanation': ai_result['explanation']}
-            
-        new_id = str(uuid.uuid4())
-        created_at = datetime.now().isoformat()
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
-            (new_id, ai_result['title'], ai_result['explanation'], user_id, created_at)
-        )
-        conn.commit()
-        return {'id': new_id, 'title': ai_result['title'], 'explanation': ai_result['explanation']}
-        
-    except Exception as e:
-        st.error(f"Erro em find_or_create_ai_concept: {e}")
-        return {'id': None, 'title': 'Erro', 'explanation': f"Erro: {e}"}
-
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
