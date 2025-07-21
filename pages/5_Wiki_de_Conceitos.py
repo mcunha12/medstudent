@@ -16,6 +16,12 @@ if 'current_concept' not in st.session_state:
 if 'search_submitted' not in st.session_state:
     st.session_state.search_submitted = False
 
+# Limpa o conceito atual quando a página é recarregada/acessada
+# (para que só apareça conteúdo quando o usuário pesquisar algo novo)
+if 'page_loaded' not in st.session_state:
+    st.session_state.current_concept = None
+    st.session_state.page_loaded = True
+
 # --- VERIFICA LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para acessar a Wiki IA.")
@@ -53,8 +59,10 @@ if st.session_state.search_submitted:
 if st.session_state.current_concept:
     concept = st.session_state.current_concept
     st.markdown("---")
-    st.header(concept['title'])
-    st.markdown(concept['explanation'], unsafe_allow_html=True)
+    
+    # Card expansível com a explicação
+    with st.expander(f"📖 {concept['title']}", expanded=True):
+        st.markdown(concept['explanation'], unsafe_allow_html=True)
 
 # --- HISTÓRICO DE BUSCA DO USUÁRIO ---
 st.markdown("---")
@@ -70,12 +78,13 @@ else:
     for item in search_history:
         with cols[col_idx % 3]:
             if st.button(item['title'], key=item['id'], use_container_width=True):
-                # --- CORREÇÃO APLICADA AQUI ---
                 # Obtém a conexão com o banco de dados da forma correta
                 conn = get_db_connection() 
                 query = "SELECT * FROM ai_concepts WHERE id = ?"
                 concept_df = pd.read_sql_query(query, conn, params=(item['id'],))
                 if not concept_df.empty:
                     st.session_state.current_concept = concept_df.to_dict('records')[0]
+                    # Remove a flag page_loaded para que o conteúdo apareça
+                    st.session_state.page_loaded = False
                     st.rerun()
         col_idx += 1
