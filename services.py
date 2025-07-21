@@ -282,7 +282,7 @@ def get_user_search_history(user_id: str):
             return []
             
     except Exception as e:
-        st.error(f"❌ Erro na função get_user_search_history_improved: {e}")
+        st.error(f"❌ Erro na função get_user_search_history: {e}")
         return []
     
 def find_or_create_ai_concept(user_query: str, user_id: str):
