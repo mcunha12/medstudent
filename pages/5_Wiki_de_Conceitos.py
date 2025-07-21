@@ -12,6 +12,10 @@ st.set_page_config(
 if 'current_concept' not in st.session_state:
     st.session_state.current_concept = None
 
+# Inicializa a flag para controlar a limpeza da busca
+if 'search_submitted' not in st.session_state:
+    st.session_state.search_submitted = False
+
 # --- VERIFICA LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para acessar a Wiki IA.")
@@ -22,19 +26,28 @@ st.title("💡 Wiki com IA")
 st.markdown("Faça uma pergunta ou pesquise um termo para obter uma explicação detalhada gerada por IA.")
 
 # --- BARRA DE PESQUISA ---
+# Define o valor padrão baseado no estado de submissão
+default_value = "" if st.session_state.search_submitted else st.session_state.get("wiki_search_input", "")
+
 search_query = st.text_input(
     "Pesquisar conceito...",
     placeholder="Ex: Tratamento para Infarto Agudo do Miocárdio",
-    key="wiki_search_input"
+    key="wiki_search_input",
+    value=default_value
 )
 
-if search_query:
+# Se uma pesquisa foi enviada, processa e marca para limpar na próxima renderização
+if search_query and not st.session_state.search_submitted:
     st.session_state.current_concept = find_or_create_ai_concept(
         search_query, st.session_state.user_id
     )
-    # Limpa a barra de pesquisa para a próxima busca
-    st.session_state.wiki_search_input = ""
+    # Marca que a pesquisa foi submetida para limpar o campo
+    st.session_state.search_submitted = True
+    st.rerun()
 
+# Reset da flag após a renderização
+if st.session_state.search_submitted:
+    st.session_state.search_submitted = False
 
 # --- EXIBIÇÃO DO CONCEITO ATUAL ---
 if st.session_state.current_concept:
@@ -42,7 +55,6 @@ if st.session_state.current_concept:
     st.markdown("---")
     st.header(concept['title'])
     st.markdown(concept['explanation'], unsafe_allow_html=True)
-
 
 # --- HISTÓRICO DE BUSCA DO USUÁRIO ---
 st.markdown("---")

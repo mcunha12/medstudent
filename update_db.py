@@ -1,27 +1,17 @@
-# update_db.py
 import sqlite3
 
-DB_FILE = 'medstudent.db'
-conn = sqlite3.connect(DB_FILE)
-cursor = conn.cursor()
+def delete_table():
+    # Conecta ao banco de dados medstudent.db na mesma pasta
+    conn = sqlite3.connect('medstudent.db')
+    cursor = conn.cursor()
 
-try:
-    # Cria a nova tabela para os conceitos gerados pela IA
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS ai_concepts (
-        id TEXT PRIMARY KEY,
-        title TEXT NOT NULL,
-        explanation TEXT NOT NULL,
-        users TEXT,
-        created_at TEXT NOT NULL
-    );
-    """)
-    print("Tabela 'ai_concepts' verificada/criada com sucesso.")
-except Exception as e:
-    print(f"Ocorreu um erro: {e}")
+    # Deleta a tabela concepts se ela existir
+    cursor.execute('DROP TABLE IF EXISTS concepts')
 
-conn.commit()
-conn.close()
-print("Processo concluído.")
+    # Salva as alterações e fecha a conexão
+    conn.commit()
+    conn.close()
 
-#   
+if __name__ == '__main__':
+    delete_table()
+    print("Tabela 'concepts' deletada com sucesso (se existia).")
