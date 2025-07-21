@@ -10,8 +10,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-
-
 # --- VERIFICA SE O USUÁRIO ESTÁ LOGADO ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para ver seu histórico.")

@@ -406,7 +406,7 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
     percentile = (user_rank / total_users) * 100
     return {'rank': user_rank, 'total_users': total_users, 'percentile': percentile}
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=1)
 def get_user_answered_questions_details(user_id):
     """Busca o histórico de um usuário no SQLite."""
     try:
