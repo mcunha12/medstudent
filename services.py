@@ -120,7 +120,6 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
             else:
                 pool = questions_df.copy()
             list_of_pools.append(pool)
-
         if not answers_df.empty and ('corretas' in status_filters or 'incorretas' in status_filters):
             answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
             if 'corretas' in status_filters:
@@ -153,7 +152,7 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
 
-# --- WIKI/CONCEPTS FUNCTIONS (SQLite Version - Advanced) ---
+# --- WIKI/CONCEPTS FUNCTIONS (SQLite Version) ---
 
 @st.cache_data(ttl=3600)
 def get_all_concepts_from_questions():
@@ -172,8 +171,6 @@ def get_all_concepts_from_questions():
         df.dropna(subset=['subtopicos', 'areas_principais'], inplace=True)
         df = df[df['subtopicos'] != '']
         df = df[df['areas_principais'] != '']
-        
-        # Agrupa para ter uma linha por conceito, com uma lista de áreas
         concept_areas = df.groupby('subtopicos')['areas_principais'].apply(lambda x: ', '.join(sorted(x.unique()))).reset_index()
         concept_areas.rename(columns={'subtopicos': 'concept', 'areas_principais': 'areas'}, inplace=True)
         return concept_areas
@@ -188,9 +185,26 @@ def _save_concept(concept_name, explanation, areas_str):
         cursor = conn.cursor()
         cursor.execute("INSERT INTO concepts (concept, explanation, areas) VALUES (?, ?, ?)", (concept_name, explanation, areas_str))
         conn.commit()
-        get_wiki_data.clear() # Limpa o cache da função principal da Wiki
+        get_wiki_data.clear()
     except Exception as e:
         print(f"ERRO: Falha ao salvar o conceito '{concept_name}' no SQLite. Erro: {e}")
+
+def _generate_concept_with_gemini(concept_name):
+    """Gera a explicação de um conceito médico usando a API do Gemini."""
+    prompt = f"""
+Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
+**Tópico Principal:** "{concept_name}"
+... (o prompt completo que você definiu) ...
+"""
+    try:
+        model = get_gemini_model()
+        response = model.generate_content(prompt)
+        if response.prompt_feedback.block_reason:
+            reason = response.prompt_feedback.block_reason.name
+            return f"**Erro:** A geração de conteúdo foi bloqueada por motivos de segurança ({reason})."
+        return response.text
+    except Exception as e:
+        return f"**Erro ao contatar a IA:** {e}"
 
 def get_concept_explanation(concept_name: str):
     """Busca a explicação de um conceito. Se não existir, gera com a IA e salva."""
@@ -201,11 +215,9 @@ def get_concept_explanation(concept_name: str):
     if not result.empty:
         return result['explanation'].iloc[0]
     else:
-        # Se o conceito não existe, precisamos descobrir suas áreas para salvá-lo
         all_concepts_df = get_all_concepts_from_questions()
         concept_info = all_concepts_df[all_concepts_df['concept'] == concept_name]
         areas_str = concept_info['areas'].iloc[0] if not concept_info.empty else "Geral"
-
         explanation = _generate_concept_with_gemini(concept_name)
         if not explanation.startswith("**Erro:**"):
             _save_concept(concept_name, explanation, areas_str)
@@ -215,21 +227,18 @@ def get_concept_explanation(concept_name: str):
 def get_wiki_data(user_id):
     """
     Função principal para carregar os dados da Wiki.
-    1. Pega todos os conceitos e suas áreas da tabela 'questions'.
+    1. Pega todos os conceitos e suas áreas.
     2. Pega os conceitos que o usuário errou.
     3. Junta tudo em um único DataFrame com a flag 'user_has_error'.
     """
-    # Passo 1: Pega todos os conceitos e suas áreas
     concepts_df = get_all_concepts_from_questions()
     if concepts_df.empty:
         return pd.DataFrame(columns=['concept', 'areas', 'user_has_error'])
 
-    # Passo 2: Pega os conceitos que o usuário errou
     conn = get_db_connection()
     query = """
     SELECT DISTINCT q.subtopicos
-    FROM answers a
-    JOIN questions q ON a.question_id = q.question_id
+    FROM answers a JOIN questions q ON a.question_id = q.question_id
     WHERE a.user_id = ? AND a.is_correct = 'FALSE'
     """
     incorrect_df = pd.read_sql_query(query, conn, params=(str(user_id),))
@@ -238,10 +247,28 @@ def get_wiki_data(user_id):
     if not incorrect_df.empty:
         incorrect_list = incorrect_df['subtopicos'].dropna().str.split(',').explode().str.strip().unique().tolist()
 
-    # Passo 3: Adiciona a flag 'user_has_error'
     concepts_df['user_has_error'] = concepts_df['concept'].isin(incorrect_list)
-    
     return concepts_df
+
+def get_relevant_concepts(user_query: str, all_concepts: list[str]) -> list[str]:
+    """Usa a IA para encontrar os conceitos mais relevantes."""
+    if not user_query or not all_concepts: return all_concepts
+    concept_list_str = "\n- ".join(all_concepts)
+    prompt = f"""
+Você é um assistente de busca inteligente para uma Wiki médica...
+**Pergunta do Usuário:** "{user_query}"
+... (resto do prompt)
+"""
+    try:
+        model = get_gemini_model()
+        response = model.generate_content(prompt)
+        relevant_list = json.loads(response.text)
+        if isinstance(relevant_list, list) and all(isinstance(item, str) for item in relevant_list):
+            return relevant_list
+        else:
+            return [c for c in all_concepts if user_query.lower() in c.lower()]
+    except Exception:
+        return [c for c in all_concepts if user_query.lower() in c.lower()]
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
