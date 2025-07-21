@@ -48,7 +48,7 @@ if search_query and not st.session_state.search_submitted:
         search_query, st.session_state.user_id
     )
     # Marca que a pesquisa foi submetida para limpar o campo
-    st.session_state.search_submitted = True
+    st.session_session_state.search_submitted = True
     st.rerun()
 
 # Reset da flag após a renderização
@@ -78,13 +78,14 @@ else:
     for item in search_history:
         with cols[col_idx % 3]:
             if st.button(item['title'], key=item['id'], use_container_width=True):
-                # Obtém a conexão com o banco de dados da forma correta
-                conn = get_db_connection() 
+                # Ensure a new connection is opened for this specific query
+                conn_for_button_click = get_db_connection()
                 query = "SELECT * FROM ai_concepts WHERE id = ?"
-                concept_df = pd.read_sql_query(query, conn, params=(item['id'],))
+                concept_df = pd.read_sql_query(query, conn_for_button_click, params=(item['id'],))
                 if not concept_df.empty:
                     st.session_state.current_concept = concept_df.to_dict('records')[0]
                     # Remove a flag page_loaded para que o conteúdo apareça
                     st.session_state.page_loaded = False
                     st.rerun()
+                conn_for_button_click.close() # Close the connection after use
         col_idx += 1

@@ -211,11 +211,11 @@ Você é um médico especialista e educador, criando material de estudo para um(
 
 def get_user_search_history(user_id: str):
     """
-    Função melhorada para buscar histórico com debug completo
+    Função melhorada para buscar histórico com debug completo e gestão correta da conexão.
     """
     conn = None
     try:
-        # Cria nova conexão para esta função
+        # Cria nova conexão para esta função e garante que ela será fechada
         conn = get_db_connection()
         
         # Debug: Mostra informações no Streamlit
@@ -283,27 +283,22 @@ def get_user_search_history(user_id: str):
         else:
             st.warning("⚠️ Nenhum resultado encontrado em nenhuma busca")
             final_result = []
-        
-        # Fecha a conexão antes de retornar
-        if conn:
-            conn.close()
             
         return final_result
             
     except Exception as e:
         st.error(f"❌ Erro na função get_user_search_history: {e}")
-        # Garante que a conexão seja fechada mesmo em caso de erro
-        if conn:
-            try:
-                conn.close()
-            except:
-                pass
         return []
-    
+    finally:
+        # Garante que a conexão seja fechada
+        if conn:
+            conn.close()
+
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
     Versão melhorada com debug para rastrear problemas de salvamento.
     """
+    conn = None
     try:
         conn = get_db_connection()
         all_ai_concepts = pd.read_sql_query("SELECT id, title, explanation FROM ai_concepts", conn)
@@ -359,7 +354,6 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
                     else:
                         print(f"[DEBUG] Usuário {user_id} já estava na lista")
                         
-                    conn.close()
                     return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
 
         # Se não encontrou conceito existente, cria um novo
@@ -386,18 +380,21 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
         conn.commit()
         
         print(f"[DEBUG] Conceito salvo com sucesso!")
-        conn.close()
         
         return {'id': new_id, 'title': ai_result['title'], 'explanation': ai_result['explanation']}
         
     except Exception as e:
         print(f"[DEBUG] Erro geral em find_or_create_ai_concept: {e}")
         return {'id': None, 'title': 'Erro', 'explanation': f"Erro: {e}"}
+    finally:
+        if conn:
+            conn.close()
 
 def debug_ai_concepts_table():
     """
     Função para debugar a tabela ai_concepts - mostra toda a estrutura
     """
+    conn = None # Initialize conn to None
     try:
         conn = get_db_connection()
         
@@ -411,10 +408,13 @@ def debug_ai_concepts_table():
         print(f"[DEBUG] Todos os registros na tabela:")
         print(all_data)
         
-        conn.close()
-        
     except Exception as e:
         print(f"[DEBUG] Erro ao inspecionar tabela: {e}")
+    finally:
+        if conn:
+            conn.close()
+
+# ---   
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
