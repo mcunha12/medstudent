@@ -60,6 +60,7 @@ if not st.session_state.user_id:
                 else:
                     st.error(auth_response['message'])
 else:
+    load_concepts_df()
     # Página para usuário logado
     st.title(f"Bem-vindo de volta! 👋")
     # Carrega apenas a lista de nomes dos tópicos (operação leve e cacheada)
