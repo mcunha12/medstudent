@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-from services import authenticate_or_register_user, get_global_platform_stats
+from services import authenticate_or_register_user, get_global_platform_stats, load_concepts_df
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -50,6 +50,11 @@ if not st.session_state.user_id:
                 
                 if auth_response['status'] == 'success':
                     st.session_state.user_id = auth_response['user_id']
+                    
+                    # --- PRÉ-CARREGAMENTO DOS CONCEITOS ---
+                    with st.spinner("Preparando sua sessão..."):
+                        load_concepts_df() # "Aquece" o cache com a lista de conceitos
+                    
                     st.success(auth_response['message'])
                     st.rerun()
                 else:
