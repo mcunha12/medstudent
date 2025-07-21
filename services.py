@@ -187,7 +187,7 @@ def _save_concept(concept_name, explanation, areas_str):
         conn.commit()
     except Exception as e:
         print(f"ERRO: Falha ao salvar o conceito '{concept_name}' no SQLite. Erro: {e}")
-        
+
 def _generate_concept_with_gemini(concept_name):
     """Gera a explicação de um conceito médico usando a API do Gemini."""
     prompt = f"""
@@ -205,51 +205,42 @@ Você é um médico especialista e educador, criando material de estudo para um(
     except Exception as e:
         return f"**Erro ao contatar a IA:** {e}"
 
-@st.cache_data(ttl=31536000) # Cache de 1 ano (365 dias * 24h * 60m * 60s)
+@st.cache_data(ttl=31536000) # Cache de 1 ano
 def get_concept_explanation(concept_name: str):
     """
-    Busca a explicação de um conceito diretamente no banco. 
-    Se não existir, gera com a IA e salva.
-    Esta é a abordagem mais otimizada em termos de memória.
+    Busca a explicação de um conceito. Se não existir (for nula), gera com a IA e salva.
     """
     conn = get_db_connection()
-    # 1. Faz uma busca pontual e rápida pela explicação de um único conceito
     query = "SELECT explanation FROM concepts WHERE concept = ?"
     result_df = pd.read_sql_query(query, conn, params=(concept_name,))
     
-    # 2. Se a explicação for encontrada, retorna imediatamente
-    if not result_df.empty:
+    # Verifica se encontrou o conceito e se a explicação não é nula/vazia
+    if not result_df.empty and pd.notna(result_df['explanation'].iloc[0]) and result_df['explanation'].iloc[0] != '':
         return result_df['explanation'].iloc[0]
-    
-    # 3. Se não for encontrada, gera com a IA, salva e retorna
     else:
-        # Busca as áreas do conceito para poder salvá-lo corretamente
-        all_concepts_df = get_all_concepts_from_questions()
-        concept_info = all_concepts_df[all_concepts_df['concept'] == concept_name]
-        areas_str = concept_info['areas'].iloc[0] if not concept_info.empty else "Geral"
-        
-        # Gera a nova explicação
+        # Se a explicação for nula, gera com a IA
         explanation = _generate_concept_with_gemini(concept_name)
-        
-        # Salva no banco para que na próxima vez a busca encontre
         if not explanation.startswith("**Erro:**"):
-            _save_concept(concept_name, explanation, areas_str)
-            
+            # Salva (atualiza) a explicação no banco
+            _save_concept_explanation(concept_name, explanation)
         return explanation
     
 @st.cache_data(ttl=600)
 def get_wiki_data(user_id):
     """
-    Função principal para carregar os dados da Wiki.
-    1. Pega todos os conceitos e suas áreas.
+    Função principal e OTIMIZADA para carregar os dados da Wiki.
+    1. Pega todos os conceitos e suas áreas diretamente da tabela 'concepts'.
     2. Pega os conceitos que o usuário errou.
     3. Junta tudo em um único DataFrame com a flag 'user_has_error'.
     """
-    concepts_df = get_all_concepts_from_questions()
+    conn = get_db_connection()
+    
+    # Passo 1: Leitura super rápida da tabela 'concepts' já processada
+    concepts_df = pd.read_sql_query("SELECT concept, areas FROM concepts", conn)
     if concepts_df.empty:
         return pd.DataFrame(columns=['concept', 'areas', 'user_has_error'])
 
-    conn = get_db_connection()
+    # Passo 2: Pega os conceitos que o usuário errou
     query = """
     SELECT DISTINCT q.subtopicos
     FROM answers a JOIN questions q ON a.question_id = q.question_id
@@ -261,6 +252,7 @@ def get_wiki_data(user_id):
     if not incorrect_df.empty:
         incorrect_list = incorrect_df['subtopicos'].dropna().str.split(',').explode().str.strip().unique().tolist()
 
+    # Passo 3: Adiciona a flag 'user_has_error'
     concepts_df['user_has_error'] = concepts_df['concept'].isin(incorrect_list)
     return concepts_df
 
