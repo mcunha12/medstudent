@@ -1,5 +1,7 @@
 import streamlit as st
 import json
+import pandas as pd
+import math
 from services import get_simulado_questions, save_answer, get_all_specialties, get_all_provas, normalize_for_search
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
@@ -9,6 +11,17 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
+def load_css(file_name):
+    try:
+        with open(file_name) as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except FileNotFoundError:
+        st.warning(f"Arquivo de estilo '{file_name}' não encontrado.")
+
+# Carrega o CSS e o Header Fixo
+load_css("style.css")
+st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
 
 
 # --- Funções Auxiliares da Página ---
@@ -24,9 +37,12 @@ def render_question(question_data):
     """Renderiza a interface de uma única questão."""
     st.write(question_data.get('enunciado', ''))
     
-    alternativas = json.loads(question_data.get('alternativas', '{}'))
+    # --- CORREÇÃO: Carregamento robusto de JSON ---
+    alternativas_str = question_data.get('alternativas')
+    alternativas = json.loads(alternativas_str) if alternativas_str and alternativas_str.strip() else {}
     
     selected_answer = None
+    # O loop 'for' já garante que apenas alternativas existentes sejam renderizadas
     for key, value in alternativas.items():
         if st.button(f"{key}: {value}", key=f"ans_{key}", use_container_width=True):
             selected_answer = key
@@ -47,10 +63,13 @@ def render_question(question_data):
 
 def render_feedback(question_data):
     """Renderiza o feedback (comentários) após uma resposta."""
-    comentarios = json.loads(question_data.get('comentarios', '{}'))
+    # --- CORREÇÃO: Carregamento robusto de JSON ---
+    comentarios_str = question_data.get('comentarios')
+    comentarios = json.loads(comentarios_str) if comentarios_str and comentarios_str.strip() else {}
     user_answer = st.session_state.simulado_answers[-1]['user_answer']
     
     st.subheader("Comentários das Alternativas")
+    # O loop 'for' já garante que apenas comentários existentes sejam renderizados
     for key, comment in comentarios.items():
         if key == question_data['alternativa_correta']:
             st.success(f"**{key} (Correta):** {comment}")
@@ -102,8 +121,11 @@ def render_results():
                 st.markdown("---")
                 st.write(question.get('enunciado', ''))
                 
-                alternativas = json.loads(question.get('alternativas', '{}'))
-                comentarios = json.loads(question.get('comentarios', '{}'))
+                # --- CORREÇÃO: Carregamento robusto de JSON ---
+                alternativas_str = question.get('alternativas')
+                alternativas = json.loads(alternativas_str) if alternativas_str and alternativas_str.strip() else {}
+                comentarios_str = question.get('comentarios')
+                comentarios = json.loads(comentarios_str) if comentarios_str and comentarios_str.strip() else {}
                 
                 for key, value in alternativas.items():
                     full_text = f"**{key}:** {value}"
@@ -119,7 +141,7 @@ def render_results():
         reset_simulado_state()
 
 # --- LÓGICA PRINCIPAL DA PÁGINA ---
-
+# (O resto do arquivo permanece o mesmo)
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para acessar o simulado.")
     st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
@@ -132,12 +154,9 @@ if 'answer_submitted' not in st.session_state:
 if 'keywords' not in st.session_state:
     st.session_state.keywords = []
 
-# --- RENDERIZAÇÃO CONDICIONAL ---
-
 if st.session_state.simulado_stage == 'config':
     st.title("📝 Simulador de Provas")
     st.markdown("Selecione os filtros abaixo e clique em 'Gerar Simulado' para começar a praticar.")
-
     with st.container(border=True):
         st.subheader("Filtros do Simulado")
         st.markdown("**Buscar em:**")
@@ -201,15 +220,11 @@ elif st.session_state.simulado_stage == 'in_progress':
     total_questions = len(st.session_state.simulado_questions)
     current_index = st.session_state.current_question_index
     current_question_data = st.session_state.simulado_questions[current_index]
-
     st.title(f"Questão {current_index + 1} de {total_questions}")
-    
     if st.button("✖️ Cancelar e Gerar Novo Simulado", type="secondary"):
         reset_simulado_state()
-    
     st.progress((current_index + 1) / total_questions)
     st.markdown("---")
-
     if st.session_state.answer_submitted:
         render_feedback(current_question_data)
     else:
