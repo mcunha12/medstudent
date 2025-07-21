@@ -1,5 +1,4 @@
 import streamlit as st
-# Importa as funções de geração e salvamento diretamente, removendo find_or_create_ai_concept
 from services import _generate_title_and_explanation, _save_ai_concept, get_user_search_history, get_concept_by_id
 
 st.set_page_config(
@@ -34,7 +33,7 @@ with st.form(key="search_form", clear_on_submit=True):
 
 # Processa a busca quando o formulário é enviado
 if submitted and search_query:
-    # Lógica modificada: Sempre gera um novo conceito e o salva
+    # Sempre gera um novo conceito e o salva
     st.toast("Gerando novo conceito com IA...", icon="🧠")
     with st.spinner("Aguarde, a IA está trabalhando..."):
         new_concept_data = _generate_title_and_explanation(search_query)
@@ -56,9 +55,12 @@ if st.session_state.current_concept:
     concept = st.session_state.current_concept
     st.markdown("---")
     
-    # Exibe o título e a explicação
+    # Exibe o título do conceito
     st.subheader(f"📖 {concept['title']}")
-    st.markdown(concept['explanation'], unsafe_allow_html=True)
+    
+    # ENVOLVE A EXPLICAÇÃO DENTRO DE UM EXPANDER PARA TORNÁ-LA MINIMIZÁVEL
+    with st.expander(f"Ver Explicação Detalhada: {concept['title']}", expanded=True):
+        st.markdown(concept['explanation'], unsafe_allow_html=True)
 
 # --- HISTÓRICO DE BUSCA DO USUÁRIO ---
 st.markdown("---")
