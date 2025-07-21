@@ -13,9 +13,30 @@ DB_FILE = 'medstudent.db'
 # --- GERENCIAMENTO DE CONEXÃO COM O BANCO DE DADOS ---
 @st.cache_resource
 def get_db_connection():
-    """Cria e gerencia a conexão com o banco de dados SQLite."""
-    conn = sqlite3.connect(DB_FILE, check_same_thread=False)
-    return conn
+    """
+    Cria e retorna uma conexão com o banco de dados SQLite, reutilizando-a se já existir
+    na st.session_state para evitar o erro 'Cannot operate on a closed database'.
+    Schema: ai_concepts: [id, title, explanation, users, created_at]
+    """
+    if 'db_conn' not in st.session_state:
+        try:
+            # check_same_thread=False é crucial para uso com Streamlit/threading
+            conn = sqlite3.connect('wiki_ia.db', check_same_thread=False) # Altere 'wiki_ia.db' para o caminho do seu banco se for diferente
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS ai_concepts (
+                    id TEXT PRIMARY KEY,
+                    users TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    explanation TEXT NOT NULL,
+                    created_at TEXT NOT NULL
+                )
+            """)
+            conn.commit()
+            st.session_state.db_conn = conn
+        except Exception as e:
+            st.error(f"Erro ao conectar ou criar o banco de dados: {e}")
+            st.stop() # Para a execução se o banco não puder ser acessado
+    return st.session_state.db_conn
 
 def normalize_for_search(text: str) -> str:
     """(Função auxiliar) Normaliza texto para buscas."""
