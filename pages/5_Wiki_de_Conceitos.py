@@ -48,7 +48,7 @@ if search_query and not st.session_state.search_submitted:
         search_query, st.session_state.user_id
     )
     # Marca que a pesquisa foi submetida para limpar o campo
-    st.session_session_state.search_submitted = True
+    st.session_state.search_submitted = True # Corrected line!
     st.rerun()
 
 # Reset da flag após a renderização
