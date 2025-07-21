@@ -154,60 +154,6 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
 
 # --- WIKI IA FUNCTIONS (SQLite Version - CORRIGIDA) ---
 
-Sua solicitação de alteração foi recebida! Você quer que cada explicação (conceito de IA) seja exclusiva de um único usuário, em vez de ter uma lista de usuários associados. Isso significa que a coluna users na tabela ai_concepts deve armazenar apenas um user_id por registro.
-
-Para fazer isso, precisaremos ajustar:
-
-find_or_create_ai_concept: Quando um conceito é encontrado, não precisamos mais adicionar o user_id a uma lista existente. Se o user_id atual não for o mesmo que o user_id associado ao conceito encontrado, um novo conceito deve ser gerado para o novo usuário. Se o conceito for gerado, ele será associado apenas ao user_id que o solicitou.
-
-get_user_search_history: Esta função já busca conceitos baseados no user_id. Com a mudança, a busca ficará mais direta, pois cada conceito terá apenas um user_id associado. A lógica de busca LIKE não será tão necessária, podendo focar na busca exata do user_id.
-
-Tabela ai_concepts: Embora a estrutura da tabela não mude (a coluna users continuará sendo TEXT), a semântica do que ela armazena mudará: de uma lista de IDs para um único ID.
-
-Vamos aos ajustes nas funções e à página de consulta.
-
-Funções Atualizadas (services.py)
-Python
-
-import streamlit as st
-import pandas as pd
-import sqlite3
-import uuid
-from datetime import datetime
-
-# Assume these functions are defined elsewhere in your 'services' module
-# For demonstration, I'm defining a placeholder get_gemini_model and get_db_connection
-def get_gemini_model():
-    # Placeholder for your actual Gemini model initialization
-    class MockModel:
-        def generate_content(self, prompt):
-            # Simulate a response from the AI
-            # Simplified mock response for demonstration
-            if "NENHUM" in prompt:
-                return MockResponse("NENHUM")
-            return MockResponse("<title>Exemplo de Título</title><explanation>### 1. Definição Rápida...</explanation>")
-    class MockResponse:
-        def __init__(self, text):
-            self.text = text
-            self.prompt_feedback = MockPromptFeedback()
-    class MockPromptFeedback:
-        def __init__(self):
-            self.block_reason = None
-    return MockModel()
-
-def get_db_connection():
-    # Establishes a connection to the SQLite database
-    conn = sqlite3.connect('wiki_ai.db')
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS ai_concepts (
-            id TEXT PRIMARY KEY,
-            title TEXT NOT NULL,
-            explanation TEXT NOT NULL,
-            users TEXT, -- Esta coluna agora armazenará apenas um user_id
-            created_at TEXT
-        )
-    ''')
-    return conn
 
 def _generate_title_and_explanation(user_query: str):
     """
