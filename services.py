@@ -209,20 +209,70 @@ Você é um médico especialista e educador, criando material de estudo para um(
     except Exception as e:
         return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}"}
 
+def get_user_search_history(user_id: str):
+    """
+    Retorna o histórico de conceitos pesquisados por um usuário.
+    Versão com debug melhorado.
+    """
+    try:
+        conn = get_db_connection()
+        
+        # Debug: Primeiro vamos ver todos os registros da tabela
+        print(f"[DEBUG] Buscando histórico para user_id: {user_id}")
+        
+        # Verifica se a tabela existe e tem dados
+        all_concepts = pd.read_sql_query("SELECT id, title, users FROM ai_concepts", conn)
+        print(f"[DEBUG] Total de conceitos na tabela: {len(all_concepts)}")
+        print(f"[DEBUG] Primeiros registros: {all_concepts.head()}")
+        
+        # Busca específica para o usuário - versão mais robusta
+        # Tenta diferentes padrões de busca
+        queries_to_try = [
+            # Busca exata (usuário único)
+            f"SELECT id, title FROM ai_concepts WHERE users = '{user_id}'",
+            # Busca com LIKE para usuário no início
+            f"SELECT id, title FROM ai_concepts WHERE users LIKE '{user_id}%'",
+            # Busca com LIKE para usuário no meio
+            f"SELECT id, title FROM ai_concepts WHERE users LIKE '%{user_id}%'",
+            # Busca com LIKE para usuário no final  
+            f"SELECT id, title FROM ai_concepts WHERE users LIKE '%{user_id}'",
+        ]
+        
+        for i, query in enumerate(queries_to_try):
+            try:
+                history_df = pd.read_sql_query(query, conn)
+                print(f"[DEBUG] Query {i+1} encontrou {len(history_df)} resultados")
+                if not history_df.empty:
+                    print(f"[DEBUG] Resultados encontrados: {history_df}")
+                    return history_df.to_dict('records')
+            except Exception as e:
+                print(f"[DEBUG] Erro na query {i+1}: {e}")
+                continue
+        
+        # Se chegou aqui, não encontrou nada
+        print(f"[DEBUG] Nenhum resultado encontrado para user_id: {user_id}")
+        return []
+        
+    except Exception as e:
+        print(f"[DEBUG] Erro geral na função get_user_search_history: {e}")
+        return []
+    
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
-    Busca um conceito relevante na tabela 'ai_concepts'. Se não encontrar,
-    gera um novo com a IA, salva no banco e retorna.
+    Versão melhorada com debug para rastrear problemas de salvamento.
     """
-    conn = get_db_connection()
-    all_ai_concepts = pd.read_sql_query("SELECT id, title, explanation FROM ai_concepts", conn)
-    
-    if not all_ai_concepts.empty:
-        search_corpus = "\n".join(
-            [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
-             for index, row in all_ai_concepts.iterrows()]
-        )
-        prompt = f"""
+    try:
+        conn = get_db_connection()
+        all_ai_concepts = pd.read_sql_query("SELECT id, title, explanation FROM ai_concepts", conn)
+        
+        print(f"[DEBUG] Processando query: '{user_query}' para user_id: {user_id}")
+        
+        if not all_ai_concepts.empty:
+            search_corpus = "\n".join(
+                [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
+                 for index, row in all_ai_concepts.iterrows()]
+            )
+            prompt = f"""
 Você é um motor de busca semântica. Analise a "Pergunta do Usuário" e o "Conteúdo Existente".
 Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
 **Pergunta do Usuário:** "{user_query}"
@@ -232,51 +282,96 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
 - Se encontrar um conteúdo altamente relevante, retorne APENAS o seu ID. Exemplo: "abc-123-def-456"
 - Se nada for relevante, retorne a palavra "NENHUM".
 """
-        model = get_gemini_model()
-        response = model.generate_content(prompt)
-        found_id = response.text.strip().replace("ID:", "").strip()
-        
-        if found_id != "NENHUM":
-            concept_data_list = all_ai_concepts[all_ai_concepts['id'] == found_id]
-            if not concept_data_list.empty:
-                concept_data = concept_data_list.iloc[0]
-                cursor = conn.cursor()
-                # CORREÇÃO: Busca na coluna 'users' (plural)
-                users_str = pd.read_sql_query("SELECT users FROM ai_concepts WHERE id = ?", conn, params=(found_id,)).iloc[0]['users']
-                user_list = users_str.split(',') if users_str else []
-                if user_id not in user_list:
-                    user_list.append(user_id)
-                    # CORREÇÃO: Atualiza a coluna 'users' (plural)
-                    cursor.execute("UPDATE ai_concepts SET users = ? WHERE id = ?", (','.join(user_list), found_id))
-                    conn.commit()
-                return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
+            model = get_gemini_model()
+            response = model.generate_content(prompt)
+            found_id = response.text.strip().replace("ID:", "").strip()
+            
+            print(f"[DEBUG] IA encontrou ID: {found_id}")
+            
+            if found_id != "NENHUM":
+                concept_data_list = all_ai_concepts[all_ai_concepts['id'] == found_id]
+                if not concept_data_list.empty:
+                    concept_data = concept_data_list.iloc[0]
+                    cursor = conn.cursor()
+                    
+                    # Busca os usuários atuais
+                    current_users_result = pd.read_sql_query("SELECT users FROM ai_concepts WHERE id = ?", conn, params=(found_id,))
+                    users_str = current_users_result.iloc[0]['users'] if not current_users_result.empty else ""
+                    
+                    print(f"[DEBUG] Usuários atuais no conceito {found_id}: '{users_str}'")
+                    
+                    # Processa a lista de usuários
+                    user_list = []
+                    if users_str and users_str.strip():
+                        user_list = [u.strip() for u in users_str.split(',') if u.strip()]
+                    
+                    if user_id not in user_list:
+                        user_list.append(user_id)
+                        new_users_str = ','.join(user_list)
+                        print(f"[DEBUG] Adicionando usuário. Nova lista: '{new_users_str}'")
+                        
+                        cursor.execute("UPDATE ai_concepts SET users = ? WHERE id = ?", (new_users_str, found_id))
+                        conn.commit()
+                        print(f"[DEBUG] Usuário adicionado com sucesso")
+                    else:
+                        print(f"[DEBUG] Usuário {user_id} já estava na lista")
+                        
+                    conn.close()
+                    return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
 
-    with st.spinner(f"Nenhum conceito encontrado. Gerando uma nova explicação para '{user_query}'..."):
-        ai_result = _generate_title_and_explanation(user_query)
-    
-    if ai_result['title'] == 'Erro':
-        return {'id': None, 'title': 'Erro na Geração', 'explanation': ai_result['explanation']}
+        # Se não encontrou conceito existente, cria um novo
+        print(f"[DEBUG] Criando novo conceito para: '{user_query}'")
         
-    new_id = str(uuid.uuid4())
-    created_at = datetime.now().isoformat()
-    cursor = conn.cursor()
-    # CORREÇÃO: Insere na coluna 'users' (plural)
-    cursor.execute(
-        "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
-        (new_id, ai_result['title'], ai_result['explanation'], user_id, created_at)
-    )
-    conn.commit()
-    
-    return {'id': new_id, 'title': ai_result['title'], 'explanation': ai_result['explanation']}
+        with st.spinner(f"Nenhum conceito encontrado. Gerando uma nova explicação para '{user_query}'..."):
+            ai_result = _generate_title_and_explanation(user_query)
+        
+        if ai_result['title'] == 'Erro':
+            return {'id': None, 'title': 'Erro na Geração', 'explanation': ai_result['explanation']}
+            
+        new_id = str(uuid.uuid4())
+        created_at = datetime.now().isoformat()
+        cursor = conn.cursor()
+        
+        print(f"[DEBUG] Salvando novo conceito com ID: {new_id}")
+        print(f"[DEBUG] Título: {ai_result['title']}")
+        print(f"[DEBUG] User ID: {user_id}")
+        
+        cursor.execute(
+            "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
+            (new_id, ai_result['title'], ai_result['explanation'], user_id, created_at)
+        )
+        conn.commit()
+        
+        print(f"[DEBUG] Conceito salvo com sucesso!")
+        conn.close()
+        
+        return {'id': new_id, 'title': ai_result['title'], 'explanation': ai_result['explanation']}
+        
+    except Exception as e:
+        print(f"[DEBUG] Erro geral em find_or_create_ai_concept: {e}")
+        return {'id': None, 'title': 'Erro', 'explanation': f"Erro: {e}"}
 
-def get_user_search_history(user_id: str):
-    """Retorna o histórico de conceitos pesquisados por um usuário."""
-    conn = get_db_connection()
-    # CORREÇÃO: Busca na coluna 'users' (plural)
-    query = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
-    params = (f"%{user_id}%",)
-    history_df = pd.read_sql_query(query, conn, params=params)
-    return history_df.to_dict('records')
+def debug_ai_concepts_table():
+    """
+    Função para debugar a tabela ai_concepts - mostra toda a estrutura
+    """
+    try:
+        conn = get_db_connection()
+        
+        # Mostra a estrutura da tabela
+        table_info = pd.read_sql_query("PRAGMA table_info(ai_concepts)", conn)
+        print(f"[DEBUG] Estrutura da tabela ai_concepts:")
+        print(table_info)
+        
+        # Mostra todos os registros
+        all_data = pd.read_sql_query("SELECT * FROM ai_concepts", conn)
+        print(f"[DEBUG] Todos os registros na tabela:")
+        print(all_data)
+        
+        conn.close()
+        
+    except Exception as e:
+        print(f"[DEBUG] Erro ao inspecionar tabela: {e}")
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
