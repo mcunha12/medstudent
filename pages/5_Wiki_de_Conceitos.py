@@ -73,7 +73,7 @@ if search_query:
 final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
 
 # --- LÓGICA DE PAGINAÇÃO ---
-ITEMS_PER_PAGE = 20
+ITEMS_PER_PAGE = 50000
 total_items = len(final_concepts_list)
 total_pages = math.ceil(total_items / ITEMS_PER_PAGE) if total_items > 0 else 1
 
