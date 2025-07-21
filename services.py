@@ -21,7 +21,7 @@ def get_db_connection():
     if 'db_conn' not in st.session_state:
         try:
             # check_same_thread=False é crucial para uso com Streamlit/threading
-            conn = sqlite3.connect('wiki_ia.db', check_same_thread=False) # Altere 'wiki_ia.db' para o caminho do seu banco se for diferente
+            conn = sqlite3.connect('medstudent.db', check_same_thread=False) # Altere 'wiki_ia.db' para o caminho do seu banco se for diferente
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS ai_concepts (
                     id TEXT PRIMARY KEY,
