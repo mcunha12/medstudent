@@ -64,7 +64,7 @@ if search_query:
 final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
 
 # --- LÓGICA DE PAGINAÇÃO ---
-ITEMS_PER_PAGE = 20
+ITEMS_PER_PAGE = 5000000
 total_items = len(final_concepts_list)
 total_pages = math.ceil(total_items / ITEMS_PER_PAGE) if total_items > 0 else 1
 
@@ -101,4 +101,3 @@ else:
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
 
-                
