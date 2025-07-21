@@ -154,6 +154,61 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
 
 # --- WIKI IA FUNCTIONS (SQLite Version - CORRIGIDA) ---
 
+Sua solicitação de alteração foi recebida! Você quer que cada explicação (conceito de IA) seja exclusiva de um único usuário, em vez de ter uma lista de usuários associados. Isso significa que a coluna users na tabela ai_concepts deve armazenar apenas um user_id por registro.
+
+Para fazer isso, precisaremos ajustar:
+
+find_or_create_ai_concept: Quando um conceito é encontrado, não precisamos mais adicionar o user_id a uma lista existente. Se o user_id atual não for o mesmo que o user_id associado ao conceito encontrado, um novo conceito deve ser gerado para o novo usuário. Se o conceito for gerado, ele será associado apenas ao user_id que o solicitou.
+
+get_user_search_history: Esta função já busca conceitos baseados no user_id. Com a mudança, a busca ficará mais direta, pois cada conceito terá apenas um user_id associado. A lógica de busca LIKE não será tão necessária, podendo focar na busca exata do user_id.
+
+Tabela ai_concepts: Embora a estrutura da tabela não mude (a coluna users continuará sendo TEXT), a semântica do que ela armazena mudará: de uma lista de IDs para um único ID.
+
+Vamos aos ajustes nas funções e à página de consulta.
+
+Funções Atualizadas (services.py)
+Python
+
+import streamlit as st
+import pandas as pd
+import sqlite3
+import uuid
+from datetime import datetime
+
+# Assume these functions are defined elsewhere in your 'services' module
+# For demonstration, I'm defining a placeholder get_gemini_model and get_db_connection
+def get_gemini_model():
+    # Placeholder for your actual Gemini model initialization
+    class MockModel:
+        def generate_content(self, prompt):
+            # Simulate a response from the AI
+            # Simplified mock response for demonstration
+            if "NENHUM" in prompt:
+                return MockResponse("NENHUM")
+            return MockResponse("<title>Exemplo de Título</title><explanation>### 1. Definição Rápida...</explanation>")
+    class MockResponse:
+        def __init__(self, text):
+            self.text = text
+            self.prompt_feedback = MockPromptFeedback()
+    class MockPromptFeedback:
+        def __init__(self):
+            self.block_reason = None
+    return MockModel()
+
+def get_db_connection():
+    # Establishes a connection to the SQLite database
+    conn = sqlite3.connect('wiki_ai.db')
+    conn.execute('''
+        CREATE TABLE IF NOT EXISTS ai_concepts (
+            id TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
+            explanation TEXT NOT NULL,
+            users TEXT, -- Esta coluna agora armazenará apenas um user_id
+            created_at TEXT
+        )
+    ''')
+    return conn
+
 def _generate_title_and_explanation(user_query: str):
     """
     Usa a IA para gerar um título otimizado e uma explicação detalhada.
@@ -177,7 +232,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 * **Why (Por quê):** Por que ocorre/é importante?
 * **Who (Quem):** Quem afeta?
 * **Where (Onde):** Onde se manifesta?
-* **When (Quando):** Quando ocorre?
+* **When (Quando): Quando ocorre?
 * **How (Como):** Como é o manejo?
 * **How Much (Quanto custa):** Qual o impacto?
 ### 4. Análise dos 5 Porquês
@@ -211,110 +266,77 @@ Você é um médico especialista e educador, criando material de estudo para um(
 
 def get_user_search_history(user_id: str):
     """
-    Função melhorada para buscar histórico com debug completo e gestão correta da conexão.
+    Função para buscar histórico de pesquisa de um usuário,
+    considerando que cada conceito agora pertence a um único usuário.
     """
     conn = None
     try:
-        # Cria nova conexão para esta função e garante que ela será fechada
         conn = get_db_connection()
         
-        # Debug: Mostra informações no Streamlit
         st.write(f"🔍 **Buscando histórico para User ID:** `{user_id}`")
         
-        # 1. Verifica se há registros na tabela
-        total_query = "SELECT COUNT(*) as total FROM ai_concepts"
-        total_result = pd.read_sql_query(total_query, conn)
-        total_registros = total_result.iloc[0]['total']
+        # Agora buscamos apenas por correspondência exata na coluna 'users'
+        query = "SELECT id, title FROM ai_concepts WHERE users = ? ORDER BY created_at DESC"
+        user_concepts = pd.read_sql_query(query, conn, params=(user_id,))
         
-        st.write(f"📊 **Total de conceitos na tabela:** {total_registros}")
+        st.write(f"📊 **Total de conceitos encontrados para o usuário:** {len(user_concepts)}")
         
-        if total_registros == 0:
-            st.warning("⚠️ Tabela ai_concepts está vazia!")
+        if user_concepts.empty:
+            st.warning(f"⚠️ Nenhum conceito encontrado para o usuário `{user_id}`.")
             return []
         
-        # 2. Mostra todos os registros para debug
-        all_concepts = pd.read_sql_query(
-            "SELECT id, title, users, created_at FROM ai_concepts ORDER BY created_at DESC", 
-            conn
-        )
-        st.write("🗃️ **Todos os registros na tabela:**")
-        st.dataframe(all_concepts)
+        st.write("🗃️ **Registros encontrados:**")
+        st.dataframe(user_concepts)
         
-        # 3. Testa diferentes tipos de busca
-        search_results = {}
-        
-        # Busca exata
-        query_exact = "SELECT id, title FROM ai_concepts WHERE users = ?"
-        result_exact = pd.read_sql_query(query_exact, conn, params=(user_id,))
-        search_results['Busca Exata'] = len(result_exact)
-        
-        # Busca início
-        query_start = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
-        result_start = pd.read_sql_query(query_start, conn, params=(f"{user_id},%",))
-        search_results['Busca Início'] = len(result_start)
-        
-        # Busca meio
-        query_middle = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
-        result_middle = pd.read_sql_query(query_middle, conn, params=(f"%,{user_id},%",))
-        search_results['Busca Meio'] = len(result_middle)
-        
-        # Busca final
-        query_end = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
-        result_end = pd.read_sql_query(query_end, conn, params=(f"%,{user_id}",))
-        search_results['Busca Final'] = len(result_end)
-        
-        # Busca genérica (LIKE)
-        query_like = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
-        result_like = pd.read_sql_query(query_like, conn, params=(f"%{user_id}%",))
-        search_results['Busca LIKE'] = len(result_like)
-        
-        st.write("🔎 **Resultados dos diferentes tipos de busca:**")
-        for tipo, quantidade in search_results.items():
-            st.write(f"- **{tipo}:** {quantidade} resultados")
-        
-        # 4. Determina qual resultado retornar
-        final_result = []
-        if len(result_exact) > 0:
-            st.success("✅ Usando busca exata")
-            final_result = result_exact.to_dict('records')
-        elif len(result_like) > 0:
-            st.success("✅ Usando busca LIKE")
-            final_result = result_like.to_dict('records')
-        else:
-            st.warning("⚠️ Nenhum resultado encontrado em nenhuma busca")
-            final_result = []
-            
-        return final_result
+        return user_concepts.to_dict('records')
             
     except Exception as e:
         st.error(f"❌ Erro na função get_user_search_history: {e}")
         return []
     finally:
-        # Garante que a conexão seja fechada
         if conn:
             conn.close()
 
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
-    Versão melhorada com debug para rastrear problemas de salvamento.
+    Encontra um conceito existente ou cria um novo, garantindo que
+    cada conceito seja exclusivo de um user_id.
     """
     conn = None
     try:
         conn = get_db_connection()
-        all_ai_concepts = pd.read_sql_query("SELECT id, title, explanation FROM ai_concepts", conn)
         
         print(f"[DEBUG] Processando query: '{user_query}' para user_id: {user_id}")
         
-        if not all_ai_concepts.empty:
+        # Primeiro, tentar encontrar um conceito para ESTE usuário
+        # com um título similar (ou que contenha a query)
+        # NOTA: A busca por similaridade semântica aqui não está usando a IA para comparar títulos
+        # Idealmente, você usaria embeddings ou uma busca mais sofisticada.
+        # Para simplificar e focar na relação 1:1, faremos uma busca por título exato ou LIKE.
+        
+        # Vamos buscar por um conceito que este usuário JÁ TENHA gerado com este título
+        # ou um título muito similar (case-insensitive e trimmed)
+        
+        # Buscamos por conceitos que o user_id atual possui
+        all_user_ai_concepts = pd.read_sql_query(
+            "SELECT id, title, explanation, users FROM ai_concepts WHERE users = ?",
+            conn, params=(user_id,)
+        )
+        
+        found_existing_for_user = False
+        concept_data = None
+
+        if not all_user_ai_concepts.empty:
+            # Usar IA para encontrar o mais relevante SOMENTE entre os conceitos deste usuário
             search_corpus = "\n".join(
                 [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
-                 for index, row in all_ai_concepts.iterrows()]
+                 for index, row in all_user_ai_concepts.iterrows()]
             )
             prompt = f"""
 Você é um motor de busca semântica. Analise a "Pergunta do Usuário" e o "Conteúdo Existente".
 Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
 **Pergunta do Usuário:** "{user_query}"
-**Conteúdo Existente:**
+**Conteúdo Existente (exclusivo deste usuário):**
 {search_corpus}
 **Instruções:**
 - Se encontrar um conteúdo altamente relevante, retorne APENAS o seu ID. Exemplo: "abc-123-def-456"
@@ -324,42 +346,20 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
             response = model.generate_content(prompt)
             found_id = response.text.strip().replace("ID:", "").strip()
             
-            print(f"[DEBUG] IA encontrou ID: {found_id}")
+            print(f"[DEBUG] IA encontrou ID (para este usuário): {found_id}")
             
             if found_id != "NENHUM":
-                concept_data_list = all_ai_concepts[all_ai_concepts['id'] == found_id]
+                concept_data_list = all_user_ai_concepts[all_user_ai_concepts['id'] == found_id]
                 if not concept_data_list.empty:
                     concept_data = concept_data_list.iloc[0]
-                    cursor = conn.cursor()
-                    
-                    # Busca os usuários atuais
-                    current_users_result = pd.read_sql_query("SELECT users FROM ai_concepts WHERE id = ?", conn, params=(found_id,))
-                    users_str = current_users_result.iloc[0]['users'] if not current_users_result.empty else ""
-                    
-                    print(f"[DEBUG] Usuários atuais no conceito {found_id}: '{users_str}'")
-                    
-                    # Processa a lista de usuários
-                    user_list = []
-                    if users_str and users_str.strip():
-                        user_list = [u.strip() for u in users_str.split(',') if u.strip()]
-                    
-                    if user_id not in user_list:
-                        user_list.append(user_id)
-                        new_users_str = ','.join(user_list)
-                        print(f"[DEBUG] Adicionando usuário. Nova lista: '{new_users_str}'")
-                        
-                        cursor.execute("UPDATE ai_concepts SET users = ? WHERE id = ?", (new_users_str, found_id))
-                        conn.commit()
-                        print(f"[DEBUG] Usuário adicionado com sucesso")
-                    else:
-                        print(f"[DEBUG] Usuário {user_id} já estava na lista")
-                        
-                    return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
+                    found_existing_for_user = True
+                    print(f"[DEBUG] Conceito existente encontrado para o usuário: {concept_data['title']}")
+                    return {'id': concept_data['id'], 'title': concept_data['title'], 'explanation': concept_data['explanation']}
 
-        # Se não encontrou conceito existente, cria um novo
-        print(f"[DEBUG] Criando novo conceito para: '{user_query}'")
+        # Se não encontrou um conceito existente para este usuário, cria um novo
+        print(f"[DEBUG] Criando novo conceito para: '{user_query}' (exclusivo para {user_id})")
         
-        with st.spinner(f"Nenhum conceito encontrado. Gerando uma nova explicação para '{user_query}'..."):
+        with st.spinner(f"Nenhum conceito encontrado para você. Gerando uma nova explicação para '{user_query}'..."):
             ai_result = _generate_title_and_explanation(user_query)
         
         if ai_result['title'] == 'Erro':
@@ -369,9 +369,7 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
         created_at = datetime.now().isoformat()
         cursor = conn.cursor()
         
-        print(f"[DEBUG] Salvando novo conceito com ID: {new_id}")
-        print(f"[DEBUG] Título: {ai_result['title']}")
-        print(f"[DEBUG] User ID: {user_id}")
+        print(f"[DEBUG] Salvando novo conceito com ID: {new_id} e user_id: {user_id}")
         
         cursor.execute(
             "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
