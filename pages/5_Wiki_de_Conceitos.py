@@ -1,25 +1,14 @@
 import streamlit as st
 import pandas as pd
 import math
-from services import (
-    get_all_concepts_with_areas, 
-    get_subtopics_from_incorrect_answers, 
-    get_concept_explanation
-)
+from services import get_wiki_data, get_concept_explanation, get_relevant_concepts
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
-    layout="centered", # Layout centralizado fica melhor em mobile
+    layout="centered",
     page_title="Wiki de Conceitos - MedStudent",
     initial_sidebar_state="collapsed"
 )
-
-
-# --- VERIFICA SE O USUÁRIO ESTÁ LOGADO ---
-if 'user_id' not in st.session_state or not st.session_state.user_id:
-    st.warning("Por favor, faça o login na Home para acessar a Wiki de Conceitos.")
-    st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
-    st.stop()
 
 # --- INICIALIZAÇÃO DO ESTADO DA PÁGINA ---
 if 'wiki_page_number' not in st.session_state:
@@ -29,44 +18,56 @@ st.title("💡 Wiki de Conceitos")
 st.markdown("Uma biblioteca de conhecimento para consulta rápida. Use os filtros para refinar sua busca.")
 
 # --- CARREGAMENTO DOS DADOS BASE ---
-concepts_df = get_all_concepts_with_areas()
-if concepts_df.empty:
+# Esta é a única chamada de dados principal para a página
+wiki_df = get_wiki_data(st.session_state.user_id)
+
+if wiki_df.empty:
     st.info("Ainda não há subtópicos cadastrados no banco de questões para exibir na Wiki.")
     st.stop()
-all_areas = sorted(list(concepts_df['area'].unique()))
+
+all_areas = sorted(list(wiki_df['areas'].str.split(', ').explode().str.strip().unique()))
+all_concepts_list = wiki_df['concept'].tolist()
 
 # --- INTERFACE DE FILTROS ---
 with st.expander("🔎 Filtros e Busca"):
-    # Filtro por Questões Incorretas (mais proeminente)
     show_only_incorrect = st.toggle(
         "Focar nos meus pontos fracos",
         help="Ative para ver apenas conceitos de questões que você errou."
     )
-    # Filtro por Área
     selected_areas = st.multiselect(
         "Filtrar por Área(s):",
-        options=all_areas,
-        placeholder="Selecione uma ou mais áreas"
+        options=all_areas
     )
-    # Barra de Busca por texto
     search_query = st.text_input(
-        "Buscar por palavra-chave:",
-        placeholder="Ex: Fibrilação Atrial, Diabetes..."
+        "Buscar por palavra-chave ou fazer uma pergunta:",
+        placeholder="Ex: Fibrilação Atrial, tratamento para IAM..."
     )
 
-# --- LÓGICA DE FILTRAGEM ---
-filtered_df = concepts_df.copy()
+# --- LÓGICA DE FILTRAGEM E BUSCA (COM PRIORIDADES) ---
+filtered_df = wiki_df.copy()
+
+# Prioridade 1: Filtro de "pontos fracos"
 if show_only_incorrect:
-    incorrect_topics = get_subtopics_from_incorrect_answers(st.session_state.user_id)
-    if incorrect_topics:
-        filtered_df = filtered_df[filtered_df['concept'].isin(incorrect_topics)]
-    else:
-        st.info("Você não tem questões erradas registradas para filtrar.")
-        filtered_df = pd.DataFrame(columns=['concept', 'area'])
+    filtered_df = filtered_df[filtered_df['user_has_error'] == True]
+
+# Prioridade 2: Filtro de Área (aplicado sobre o resultado anterior)
 if selected_areas:
-    filtered_df = filtered_df[filtered_df['area'].isin(selected_areas)]
+    # Filtra o DataFrame para linhas onde QUALQUER uma das áreas selecionadas esteja na string 'areas'
+    filtered_df = filtered_df[filtered_df['areas'].apply(lambda x: any(area in x for area in selected_areas))]
+
+# Prioridade 3: Busca por palavra-chave
 if search_query:
-    filtered_df = filtered_df[filtered_df['concept'].str.contains(search_query, case=False, na=False)]
+    search_results_df = filtered_df[filtered_df['concept'].str.contains(search_query, case=False, na=False)]
+    
+    # Prioridade 4 (MÁXIMA): Se a busca por palavra-chave não retornar nada, usa a IA
+    if search_results_df.empty:
+        with st.spinner("Nenhum resultado direto encontrado. Buscando com IA..."):
+            ai_concepts = get_relevant_concepts(search_query, all_concepts_list)
+            # Mostra apenas os resultados da IA, ignorando outros filtros
+            filtered_df = wiki_df[wiki_df['concept'].isin(ai_concepts)]
+            st.info(f"A busca com IA encontrou {len(ai_concepts)} conceito(s) relacionado(s).")
+    else:
+        filtered_df = search_results_df
 
 final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
 
@@ -84,33 +85,24 @@ paginated_concepts = final_concepts_list[start_idx:end_idx]
 
 # --- CONTROLES DE PAGINAÇÃO E FEEDBACK ---
 st.markdown(f"**{total_items} conceitos encontrados.**")
-
 if total_pages > 1:
-    st.markdown('<div class="pagination-controls">', unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 1, 1])
-    with col1:
-        if st.button("⬅️ Anterior", use_container_width=True, disabled=(st.session_state.wiki_page_number == 0)):
-            st.session_state.wiki_page_number -= 1
-            st.rerun()
-    with col2:
-        st.markdown(f"<div class='page-indicator'>Página {st.session_state.wiki_page_number + 1}/{total_pages}</div>", unsafe_allow_html=True)
-    with col3:
-        if st.button("Próxima ➡️", use_container_width=True, disabled=(st.session_state.wiki_page_number >= total_pages - 1)):
-            st.session_state.wiki_page_number += 1
-            st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    if col1.button("⬅️ Anterior", use_container_width=True, disabled=(st.session_state.wiki_page_number == 0)):
+        st.session_state.wiki_page_number -= 1
+        st.rerun()
+    col2.write(f"<div style='text-align: center; margin-top: 0.5rem;'>Página {st.session_state.wiki_page_number + 1}/{total_pages}</div>", unsafe_allow_html=True)
+    if col3.button("Próxima ➡️", use_container_width=True, disabled=(st.session_state.wiki_page_number >= total_pages - 1)):
+        st.session_state.wiki_page_number += 1
+        st.rerun()
 
-st.write("") # Espaçamento
+st.write("")
 
 # --- LISTAGEM DOS CONCEITOS ---
 if not paginated_concepts:
     st.warning("Nenhum conceito encontrado para os filtros selecionados.")
 else:
     for topic in paginated_concepts:
-        # Envolve cada expander em um div com a classe CSS para estilização
-        st.markdown('<div class="concept-item">', unsafe_allow_html=True)
         with st.expander(topic):
             with st.spinner(f"Buscando material de estudo para '{topic}'..."):
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
