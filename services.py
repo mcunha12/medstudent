@@ -544,3 +544,18 @@ def load_concepts_df():
     except Exception as e:
         st.error(f"Não foi possível carregar os conceitos do banco de dados: {e}")
         return pd.DataFrame()
+    
+@st.cache_data(ttl=3600)
+def get_all_specialties():
+    """Busca todas as áreas principais únicas do SQLite."""
+    try:
+        conn = get_db_connection()
+        df = pd.read_sql_query("SELECT areas_principais FROM questions", conn)
+        if df.empty or 'areas_principais' not in df.columns:
+            return []
+        specialties = df['areas_principais'].dropna().str.split(',').explode()
+        unique_specialties = sorted(list(specialties.str.strip().unique()))
+        return [spec for spec in unique_specialties if spec]
+    except Exception as e:
+        st.warning(f"Não foi possível carregar a lista de especialidades: {e}")
+        return []
