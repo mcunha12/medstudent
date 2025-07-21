@@ -16,27 +16,72 @@ def get_db_connection():
     """
     Cria e retorna uma conexão com o banco de dados SQLite, reutilizando-a se já existir
     na st.session_state para evitar o erro 'Cannot operate on a closed database'.
-    Schema: ai_concepts: [id, title, explanation, users, created_at]
+    Garante que todas as tabelas necessárias para o aplicativo existam.
     """
     if 'db_conn' not in st.session_state:
         try:
             # check_same_thread=False é crucial para uso com Streamlit/threading
-            conn = sqlite3.connect('medstudent.db', check_same_thread=False) # Altere 'wiki_ia.db' para o caminho do seu banco se for diferente
+            conn = sqlite3.connect(DB_FILE, check_same_thread=False)
+            
+            # Tabela para conceitos de IA
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS ai_concepts (
                     id TEXT PRIMARY KEY,
-                    users TEXT NOT NULL,
+                    users TEXT NOT NULL, -- Referencia o user_id da tabela users
                     title TEXT NOT NULL,
                     explanation TEXT NOT NULL,
                     created_at TEXT NOT NULL
                 )
             """)
+            
+            # Tabela para usuários (schema baseado no users.csv e no seu código)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS users (
+                    user_id TEXT PRIMARY KEY,
+                    email TEXT UNIQUE NOT NULL,
+                    password TEXT NOT NULL,
+                    created_at TEXT NOT NULL,
+                    active BOOLEAN NOT NULL DEFAULT TRUE
+                )
+            """)
+
+            # Tabela para questões (schema baseado no questions.csv)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS questions (
+                    question_id TEXT PRIMARY KEY,
+                    enunciado TEXT NOT NULL,
+                    alternativas TEXT, -- Armazenado como JSON string
+                    comentarios TEXT, -- Armazenado como JSON string
+                    alternativa_correta TEXT,
+                    areas_principais TEXT, -- String separada por vírgulas
+                    subtopicos TEXT, -- String separada por vírgulas
+                    prova TEXT,
+                    createdAt TEXT
+                )
+            """)
+
+            # Tabela para respostas dos usuários (schema baseado no answers.csv)
+            conn.execute("""
+                CREATE TABLE IF NOT EXISTS answers (
+                    answer_id TEXT PRIMARY KEY,
+                    user_id TEXT NOT NULL,
+                    question_id TEXT NOT NULL,
+                    user_answer TEXT,
+                    is_correct TEXT NOT NULL, -- 'TRUE' ou 'FALSE'
+                    answered_at TEXT NOT NULL,
+                    FOREIGN KEY (user_id) REFERENCES users(user_id),
+                    FOREIGN KEY (question_id) REFERENCES questions(question_id)
+                )
+            """)
+            
             conn.commit()
             st.session_state.db_conn = conn
         except Exception as e:
             st.error(f"Erro ao conectar ou criar o banco de dados: {e}")
             st.stop() # Para a execução se o banco não puder ser acessado
     return st.session_state.db_conn
+
+# --- FUNÇÕES AUXILIARES ---
 
 def normalize_for_search(text: str) -> str:
     """(Função auxiliar) Normaliza texto para buscas."""
