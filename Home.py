@@ -9,8 +9,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-
-
 # --- LÓGICA DE LOGIN E UI ---
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
@@ -42,22 +40,12 @@ if not st.session_state.user_id:
                 
                 if auth_response['status'] == 'success':
                     st.session_state.user_id = auth_response['user_id']
-                                        
                     st.success(auth_response['message'])
                     st.rerun()
                 else:
                     st.error(auth_response['message'])
 else:
-    # --- ESTRATÉGIA DE PRÉ-CARREGAMENTO (CACHE WARMING) ---
-    # "Aquece" o cache dos conceitos na primeira vez que o usuário logado acessa a Home.
-    if 'concepts_cache_warmed' not in st.session_state:
-        with st.spinner("Otimizando sua sessão..."):
-            # Esta função já é cacheada, então rodá-la aqui pré-popula o cache
-            # para que a página da Wiki carregue instantaneamente.
-            load_concepts_df()
-        st.session_state.concepts_cache_warmed = True
-
-    # O resto da página continua normalmente
+    # Página para usuário logado
     st.title(f"Bem-vindo de volta! 👋")
     st.markdown("### O que vamos praticar hoje?")
     
