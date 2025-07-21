@@ -10,15 +10,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- INICIALIZAÇÃO DO ESTADO DA PÁGINA ---
-if 'wiki_page_number' not in st.session_state:
-    st.session_state.wiki_page_number = 0
+# --- VERIFICA SE O USUÁRIO ESTÁ LOGADO ---
+if 'user_id' not in st.session_state or not st.session_state.user_id:
+    st.warning("Por favor, faça o login na Home para acessar a Wiki de Conceitos.")
+    st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
+    st.stop()
 
 st.title("💡 Wiki de Conceitos")
 st.markdown("Uma biblioteca de conhecimento para consulta rápida. Use os filtros para refinar sua busca.")
 
 # --- CARREGAMENTO DOS DADOS BASE ---
-# Esta função carrega apenas os metadados (nomes, áreas, flag de erro), sem as explicações.
 wiki_df = get_wiki_data(st.session_state.user_id)
 
 if wiki_df.empty:
@@ -26,7 +27,7 @@ if wiki_df.empty:
     st.stop()
 
 all_areas = sorted(list(wiki_df['areas'].str.split(', ').explode().str.strip().unique()))
-all_concepts_list = wiki_df['concept'].tolist()
+all_concepts_list = sorted(wiki_df['concept'].unique().tolist())
 
 # --- INTERFACE DE FILTROS ---
 with st.expander("🔎 Filtros e Busca"):
@@ -43,61 +44,48 @@ with st.expander("🔎 Filtros e Busca"):
         placeholder="Ex: Fibrilação Atrial, tratamento para IAM..."
     )
 
-# --- LÓGICA DE FILTRAGEM E BUSCA (COM PRIORIDADES) ---
-filtered_df = wiki_df.copy()
+# --- NOVA LÓGICA DE FILTRAGEM CONDICIONAL ---
 
-if show_only_incorrect:
-    filtered_df = filtered_df[filtered_df['user_has_error'] == True]
-if selected_areas:
-    filtered_df = filtered_df[filtered_df['areas'].apply(lambda x: any(area in x for area in selected_areas))]
-if search_query:
-    search_results_df = filtered_df[filtered_df['concept'].str.contains(search_query, case=False, na=False)]
+# Verifica se algum filtro foi ativado pelo usuário
+any_filter_active = show_only_incorrect or selected_areas or search_query
+
+if any_filter_active:
+    # Se um filtro estiver ativo, executa a lógica de filtragem detalhada
+    filtered_df = wiki_df.copy()
+
+    if show_only_incorrect:
+        filtered_df = filtered_df[filtered_df['user_has_error'] == True]
+    if selected_areas:
+        filtered_df = filtered_df[filtered_df['areas'].apply(lambda x: any(area in x for area in selected_areas))]
+    if search_query:
+        search_results_df = filtered_df[filtered_df['concept'].str.contains(search_query, case=False, na=False)]
+        
+        if search_results_df.empty:
+            with st.spinner("Nenhum resultado direto encontrado. Buscando com IA..."):
+                ai_concepts = get_relevant_concepts(search_query, all_concepts_list)
+                filtered_df = wiki_df[wiki_df['concept'].isin(ai_concepts)]
+                st.info(f"A busca com IA encontrou {len(ai_concepts)} conceito(s) relacionado(s).")
+        else:
+            filtered_df = search_results_df
     
-    if search_results_df.empty:
-        with st.spinner("Nenhum resultado direto encontrado. Buscando com IA..."):
-            ai_concepts = get_relevant_concepts(search_query, all_concepts_list)
-            filtered_df = wiki_df[wiki_df['concept'].isin(ai_concepts)]
-            st.info(f"A busca com IA encontrou {len(ai_concepts)} conceito(s) relacionado(s).")
-    else:
-        filtered_df = search_results_df
+    final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
+else:
+    # Se nenhum filtro estiver ativo, a lista final é simplesmente a lista completa de conceitos
+    final_concepts_list = all_concepts_list
 
-final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
-
-# --- LÓGICA DE PAGINAÇÃO ---
-ITEMS_PER_PAGE = 5000000
-total_items = len(final_concepts_list)
-total_pages = math.ceil(total_items / ITEMS_PER_PAGE) if total_items > 0 else 1
-
-if st.session_state.wiki_page_number >= total_pages:
-    st.session_state.wiki_page_number = 0
-
-start_idx = st.session_state.wiki_page_number * ITEMS_PER_PAGE
-end_idx = start_idx + ITEMS_PER_PAGE
-paginated_concepts = final_concepts_list[start_idx:end_idx]
-
-# --- CONTROLES DE PAGINAÇÃO E FEEDBACK ---
-st.markdown(f"**{total_items} conceitos encontrados.**")
-if total_pages > 1:
-    col1, col2, col3 = st.columns([1, 1, 1])
-    if col1.button("⬅️ Anterior", use_container_width=True, disabled=(st.session_state.wiki_page_number == 0)):
-        st.session_state.wiki_page_number -= 1
-        st.rerun()
-    col2.write(f"<div style='text-align: center; margin-top: 0.5rem;'>Página {st.session_state.wiki_page_number + 1}/{total_pages}</div>", unsafe_allow_html=True)
-    if col3.button("Próxima ➡️", use_container_width=True, disabled=(st.session_state.wiki_page_number >= total_pages - 1)):
-        st.session_state.wiki_page_number += 1
-        st.rerun()
-
+# --- FEEDBACK DE RESULTADOS ---
+st.markdown("---")
+st.markdown(f"**{len(final_concepts_list)} conceitos encontrados.**")
 st.write("")
 
-# --- LISTAGEM DOS CONCEITOS ---
-if not paginated_concepts:
+# --- LISTAGEM DOS CONCEITOS (SEM PAGINAÇÃO) ---
+if not final_concepts_list:
     st.warning("Nenhum conceito encontrado para os filtros selecionados.")
 else:
-    for topic in paginated_concepts:
+    for topic in final_concepts_list:
         with st.expander(topic):
             # A função pesada só é chamada aqui, quando o card é expandido.
-            # O resultado fica cacheado por 1 ano.
             with st.spinner(f"Buscando material de estudo para '{topic}'..."):
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
-
+            st.markdown("---")  
