@@ -197,18 +197,17 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
 
 # --- WIKI/CONCEPTS FUNCTIONS (SQLite Version) ---
 
-def load_concepts_into_session():
+def load_concepts_df():
     """
-    Carrega a tabela 'concepts' do SQLite para o st.session_state se ela ainda não estiver lá.
+    Carrega toda a tabela 'concepts' do SQLite para um DataFrame cacheado.
+    O cache dura 1 mês, mas é invalidado por _save_concept.
     """
-    if 'concepts_df' not in st.session_state:
-        try:
-            conn = get_db_connection()
-            # Uma única leitura rápida do arquivo de banco de dados local
-            st.session_state.concepts_df = pd.read_sql_query("SELECT * FROM concepts", conn)
-        except Exception as e:
-            st.error(f"Não foi possível carregar os conceitos do banco de dados: {e}")
-            st.session_state.concepts_df = pd.DataFrame()
+    try:
+        conn = get_db_connection()
+        return pd.read_sql_query("SELECT * FROM concepts", conn)
+    except Exception as e:
+        st.error(f"Não foi possível carregar os conceitos do banco de dados: {e}")
+        return pd.DataFrame()
 
 def _save_concept(concept_name, explanation):
     """Salva um novo conceito no banco de dados SQLite e invalida o cache em memória."""
