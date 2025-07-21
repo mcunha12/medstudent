@@ -211,50 +211,78 @@ Você é um médico especialista e educador, criando material de estudo para um(
 
 def get_user_search_history(user_id: str):
     """
-    Retorna o histórico de conceitos pesquisados por um usuário.
-    Versão com debug melhorado.
+    Função melhorada para buscar histórico com debug completo
     """
     try:
         conn = get_db_connection()
         
-        # Debug: Primeiro vamos ver todos os registros da tabela
-        print(f"[DEBUG] Buscando histórico para user_id: {user_id}")
+        # Debug: Mostra informações no Streamlit
+        st.write(f"🔍 **Buscando histórico para User ID:** `{user_id}`")
         
-        # Verifica se a tabela existe e tem dados
-        all_concepts = pd.read_sql_query("SELECT id, title, users FROM ai_concepts", conn)
-        print(f"[DEBUG] Total de conceitos na tabela: {len(all_concepts)}")
-        print(f"[DEBUG] Primeiros registros: {all_concepts.head()}")
+        # 1. Verifica se há registros na tabela
+        total_query = "SELECT COUNT(*) as total FROM ai_concepts"
+        total_result = pd.read_sql_query(total_query, conn)
+        total_registros = total_result.iloc[0]['total']
         
-        # Busca específica para o usuário - versão mais robusta
-        # Tenta diferentes padrões de busca
-        queries_to_try = [
-            # Busca exata (usuário único)
-            f"SELECT id, title FROM ai_concepts WHERE users = '{user_id}'",
-            # Busca com LIKE para usuário no início
-            f"SELECT id, title FROM ai_concepts WHERE users LIKE '{user_id}%'",
-            # Busca com LIKE para usuário no meio
-            f"SELECT id, title FROM ai_concepts WHERE users LIKE '%{user_id}%'",
-            # Busca com LIKE para usuário no final  
-            f"SELECT id, title FROM ai_concepts WHERE users LIKE '%{user_id}'",
-        ]
+        st.write(f"📊 **Total de conceitos na tabela:** {total_registros}")
         
-        for i, query in enumerate(queries_to_try):
-            try:
-                history_df = pd.read_sql_query(query, conn)
-                print(f"[DEBUG] Query {i+1} encontrou {len(history_df)} resultados")
-                if not history_df.empty:
-                    print(f"[DEBUG] Resultados encontrados: {history_df}")
-                    return history_df.to_dict('records')
-            except Exception as e:
-                print(f"[DEBUG] Erro na query {i+1}: {e}")
-                continue
+        if total_registros == 0:
+            st.warning("⚠️ Tabela ai_concepts está vazia!")
+            return []
         
-        # Se chegou aqui, não encontrou nada
-        print(f"[DEBUG] Nenhum resultado encontrado para user_id: {user_id}")
-        return []
+        # 2. Mostra todos os registros para debug
+        all_concepts = pd.read_sql_query(
+            "SELECT id, title, users, created_at FROM ai_concepts ORDER BY created_at DESC", 
+            conn
+        )
+        st.write("🗃️ **Todos os registros na tabela:**")
+        st.dataframe(all_concepts)
         
+        # 3. Testa diferentes tipos de busca
+        search_results = {}
+        
+        # Busca exata
+        query_exact = "SELECT id, title FROM ai_concepts WHERE users = ?"
+        result_exact = pd.read_sql_query(query_exact, conn, params=(user_id,))
+        search_results['Busca Exata'] = len(result_exact)
+        
+        # Busca início
+        query_start = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
+        result_start = pd.read_sql_query(query_start, conn, params=(f"{user_id},%",))
+        search_results['Busca Início'] = len(result_start)
+        
+        # Busca meio
+        query_middle = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
+        result_middle = pd.read_sql_query(query_middle, conn, params=(f"%,{user_id},%",))
+        search_results['Busca Meio'] = len(result_middle)
+        
+        # Busca final
+        query_end = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
+        result_end = pd.read_sql_query(query_end, conn, params=(f"%,{user_id}",))
+        search_results['Busca Final'] = len(result_end)
+        
+        # Busca genérica (LIKE)
+        query_like = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
+        result_like = pd.read_sql_query(query_like, conn, params=(f"%{user_id}%",))
+        search_results['Busca LIKE'] = len(result_like)
+        
+        st.write("🔎 **Resultados dos diferentes tipos de busca:**")
+        for tipo, quantidade in search_results.items():
+            st.write(f"- **{tipo}:** {quantidade} resultados")
+        
+        # 4. Retorna o melhor resultado encontrado
+        if len(result_exact) > 0:
+            st.success("✅ Usando busca exata")
+            return result_exact.to_dict('records')
+        elif len(result_like) > 0:
+            st.success("✅ Usando busca LIKE")
+            return result_like.to_dict('records')
+        else:
+            st.warning("⚠️ Nenhum resultado encontrado em nenhuma busca")
+            return []
+            
     except Exception as e:
-        print(f"[DEBUG] Erro geral na função get_user_search_history: {e}")
+        st.error(f"❌ Erro na função get_user_search_history_improved: {e}")
         return []
     
 def find_or_create_ai_concept(user_query: str, user_id: str):
