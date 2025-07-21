@@ -11,19 +11,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
-def load_css(file_name):
-    try:
-        with open(file_name) as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning(f"Arquivo de estilo '{file_name}' não encontrado.")
-
-# Carrega o CSS e o Header Fixo
-load_css("style.css")
-st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
-
-
 # --- Funções Auxiliares da Página ---
 def reset_simulado_state():
     """Função auxiliar para limpar o estado do simulado e voltar à tela de configuração."""
