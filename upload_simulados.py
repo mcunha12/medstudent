@@ -1,7 +1,6 @@
 import os
 import json
 import uuid
-import gspread
 import pandas as pd
 import toml
 from pathlib import Path

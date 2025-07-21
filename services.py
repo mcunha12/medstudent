@@ -185,7 +185,6 @@ def _save_concept(concept_name, explanation, areas_str):
         cursor = conn.cursor()
         cursor.execute("INSERT INTO concepts (concept, explanation, areas) VALUES (?, ?, ?)", (concept_name, explanation, areas_str))
         conn.commit()
-        get_wiki_data.clear()
     except Exception as e:
         print(f"ERRO: Falha ao salvar o conceito '{concept_name}' no SQLite. Erro: {e}")
 
@@ -207,22 +206,36 @@ Você é um médico especialista e educador, criando material de estudo para um(
         return f"**Erro ao contatar a IA:** {e}"
 
 def get_concept_explanation(concept_name: str):
-    """Busca a explicação de um conceito. Se não existir, gera com a IA e salva."""
+    """
+    Busca a explicação de um conceito diretamente no banco. 
+    Se não existir, gera com a IA e salva.
+    Esta é a abordagem mais otimizada em termos de memória.
+    """
     conn = get_db_connection()
+    # 1. Faz uma busca pontual e rápida pela explicação de um único conceito
     query = "SELECT explanation FROM concepts WHERE concept = ?"
-    result = pd.read_sql_query(query, conn, params=(concept_name,))
+    result_df = pd.read_sql_query(query, conn, params=(concept_name,))
     
-    if not result.empty:
-        return result['explanation'].iloc[0]
+    # 2. Se a explicação for encontrada, retorna imediatamente
+    if not result_df.empty:
+        return result_df['explanation'].iloc[0]
+    
+    # 3. Se não for encontrada, gera com a IA, salva e retorna
     else:
+        # Busca as áreas do conceito para poder salvá-lo corretamente
         all_concepts_df = get_all_concepts_from_questions()
         concept_info = all_concepts_df[all_concepts_df['concept'] == concept_name]
         areas_str = concept_info['areas'].iloc[0] if not concept_info.empty else "Geral"
+        
+        # Gera a nova explicação
         explanation = _generate_concept_with_gemini(concept_name)
+        
+        # Salva no banco para que na próxima vez a busca encontre
         if not explanation.startswith("**Erro:**"):
             _save_concept(concept_name, explanation, areas_str)
+            
         return explanation
-
+    
 @st.cache_data(ttl=600)
 def get_wiki_data(user_id):
     """
@@ -531,19 +544,7 @@ def get_subtopics_from_incorrect_answers(user_id):
     except Exception as e:
         st.warning(f"Não foi possível carregar os subtópicos de questões incorretas: {e}")
         return []
-    
-@st.cache_data(ttl=2592000) # Cache de 1 mês
-def load_concepts_df():
-    """
-    Carrega toda a tabela 'concepts' do SQLite para um DataFrame cacheado.
-    O cache dura 1 mês, mas é invalidado por _save_concept.
-    """
-    try:
-        conn = get_db_connection()
-        return pd.read_sql_query("SELECT * FROM concepts", conn)
-    except Exception as e:
-        st.error(f"Não foi possível carregar os conceitos do banco de dados: {e}")
-        return pd.DataFrame()
+
     
 @st.cache_data(ttl=3600)
 def get_all_specialties():
