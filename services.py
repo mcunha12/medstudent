@@ -152,8 +152,7 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
 
-# --- WIKI IA FUNCTIONS (SQLite Version - CORRIGIDA) ---
-
+# --- WIKI IA FUNCTIONS (SQLite Version) ---
 
 def _generate_title_and_explanation(user_query: str):
     """
@@ -212,68 +211,48 @@ Você é um médico especialista e educador, criando material de estudo para um(
 
 def get_user_search_history(user_id: str):
     """
-    Função para buscar histórico de pesquisa de um usuário,
-    considerando que cada conceito agora pertence a um único usuário.
+    Busca o histórico de pesquisa de um usuário.
     """
-    conn = None
     try:
         conn = get_db_connection()
-        
-        st.write(f"🔍 **Buscando histórico para User ID:** `{user_id}`")
-        
-        # Agora buscamos apenas por correspondência exata na coluna 'users'
         query = "SELECT id, title FROM ai_concepts WHERE users = ? ORDER BY created_at DESC"
         user_concepts = pd.read_sql_query(query, conn, params=(user_id,))
-        
-        st.write(f"📊 **Total de conceitos encontrados para o usuário:** {len(user_concepts)}")
-        
         if user_concepts.empty:
-            st.warning(f"⚠️ Nenhum conceito encontrado para o usuário `{user_id}`.")
             return []
-        
-        st.write("🗃️ **Registros encontrados:**")
-        st.dataframe(user_concepts)
-        
         return user_concepts.to_dict('records')
-            
     except Exception as e:
-        st.error(f"❌ Erro na função get_user_search_history: {e}")
+        st.error(f"Erro ao buscar o histórico de conceitos: {e}")
         return []
-    finally:
-        if conn:
-            conn.close()
+
+# NOVA FUNÇÃO para buscar um conceito por ID
+def get_concept_by_id(concept_id: str):
+    """
+    Busca um único conceito de IA pelo seu ID.
+    """
+    try:
+        conn = get_db_connection()
+        query = "SELECT id, title, explanation FROM ai_concepts WHERE id = ?"
+        concept_df = pd.read_sql_query(query, conn, params=(concept_id,))
+        if concept_df.empty:
+            return None
+        return concept_df.to_dict('records')[0]
+    except Exception as e:
+        st.error(f"Erro ao buscar o conceito: {e}")
+        return None
 
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
-    Encontra um conceito existente ou cria um novo, garantindo que
-    cada conceito seja exclusivo de um user_id.
+    Encontra um conceito existente para o usuário ou cria um novo.
     """
-    conn = None
     try:
         conn = get_db_connection()
-        
-        print(f"[DEBUG] Processando query: '{user_query}' para user_id: {user_id}")
-        
-        # Primeiro, tentar encontrar um conceito para ESTE usuário
-        # com um título similar (ou que contenha a query)
-        # NOTA: A busca por similaridade semântica aqui não está usando a IA para comparar títulos
-        # Idealmente, você usaria embeddings ou uma busca mais sofisticada.
-        # Para simplificar e focar na relação 1:1, faremos uma busca por título exato ou LIKE.
-        
-        # Vamos buscar por um conceito que este usuário JÁ TENHA gerado com este título
-        # ou um título muito similar (case-insensitive e trimmed)
-        
-        # Buscamos por conceitos que o user_id atual possui
+        # Busca por conceitos que o user_id atual possui
         all_user_ai_concepts = pd.read_sql_query(
             "SELECT id, title, explanation, users FROM ai_concepts WHERE users = ?",
             conn, params=(user_id,)
         )
         
-        found_existing_for_user = False
-        concept_data = None
-
         if not all_user_ai_concepts.empty:
-            # Usar IA para encontrar o mais relevante SOMENTE entre os conceitos deste usuário
             search_corpus = "\n".join(
                 [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
                  for index, row in all_user_ai_concepts.iterrows()]
@@ -292,20 +271,14 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
             response = model.generate_content(prompt)
             found_id = response.text.strip().replace("ID:", "").strip()
             
-            print(f"[DEBUG] IA encontrou ID (para este usuário): {found_id}")
-            
             if found_id != "NENHUM":
                 concept_data_list = all_user_ai_concepts[all_user_ai_concepts['id'] == found_id]
                 if not concept_data_list.empty:
                     concept_data = concept_data_list.iloc[0]
-                    found_existing_for_user = True
-                    print(f"[DEBUG] Conceito existente encontrado para o usuário: {concept_data['title']}")
                     return {'id': concept_data['id'], 'title': concept_data['title'], 'explanation': concept_data['explanation']}
 
-        # Se não encontrou um conceito existente para este usuário, cria um novo
-        print(f"[DEBUG] Criando novo conceito para: '{user_query}' (exclusivo para {user_id})")
-        
-        with st.spinner(f"Nenhum conceito encontrado para você. Gerando uma nova explicação para '{user_query}'..."):
+        # Se não encontrou, cria um novo
+        with st.spinner(f"Gerando uma nova explicação para '{user_query}'..."):
             ai_result = _generate_title_and_explanation(user_query)
         
         if ai_result['title'] == 'Erro':
@@ -314,25 +287,16 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
         new_id = str(uuid.uuid4())
         created_at = datetime.now().isoformat()
         cursor = conn.cursor()
-        
-        print(f"[DEBUG] Salvando novo conceito com ID: {new_id} e user_id: {user_id}")
-        
         cursor.execute(
             "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
             (new_id, ai_result['title'], ai_result['explanation'], user_id, created_at)
         )
         conn.commit()
-        
-        print(f"[DEBUG] Conceito salvo com sucesso!")
-        
         return {'id': new_id, 'title': ai_result['title'], 'explanation': ai_result['explanation']}
         
     except Exception as e:
-        print(f"[DEBUG] Erro geral em find_or_create_ai_concept: {e}")
+        st.error(f"Erro em find_or_create_ai_concept: {e}")
         return {'id': None, 'title': 'Erro', 'explanation': f"Erro: {e}"}
-    finally:
-        if conn:
-            conn.close()
 
 def debug_ai_concepts_table():
     """
