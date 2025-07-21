@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import math
-from services import get_wiki_data, get_concept_explanation, get_relevant_concepts
+from services import get_wiki_data, get_concept_explanation, get_relevant_concepts,load_concepts_df
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -19,6 +19,7 @@ st.markdown("Uma biblioteca de conhecimento para consulta rápida. Use os filtro
 
 # --- CARREGAMENTO DOS DADOS BASE ---
 # Esta é a única chamada de dados principal para a página
+load_concepts_df()
 wiki_df = get_wiki_data(st.session_state.user_id)
 
 if wiki_df.empty:
