@@ -205,24 +205,36 @@ Você é um médico especialista e educador, criando material de estudo para um(
     except Exception as e:
         return f"**Erro ao contatar a IA:** {e}"
 
-@st.cache_data(ttl=31536000) # Cache de 1 ano
+@st.cache_data(ttl=31536000) # Cache de 1 ano (365 dias * 24h * 60m * 60s)
 def get_concept_explanation(concept_name: str):
     """
-    Busca a explicação de um conceito. Se não existir (for nula), gera com a IA e salva.
+    Busca a explicação de um conceito diretamente no banco. 
+    Se não existir, gera com a IA e salva.
+    Esta é a abordagem mais otimizada em termos de memória.
     """
     conn = get_db_connection()
+    # 1. Faz uma busca pontual e rápida pela explicação de um único conceito
     query = "SELECT explanation FROM concepts WHERE concept = ?"
     result_df = pd.read_sql_query(query, conn, params=(concept_name,))
     
-    # Verifica se encontrou o conceito e se a explicação não é nula/vazia
-    if not result_df.empty and pd.notna(result_df['explanation'].iloc[0]) and result_df['explanation'].iloc[0] != '':
+    # 2. Se a explicação for encontrada, retorna imediatamente
+    if not result_df.empty:
         return result_df['explanation'].iloc[0]
+    
+    # 3. Se não for encontrada, gera com a IA, salva e retorna
     else:
-        # Se a explicação for nula, gera com a IA
+        # Busca as áreas do conceito para poder salvá-lo corretamente
+        all_concepts_df = get_all_concepts_from_questions()
+        concept_info = all_concepts_df[all_concepts_df['concept'] == concept_name]
+        areas_str = concept_info['areas'].iloc[0] if not concept_info.empty else "Geral"
+        
+        # Gera a nova explicação
         explanation = _generate_concept_with_gemini(concept_name)
+        
+        # Salva no banco para que na próxima vez a busca encontre
         if not explanation.startswith("**Erro:**"):
-            # Salva (atualiza) a explicação no banco
-            _save_concept_explanation(concept_name, explanation)
+            _save_concept(concept_name, explanation, areas_str)
+            
         return explanation
     
 @st.cache_data(ttl=600)
