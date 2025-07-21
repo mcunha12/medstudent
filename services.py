@@ -242,7 +242,7 @@ def _save_ai_concept(concept_data: dict, user_id: str):
         conn = get_db_connection()
         cursor = conn.cursor()
         concept_id = str(uuid.uuid4()) # Gera um ID único para o novo conceito
-        created_at = datetime.datetime.now().isoformat() # Timestamp da criação
+        created_at = datetime.now().isoformat() # Timestamp da criação
         cursor.execute(
             """
             INSERT INTO ai_concepts (id, users, title, explanation, created_at)
