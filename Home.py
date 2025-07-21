@@ -70,19 +70,19 @@ else:
     col1, col2, col3, col4, col5 = st.columns(5)
 
     with col1:
-        st.page_link("pages/1_Simulado.py", label="📝 Simulador", icon="📝")
+        st.page_link("pages/1_Simulado.py", label="Simulador", icon="📝")
     
     with col2:
-        st.page_link("pages/2_Meu_Perfil.py", label="📊 Meu Perfil", icon="📊")
+        st.page_link("pages/2_Meu_Perfil.py", label="Meu Perfil", icon="📊")
 
     with col3:
-        st.page_link("pages/3_Revisão_de_Questões.py", label="🔎 Revisão", icon="🔎")
+        st.page_link("pages/3_Revisão_de_Questões.py", label="Revisão", icon="🔎")
     
     with col4:
-        st.page_link("pages/4_Posologia.py", label="💊 Posologia", icon="💊")
+        st.page_link("pages/4_Posologia.py", label="Posologia", icon="💊")
 
     with col5:
-        st.page_link("pages/5_Wiki_de_Conceitos.py", label="💡 Wiki de Conceitos", icon="💡")
+        st.page_link("pages/5_Wiki_de_Conceitos.py", label="Wiki de Conceitos", icon="💡")
 
     # --- Seção de Estatísticas e Logout ---
     st.markdown("---")
