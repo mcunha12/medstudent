@@ -1,91 +1,69 @@
 import streamlit as st
-import pandas as pd
-import math
-from services import get_wiki_data, get_concept_explanation, get_relevant_concepts
+from services import find_or_create_ai_concept, get_user_search_history
 
-# --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
     layout="centered",
-    page_title="Wiki de Conceitos - MedStudent",
+    page_title="Wiki IA - MedStudent",
     initial_sidebar_state="collapsed"
 )
 
-# --- VERIFICA SE O USUÁRIO ESTÁ LOGADO ---
+# --- INICIALIZAÇÃO DO ESTADO DA PÁGINA ---
+if 'current_concept' not in st.session_state:
+    st.session_state.current_concept = None
+
+# --- VERIFICA LOGIN ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
-    st.warning("Por favor, faça o login na Home para acessar a Wiki de Conceitos.")
+    st.warning("Por favor, faça o login na Home para acessar a Wiki IA.")
     st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
     st.stop()
 
-st.title("💡 Wiki de Conceitos")
-st.markdown("Uma biblioteca de conhecimento para consulta rápida. Use os filtros para refinar sua busca.")
+st.title("💡 Wiki com IA")
+st.markdown("Faça uma pergunta ou pesquise um termo para obter uma explicação detalhada gerada por IA.")
 
-# --- CARREGAMENTO DOS DADOS BASE ---
-wiki_df = get_wiki_data(st.session_state.user_id)
+# --- BARRA DE PESQUISA ---
+search_query = st.text_input(
+    "Pesquisar conceito...",
+    placeholder="Ex: Tratamento para Infarto Agudo do Miocárdio",
+    key="wiki_search_input"
+)
 
-if wiki_df.empty:
-    st.info("Ainda não há subtópicos cadastrados no banco de questões para exibir na Wiki.")
-    st.stop()
-
-all_areas = sorted(list(wiki_df['areas'].str.split(', ').explode().str.strip().unique()))
-all_concepts_list = sorted(wiki_df['concept'].unique().tolist())
-
-# --- INTERFACE DE FILTROS ---
-with st.expander("🔎 Filtros e Busca"):
-    show_only_incorrect = st.toggle(
-        "Focar nos meus pontos fracos",
-        help="Ative para ver apenas conceitos de questões que você errou."
+if search_query:
+    # Quando o usuário pesquisa, chama a função principal
+    st.session_state.current_concept = find_or_create_ai_concept(
+        search_query, st.session_state.user_id
     )
-    selected_areas = st.multiselect(
-        "Filtrar por Área(s):",
-        options=all_areas
-    )
-    search_query = st.text_input(
-        "Buscar por palavra-chave ou fazer uma pergunta:",
-        placeholder="Ex: Fibrilação Atrial, tratamento para IAM..."
-    )
+    # Limpa a barra de pesquisa para a próxima busca
+    st.session_state.wiki_search_input = ""
 
-# --- NOVA LÓGICA DE FILTRAGEM CONDICIONAL ---
 
-# Verifica se algum filtro foi ativado pelo usuário
-any_filter_active = show_only_incorrect or selected_areas or search_query
+# --- EXIBIÇÃO DO CONCEITO ATUAL ---
+if st.session_state.current_concept:
+    concept = st.session_state.current_concept
+    st.markdown("---")
+    st.header(concept['title'])
+    st.markdown(concept['explanation'], unsafe_allow_html=True)
 
-if any_filter_active:
-    # Se um filtro estiver ativo, executa a lógica de filtragem detalhada
-    filtered_df = wiki_df.copy()
 
-    if show_only_incorrect:
-        filtered_df = filtered_df[filtered_df['user_has_error'] == True]
-    if selected_areas:
-        filtered_df = filtered_df[filtered_df['areas'].apply(lambda x: any(area in x for area in selected_areas))]
-    if search_query:
-        search_results_df = filtered_df[filtered_df['concept'].str.contains(search_query, case=False, na=False)]
-        
-        if search_results_df.empty:
-            with st.spinner("Nenhum resultado direto encontrado. Buscando com IA..."):
-                ai_concepts = get_relevant_concepts(search_query, all_concepts_list)
-                filtered_df = wiki_df[wiki_df['concept'].isin(ai_concepts)]
-                st.info(f"A busca com IA encontrou {len(ai_concepts)} conceito(s) relacionado(s).")
-        else:
-            filtered_df = search_results_df
-    
-    final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
-else:
-    # Se nenhum filtro estiver ativo, a lista final é simplesmente a lista completa de conceitos
-    final_concepts_list = all_concepts_list
-
-# --- FEEDBACK DE RESULTADOS ---
+# --- HISTÓRICO DE BUSCA DO USUÁRIO ---
 st.markdown("---")
-st.markdown(f"**{len(final_concepts_list)} conceitos encontrados.**")
-st.write("")
+st.subheader("Seu Histórico de Pesquisas")
 
-# --- LISTAGEM DOS CONCEITOS (SEM PAGINAÇÃO) ---
-if not final_concepts_list:
-    st.warning("Nenhum conceito encontrado para os filtros selecionados.")
+search_history = get_user_search_history(st.session_state.user_id)
+
+if not search_history:
+    st.info("Seu histórico de pesquisas aparecerá aqui.")
 else:
-    for topic in final_concepts_list:
-        with st.expander(topic):
-            # A função pesada só é chamada aqui, quando o card é expandido.
-            with st.spinner(f"Buscando material de estudo para '{topic}'..."):
-                explanation = get_concept_explanation(topic)
-                st.markdown(explanation, unsafe_allow_html=True)
-            st.markdown("---")  
+    # Cria colunas para exibir o histórico de forma mais organizada
+    cols = st.columns(3)
+    col_idx = 0
+    for item in search_history:
+        with cols[col_idx % 3]:
+            if st.button(item['title'], key=item['id'], use_container_width=True):
+                # Ao clicar em um item do histórico, busca a explicação completa
+                conn = st.session_state.db_connection # Assumindo que a conexão está no session_state
+                query = "SELECT * FROM ai_concepts WHERE id = ?"
+                concept_df = pd.read_sql_query(query, conn, params=(item['id'],))
+                if not concept_df.empty:
+                    st.session_state.current_concept = concept_df.to_dict('records')[0]
+                    st.rerun()
+        col_idx += 1

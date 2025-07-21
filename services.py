@@ -154,140 +154,153 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
 
 # --- WIKI/CONCEPTS FUNCTIONS (SQLite Version) ---
 
-@st.cache_data(ttl=3600)
-def get_all_concepts_from_questions():
-    """Busca todos os subtópicos únicos e suas áreas principais da tabela 'questions'."""
-    try:
-        conn = get_db_connection()
-        query = "SELECT areas_principais, subtopicos FROM questions"
-        df = pd.read_sql_query(query, conn)
-        df.dropna(subset=['subtopicos'], inplace=True)
-        df['subtopicos'] = df['subtopicos'].str.split(',')
-        df['areas_principais'] = df['areas_principais'].fillna('').str.split(',')
-        df = df.explode('subtopicos')
-        df = df.explode('areas_principais')
-        df['subtopicos'] = df['subtopicos'].str.strip()
-        df['areas_principais'] = df['areas_principais'].str.strip()
-        df.dropna(subset=['subtopicos', 'areas_principais'], inplace=True)
-        df = df[df['subtopicos'] != '']
-        df = df[df['areas_principais'] != '']
-        concept_areas = df.groupby('subtopicos')['areas_principais'].apply(lambda x: ', '.join(sorted(x.unique()))).reset_index()
-        concept_areas.rename(columns={'subtopicos': 'concept', 'areas_principais': 'areas'}, inplace=True)
-        return concept_areas
-    except Exception as e:
-        st.warning(f"Não foi possível carregar a lista de conceitos com áreas: {e}")
-        return pd.DataFrame(columns=['concept', 'areas'])
+# --- WIKI IA FUNCTIONS (SQLite Version) ---
 
-def _save_concept(concept_name, explanation, areas_str):
-    """Salva um novo conceito no banco de dados SQLite. (Não invalida mais o cache)"""
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        cursor.execute("INSERT INTO concepts (concept, explanation, areas) VALUES (?, ?, ?)", (concept_name, explanation, areas_str))
-        conn.commit()
-    except Exception as e:
-        print(f"ERRO: Falha ao salvar o conceito '{concept_name}' no SQLite. Erro: {e}")
-
-def _generate_concept_with_gemini(concept_name):
-    """Gera a explicação de um conceito médico usando a API do Gemini."""
+def _generate_title_and_explanation(user_query: str):
+    """
+    Usa a IA para gerar um título otimizado e uma explicação detalhada.
+    Retorna um dicionário com 'title' e 'explanation' ou None em caso de erro.
+    """
     prompt = f"""
 Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
-**Tópico Principal:** "{concept_name}"
-... (o prompt completo que você definiu) ...
+
+**Tópico da Pesquisa do Usuário:** "{user_query}"
+
+**Sua Tarefa (em uma única resposta):**
+1.  **Gerar um Título Otimizado:** Primeiro, crie um título claro, conciso e otimizado para busca sobre o tópico principal. O título deve ser autoexplicativo.
+2.  **Gerar a Explicação:** Depois do título, gere uma explicação completa e aprofundada, seguindo a estrutura de formatação Markdown abaixo.
+
+**Formato OBRIGATÓRIO da sua resposta:**
+<title>Seu Título Otimizado Aqui</title>
+<explanation>
+### 1. Definição Rápida
+* **Conceito:** [Definição concisa do tópico em uma ou duas frases.]
+* **Relevância Clínica:** [Breve explicação de por que este conceito é crucial na prática médica e em provas de residência.]
+
+### 2. Aprofundamento Técnico e Integração
+[Desenvolva o conceito de forma detalhada. Conecte-o com a fisiopatologia, farmacologia, semiologia, etc. Discuta diagnóstico, tratamento (com posologias comuns), prognóstico e complicações.]
+
+### 3. Análise 5W2H
+* **What (O quê):** O que é?
+* **Why (Por quê):** Por que ocorre/é importante?
+* **Who (Quem):** Quem afeta?
+* **Where (Onde):** Onde se manifesta?
+* **When (Quando):** Quando ocorre?
+* **How (Como):** Como é o manejo?
+* **How Much (Quanto custa):** Qual o impacto?
+
+### 4. Análise dos 5 Porquês
+[Aplique a técnica dos 5 Porquês para explorar a causa raiz do problema.]
+* **1. Por que...?**
+    * Porque...
+* **2. Por que...?**
+    * Porque... (continue até 5)
+
+### 5. Pontos-Chave e Analogias
+[Liste 2-3 conceitos complexos e explique-os de forma simplificada, usando analogias.]
+* **Ponto-Chave 1:** ...
+* **Ponto-Chave 2:** ...
+
+### 6. Referências
+[Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's, diretrizes de sociedades médicas).]
+</explanation>
 """
     try:
-        model = get_gemini_model()
+        model = get_gemini_model() # Usando o modelo padrão (gemini-1.5-flash)
         response = model.generate_content(prompt)
+        
         if response.prompt_feedback.block_reason:
             reason = response.prompt_feedback.block_reason.name
-            return f"**Erro:** A geração de conteúdo foi bloqueada por motivos de segurança ({reason})."
-        return response.text
+            return {'title': 'Erro', 'explanation': f"**Erro:** A geração de conteúdo foi bloqueada ({reason})."}
+        
+        # Extrai o título e a explicação usando as tags
+        full_text = response.text
+        title = full_text.split('<title>')[1].split('</title>')[0].strip()
+        explanation = full_text.split('<explanation>')[1].split('</explanation>')[0].strip()
+        
+        return {'title': title, 'explanation': explanation}
+        
     except Exception as e:
-        return f"**Erro ao contatar a IA:** {e}"
+        return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}"}
 
-@st.cache_data(ttl=31536000) # Cache de 1 ano (365 dias * 24h * 60m * 60s)
-def get_concept_explanation(concept_name: str):
+def find_or_create_ai_concept(user_query: str, user_id: str):
     """
-    Busca a explicação de um conceito diretamente no banco. 
-    Se não existir, gera com a IA e salva.
-    Esta é a abordagem mais otimizada em termos de memória.
-    """
-    conn = get_db_connection()
-    # 1. Faz uma busca pontual e rápida pela explicação de um único conceito
-    query = "SELECT explanation FROM concepts WHERE concept = ?"
-    result_df = pd.read_sql_query(query, conn, params=(concept_name,))
-    
-    # 2. Se a explicação for encontrada, retorna imediatamente
-    if not result_df.empty:
-        return result_df['explanation'].iloc[0]
-    
-    # 3. Se não for encontrada, gera com a IA, salva e retorna
-    else:
-        # Busca as áreas do conceito para poder salvá-lo corretamente
-        all_concepts_df = get_all_concepts_from_questions()
-        concept_info = all_concepts_df[all_concepts_df['concept'] == concept_name]
-        areas_str = concept_info['areas'].iloc[0] if not concept_info.empty else "Geral"
-        
-        # Gera a nova explicação
-        explanation = _generate_concept_with_gemini(concept_name)
-        
-        # Salva no banco para que na próxima vez a busca encontre
-        if not explanation.startswith("**Erro:**"):
-            _save_concept(concept_name, explanation, areas_str)
-            
-        return explanation
-    
-@st.cache_data(ttl=600)
-def get_wiki_data(user_id):
-    """
-    Função principal e OTIMIZADA para carregar os dados da Wiki.
-    1. Pega todos os conceitos e suas áreas diretamente da tabela 'concepts'.
-    2. Pega os conceitos que o usuário errou.
-    3. Junta tudo em um único DataFrame com a flag 'user_has_error'.
+    Busca um conceito relevante na tabela 'ai_concepts'. Se não encontrar,
+    gera um novo com a IA, salva no banco e retorna.
     """
     conn = get_db_connection()
     
-    # Passo 1: Leitura super rápida da tabela 'concepts' já processada
-    concepts_df = pd.read_sql_query("SELECT concept, areas FROM concepts", conn)
-    if concepts_df.empty:
-        return pd.DataFrame(columns=['concept', 'areas', 'user_has_error'])
-
-    # Passo 2: Pega os conceitos que o usuário errou
-    query = """
-    SELECT DISTINCT q.subtopicos
-    FROM answers a JOIN questions q ON a.question_id = q.question_id
-    WHERE a.user_id = ? AND a.is_correct = 'FALSE'
-    """
-    incorrect_df = pd.read_sql_query(query, conn, params=(str(user_id),))
+    # --- Busca Semântica (Simplificada com IA) ---
+    # Primeiro, pega todos os títulos e explicações existentes
+    all_ai_concepts = pd.read_sql_query("SELECT id, title, explanation FROM ai_concepts", conn)
     
-    incorrect_list = []
-    if not incorrect_df.empty:
-        incorrect_list = incorrect_df['subtopicos'].dropna().str.split(',').explode().str.strip().unique().tolist()
+    if not all_ai_concepts.empty:
+        # Cria uma string com todo o conteúdo para a IA analisar
+        search_corpus = "\n".join(
+            [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
+             for index, row in all_ai_concepts.iterrows()]
+        )
+        
+        prompt = f"""
+Você é um motor de busca semântica. Analise a "Pergunta do Usuário" e o "Conteúdo Existente".
+Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
 
-    # Passo 3: Adiciona a flag 'user_has_error'
-    concepts_df['user_has_error'] = concepts_df['concept'].isin(incorrect_list)
-    return concepts_df
+**Pergunta do Usuário:**
+"{user_query}"
 
-def get_relevant_concepts(user_query: str, all_concepts: list[str]) -> list[str]:
-    """Usa a IA para encontrar os conceitos mais relevantes."""
-    if not user_query or not all_concepts: return all_concepts
-    concept_list_str = "\n- ".join(all_concepts)
-    prompt = f"""
-Você é um assistente de busca inteligente para uma Wiki médica...
-**Pergunta do Usuário:** "{user_query}"
-... (resto do prompt)
+**Conteúdo Existente:**
+{search_corpus}
+
+**Instruções:**
+- Se encontrar um conteúdo altamente relevante, retorne APENAS o seu ID. Exemplo: "abc-123-def-456"
+- Se nada for relevante, retorne a palavra "NENHUM".
 """
-    try:
-        model = get_gemini_model()
+        model = get_gemini_model() # Usando o modelo mais barato (flash) para a busca
         response = model.generate_content(prompt)
-        relevant_list = json.loads(response.text)
-        if isinstance(relevant_list, list) and all(isinstance(item, str) for item in relevant_list):
-            return relevant_list
-        else:
-            return [c for c in all_concepts if user_query.lower() in c.lower()]
-    except Exception:
-        return [c for c in all_concepts if user_query.lower() in c.lower()]
+        found_id = response.text.strip()
+        
+        if found_id != "NENHUM" and not found_id.startswith("ID:"):
+            # Encontrou um conceito relevante, vamos buscá-lo e atualizar a lista de usuários
+            concept_data = all_ai_concepts[all_ai_concepts['id'] == found_id].iloc[0]
+            
+            # Adiciona o user_id à lista de usuários que pesquisaram isso
+            cursor = conn.cursor()
+            users_str = pd.read_sql_query("SELECT users FROM ai_concepts WHERE id = ?", conn, params=(found_id,)).iloc[0]['users']
+            user_list = users_str.split(',') if users_str else []
+            if user_id not in user_list:
+                user_list.append(user_id)
+                cursor.execute("UPDATE ai_concepts SET users = ? WHERE id = ?", (','.join(user_list), found_id))
+                conn.commit()
 
+            return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
+
+    # --- Se não encontrou nada relevante, cria um novo ---
+    with st.spinner(f"Nenhum conceito encontrado. Gerando uma nova explicação para '{user_query}'..."):
+        ai_result = _generate_title_and_explanation(user_query)
+    
+    if ai_result['title'] == 'Erro':
+        return {'id': None, 'title': 'Erro na Geração', 'explanation': ai_result['explanation']}
+        
+    # Salva o novo conceito no banco
+    new_id = str(uuid.uuid4())
+    created_at = datetime.now().isoformat()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
+        (new_id, ai_result['title'], ai_result['explanation'], user_id, created_at)
+    )
+    conn.commit()
+    
+    return {'id': new_id, 'title': ai_result['title'], 'explanation': ai_result['explanation']}
+
+def get_user_search_history(user_id: str):
+    """Retorna o histórico de conceitos pesquisados por um usuário."""
+    conn = get_db_connection()
+    # Usamos LIKE para encontrar o user_id dentro da lista de strings
+    query = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
+    params = (f"%{user_id}%",)
+    history_df = pd.read_sql_query(query, conn, params=params)
+    return history_df.to_dict('records')
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
 @st.cache_data(ttl=600)

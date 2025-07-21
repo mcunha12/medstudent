@@ -6,15 +6,22 @@ conn = sqlite3.connect(DB_FILE)
 cursor = conn.cursor()
 
 try:
-    # Adiciona a coluna 'areas' à tabela 'concepts' se ela não existir
-    cursor.execute("ALTER TABLE concepts ADD COLUMN areas TEXT;")
-    print("Coluna 'areas' adicionada com sucesso à tabela 'concepts'.")
-except sqlite3.OperationalError as e:
-    # O erro "duplicate column name" é esperado se você rodar o script mais de uma vez
-    if "duplicate column name" in str(e):
-        print("Coluna 'areas' já existe na tabela 'concepts'. Nenhuma alteração necessária.")
-    else:
-        raise e
+    # Cria a nova tabela para os conceitos gerados pela IA
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS ai_concepts (
+        id TEXT PRIMARY KEY,
+        title TEXT NOT NULL,
+        explanation TEXT NOT NULL,
+        users TEXT,
+        created_at TEXT NOT NULL
+    );
+    """)
+    print("Tabela 'ai_concepts' verificada/criada com sucesso.")
+except Exception as e:
+    print(f"Ocorreu um erro: {e}")
 
 conn.commit()
 conn.close()
+print("Processo concluído.")
+
+#   
