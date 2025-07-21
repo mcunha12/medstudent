@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import math
-from services import get_wiki_data, get_concept_explanation, get_relevant_concepts,load_concepts_df
+from services import get_wiki_data, get_concept_explanation, get_relevant_concepts
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -18,8 +18,7 @@ st.title("💡 Wiki de Conceitos")
 st.markdown("Uma biblioteca de conhecimento para consulta rápida. Use os filtros para refinar sua busca.")
 
 # --- CARREGAMENTO DOS DADOS BASE ---
-# Esta é a única chamada de dados principal para a página
-load_concepts_df()
+# Esta função carrega apenas os metadados (nomes, áreas, flag de erro), sem as explicações.
 wiki_df = get_wiki_data(st.session_state.user_id)
 
 if wiki_df.empty:
@@ -47,24 +46,16 @@ with st.expander("🔎 Filtros e Busca"):
 # --- LÓGICA DE FILTRAGEM E BUSCA (COM PRIORIDADES) ---
 filtered_df = wiki_df.copy()
 
-# Prioridade 1: Filtro de "pontos fracos"
 if show_only_incorrect:
     filtered_df = filtered_df[filtered_df['user_has_error'] == True]
-
-# Prioridade 2: Filtro de Área (aplicado sobre o resultado anterior)
 if selected_areas:
-    # Filtra o DataFrame para linhas onde QUALQUER uma das áreas selecionadas esteja na string 'areas'
     filtered_df = filtered_df[filtered_df['areas'].apply(lambda x: any(area in x for area in selected_areas))]
-
-# Prioridade 3: Busca por palavra-chave
 if search_query:
     search_results_df = filtered_df[filtered_df['concept'].str.contains(search_query, case=False, na=False)]
     
-    # Prioridade 4 (MÁXIMA): Se a busca por palavra-chave não retornar nada, usa a IA
     if search_results_df.empty:
         with st.spinner("Nenhum resultado direto encontrado. Buscando com IA..."):
             ai_concepts = get_relevant_concepts(search_query, all_concepts_list)
-            # Mostra apenas os resultados da IA, ignorando outros filtros
             filtered_df = wiki_df[wiki_df['concept'].isin(ai_concepts)]
             st.info(f"A busca com IA encontrou {len(ai_concepts)} conceito(s) relacionado(s).")
     else:
@@ -73,7 +64,7 @@ if search_query:
 final_concepts_list = sorted(filtered_df['concept'].unique().tolist())
 
 # --- LÓGICA DE PAGINAÇÃO ---
-ITEMS_PER_PAGE = 50000
+ITEMS_PER_PAGE = 20
 total_items = len(final_concepts_list)
 total_pages = math.ceil(total_items / ITEMS_PER_PAGE) if total_items > 0 else 1
 
@@ -104,6 +95,10 @@ if not paginated_concepts:
 else:
     for topic in paginated_concepts:
         with st.expander(topic):
+            # A função pesada só é chamada aqui, quando o card é expandido.
+            # O resultado fica cacheado por 1 ano.
             with st.spinner(f"Buscando material de estudo para '{topic}'..."):
                 explanation = get_concept_explanation(topic)
                 st.markdown(explanation, unsafe_allow_html=True)
+
+                

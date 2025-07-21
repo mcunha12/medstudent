@@ -179,7 +179,7 @@ def get_all_concepts_from_questions():
         return pd.DataFrame(columns=['concept', 'areas'])
 
 def _save_concept(concept_name, explanation, areas_str):
-    """Salva um novo conceito, sua explicação e suas áreas no banco."""
+    """Salva um novo conceito no banco de dados SQLite. (Não invalida mais o cache)"""
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -187,7 +187,7 @@ def _save_concept(concept_name, explanation, areas_str):
         conn.commit()
     except Exception as e:
         print(f"ERRO: Falha ao salvar o conceito '{concept_name}' no SQLite. Erro: {e}")
-
+        
 def _generate_concept_with_gemini(concept_name):
     """Gera a explicação de um conceito médico usando a API do Gemini."""
     prompt = f"""
@@ -205,6 +205,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
     except Exception as e:
         return f"**Erro ao contatar a IA:** {e}"
 
+@st.cache_data(ttl=31536000) # Cache de 1 ano (365 dias * 24h * 60m * 60s)
 def get_concept_explanation(concept_name: str):
     """
     Busca a explicação de um conceito diretamente no banco. 

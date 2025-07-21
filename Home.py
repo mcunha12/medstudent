@@ -1,6 +1,6 @@
 import streamlit as st
 import re
-from services import authenticate_or_register_user, get_global_platform_stats, load_concepts_df
+from services import authenticate_or_register_user, get_global_platform_stats
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
