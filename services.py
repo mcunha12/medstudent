@@ -152,34 +152,26 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
 
-# --- WIKI/CONCEPTS FUNCTIONS (SQLite Version) ---
-
-# --- WIKI IA FUNCTIONS (SQLite Version) ---
+# --- WIKI IA FUNCTIONS (SQLite Version - CORRIGIDA) ---
 
 def _generate_title_and_explanation(user_query: str):
     """
     Usa a IA para gerar um título otimizado e uma explicação detalhada.
-    Retorna um dicionário com 'title' e 'explanation' ou None em caso de erro.
     """
     prompt = f"""
 Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
-
 **Tópico da Pesquisa do Usuário:** "{user_query}"
-
 **Sua Tarefa (em uma única resposta):**
 1.  **Gerar um Título Otimizado:** Primeiro, crie um título claro, conciso e otimizado para busca sobre o tópico principal. O título deve ser autoexplicativo.
 2.  **Gerar a Explicação:** Depois do título, gere uma explicação completa e aprofundada, seguindo a estrutura de formatação Markdown abaixo.
-
 **Formato OBRIGATÓRIO da sua resposta:**
 <title>Seu Título Otimizado Aqui</title>
 <explanation>
 ### 1. Definição Rápida
 * **Conceito:** [Definição concisa do tópico em uma ou duas frases.]
 * **Relevância Clínica:** [Breve explicação de por que este conceito é crucial na prática médica e em provas de residência.]
-
 ### 2. Aprofundamento Técnico e Integração
 [Desenvolva o conceito de forma detalhada. Conecte-o com a fisiopatologia, farmacologia, semiologia, etc. Discuta diagnóstico, tratamento (com posologias comuns), prognóstico e complicações.]
-
 ### 3. Análise 5W2H
 * **What (O quê):** O que é?
 * **Why (Por quê):** Por que ocorre/é importante?
@@ -188,38 +180,32 @@ Você é um médico especialista e educador, criando material de estudo para um(
 * **When (Quando):** Quando ocorre?
 * **How (Como):** Como é o manejo?
 * **How Much (Quanto custa):** Qual o impacto?
-
 ### 4. Análise dos 5 Porquês
 [Aplique a técnica dos 5 Porquês para explorar a causa raiz do problema.]
 * **1. Por que...?**
     * Porque...
 * **2. Por que...?**
     * Porque... (continue até 5)
-
 ### 5. Pontos-Chave e Analogias
 [Liste 2-3 conceitos complexos e explique-os de forma simplificada, usando analogias.]
 * **Ponto-Chave 1:** ...
 * **Ponto-Chave 2:** ...
-
 ### 6. Referências
 [Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's, diretrizes de sociedades médicas).]
 </explanation>
 """
     try:
-        model = get_gemini_model() # Usando o modelo padrão (gemini-1.5-flash)
+        model = get_gemini_model()
         response = model.generate_content(prompt)
-        
         if response.prompt_feedback.block_reason:
             reason = response.prompt_feedback.block_reason.name
             return {'title': 'Erro', 'explanation': f"**Erro:** A geração de conteúdo foi bloqueada ({reason})."}
         
-        # Extrai o título e a explicação usando as tags
         full_text = response.text
         title = full_text.split('<title>')[1].split('</title>')[0].strip()
         explanation = full_text.split('<explanation>')[1].split('</explanation>')[0].strip()
         
         return {'title': title, 'explanation': explanation}
-        
     except Exception as e:
         return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}"}
 
@@ -229,62 +215,52 @@ def find_or_create_ai_concept(user_query: str, user_id: str):
     gera um novo com a IA, salva no banco e retorna.
     """
     conn = get_db_connection()
-    
-    # --- Busca Semântica (Simplificada com IA) ---
-    # Primeiro, pega todos os títulos e explicações existentes
     all_ai_concepts = pd.read_sql_query("SELECT id, title, explanation FROM ai_concepts", conn)
     
     if not all_ai_concepts.empty:
-        # Cria uma string com todo o conteúdo para a IA analisar
         search_corpus = "\n".join(
             [f"ID: {row['id']}\nTítulo: {row['title']}\nExplicação: {row['explanation'][:200]}\n---" 
              for index, row in all_ai_concepts.iterrows()]
         )
-        
         prompt = f"""
 Você é um motor de busca semântica. Analise a "Pergunta do Usuário" e o "Conteúdo Existente".
 Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
-
-**Pergunta do Usuário:**
-"{user_query}"
-
+**Pergunta do Usuário:** "{user_query}"
 **Conteúdo Existente:**
 {search_corpus}
-
 **Instruções:**
 - Se encontrar um conteúdo altamente relevante, retorne APENAS o seu ID. Exemplo: "abc-123-def-456"
 - Se nada for relevante, retorne a palavra "NENHUM".
 """
-        model = get_gemini_model() # Usando o modelo mais barato (flash) para a busca
+        model = get_gemini_model()
         response = model.generate_content(prompt)
-        found_id = response.text.strip()
+        found_id = response.text.strip().replace("ID:", "").strip()
         
-        if found_id != "NENHUM" and not found_id.startswith("ID:"):
-            # Encontrou um conceito relevante, vamos buscá-lo e atualizar a lista de usuários
-            concept_data = all_ai_concepts[all_ai_concepts['id'] == found_id].iloc[0]
-            
-            # Adiciona o user_id à lista de usuários que pesquisaram isso
-            cursor = conn.cursor()
-            users_str = pd.read_sql_query("SELECT users FROM ai_concepts WHERE id = ?", conn, params=(found_id,)).iloc[0]['users']
-            user_list = users_str.split(',') if users_str else []
-            if user_id not in user_list:
-                user_list.append(user_id)
-                cursor.execute("UPDATE ai_concepts SET users = ? WHERE id = ?", (','.join(user_list), found_id))
-                conn.commit()
+        if found_id != "NENHUM":
+            concept_data_list = all_ai_concepts[all_ai_concepts['id'] == found_id]
+            if not concept_data_list.empty:
+                concept_data = concept_data_list.iloc[0]
+                cursor = conn.cursor()
+                # CORREÇÃO: Busca na coluna 'users' (plural)
+                users_str = pd.read_sql_query("SELECT users FROM ai_concepts WHERE id = ?", conn, params=(found_id,)).iloc[0]['users']
+                user_list = users_str.split(',') if users_str else []
+                if user_id not in user_list:
+                    user_list.append(user_id)
+                    # CORREÇÃO: Atualiza a coluna 'users' (plural)
+                    cursor.execute("UPDATE ai_concepts SET users = ? WHERE id = ?", (','.join(user_list), found_id))
+                    conn.commit()
+                return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
 
-            return {'id': found_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
-
-    # --- Se não encontrou nada relevante, cria um novo ---
     with st.spinner(f"Nenhum conceito encontrado. Gerando uma nova explicação para '{user_query}'..."):
         ai_result = _generate_title_and_explanation(user_query)
     
     if ai_result['title'] == 'Erro':
         return {'id': None, 'title': 'Erro na Geração', 'explanation': ai_result['explanation']}
         
-    # Salva o novo conceito no banco
     new_id = str(uuid.uuid4())
     created_at = datetime.now().isoformat()
     cursor = conn.cursor()
+    # CORREÇÃO: Insere na coluna 'users' (plural)
     cursor.execute(
         "INSERT INTO ai_concepts (id, title, explanation, users, created_at) VALUES (?, ?, ?, ?, ?)",
         (new_id, ai_result['title'], ai_result['explanation'], user_id, created_at)
@@ -296,11 +272,12 @@ Sua tarefa é encontrar o ID do conteúdo mais relevante para a pergunta.
 def get_user_search_history(user_id: str):
     """Retorna o histórico de conceitos pesquisados por um usuário."""
     conn = get_db_connection()
-    # Usamos LIKE para encontrar o user_id dentro da lista de strings
+    # CORREÇÃO: Busca na coluna 'users' (plural)
     query = "SELECT id, title FROM ai_concepts WHERE users LIKE ?"
     params = (f"%{user_id}%",)
     history_df = pd.read_sql_query(query, conn, params=params)
     return history_df.to_dict('records')
+
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
 @st.cache_data(ttl=600)
