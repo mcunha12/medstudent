@@ -10,14 +10,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
-def load_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
-# Carrega o CSS e o Header Fixo
-load_css("style.css")
-st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
 
 
 st.title("📊 Meu Perfil de Performance")

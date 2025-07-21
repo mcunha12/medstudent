@@ -14,17 +14,6 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- FUNÇÃO PARA CARREGAR CSS EXTERNO ---
-def load_css(file_name):
-    try:
-        with open(file_name) as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except FileNotFoundError:
-        st.warning(f"Arquivo de estilo '{file_name}' não encontrado.")
-
-# Carrega o CSS e o Header Fixo
-load_css("style.css")
-st.markdown('<div class="fixed-header">MedStudent 👨‍🏫</div>', unsafe_allow_html=True)
 
 # --- VERIFICA SE O USUÁRIO ESTÁ LOGADO ---
 if 'user_id' not in st.session_state or not st.session_state.user_id:
