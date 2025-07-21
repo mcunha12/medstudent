@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from services import find_or_create_ai_concept, get_user_search_history
+from services import find_or_create_ai_concept, get_user_search_history, get_db_connection
 
 st.set_page_config(
     layout="centered",
@@ -29,7 +29,6 @@ search_query = st.text_input(
 )
 
 if search_query:
-    # Quando o usuário pesquisa, chama a função principal
     st.session_state.current_concept = find_or_create_ai_concept(
         search_query, st.session_state.user_id
     )
@@ -54,14 +53,14 @@ search_history = get_user_search_history(st.session_state.user_id)
 if not search_history:
     st.info("Seu histórico de pesquisas aparecerá aqui.")
 else:
-    # Cria colunas para exibir o histórico de forma mais organizada
     cols = st.columns(3)
     col_idx = 0
     for item in search_history:
         with cols[col_idx % 3]:
             if st.button(item['title'], key=item['id'], use_container_width=True):
-                # Ao clicar em um item do histórico, busca a explicação completa
-                conn = st.session_state.db_connection # Assumindo que a conexão está no session_state
+                # --- CORREÇÃO APLICADA AQUI ---
+                # Obtém a conexão com o banco de dados da forma correta
+                conn = get_db_connection() 
                 query = "SELECT * FROM ai_concepts WHERE id = ?"
                 concept_df = pd.read_sql_query(query, conn, params=(item['id'],))
                 if not concept_df.empty:
