@@ -52,10 +52,17 @@ if not st.session_state.user_id:
                 else:
                     st.error(auth_response['message'])
 else:
-    load_concepts_df()
-    # Página para usuário logado
+    # --- ESTRATÉGIA DE PRÉ-CARREGAMENTO (CACHE WARMING) ---
+    # "Aquece" o cache dos conceitos na primeira vez que o usuário logado acessa a Home.
+    if 'concepts_cache_warmed' not in st.session_state:
+        with st.spinner("Otimizando sua sessão..."):
+            # Esta função já é cacheada, então rodá-la aqui pré-popula o cache
+            # para que a página da Wiki carregue instantaneamente.
+            load_concepts_df()
+        st.session_state.concepts_cache_warmed = True
+
+    # O resto da página continua normalmente
     st.title(f"Bem-vindo de volta! 👋")
-    # Carrega apenas a lista de nomes dos tópicos (operação leve e cacheada)
     st.markdown("### O que vamos praticar hoje?")
     
     st.write("") 
@@ -75,9 +82,7 @@ else:
         st.page_link("pages/4_Posologia.py", label="💊 Posologia", icon="💊")
 
     with col5:
-        # --- MUDANÇA AQUI ---
         st.page_link("pages/5_Wiki_de_Conceitos.py", label="💡 Wiki de Conceitos", icon="💡")
-
 
     # --- Seção de Estatísticas e Logout ---
     st.markdown("---")
