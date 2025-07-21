@@ -213,7 +213,9 @@ def get_user_search_history(user_id: str):
     """
     Função melhorada para buscar histórico com debug completo
     """
+    conn = None
     try:
+        # Cria nova conexão para esta função
         conn = get_db_connection()
         
         # Debug: Mostra informações no Streamlit
@@ -270,19 +272,32 @@ def get_user_search_history(user_id: str):
         for tipo, quantidade in search_results.items():
             st.write(f"- **{tipo}:** {quantidade} resultados")
         
-        # 4. Retorna o melhor resultado encontrado
+        # 4. Determina qual resultado retornar
+        final_result = []
         if len(result_exact) > 0:
             st.success("✅ Usando busca exata")
-            return result_exact.to_dict('records')
+            final_result = result_exact.to_dict('records')
         elif len(result_like) > 0:
             st.success("✅ Usando busca LIKE")
-            return result_like.to_dict('records')
+            final_result = result_like.to_dict('records')
         else:
             st.warning("⚠️ Nenhum resultado encontrado em nenhuma busca")
-            return []
+            final_result = []
+        
+        # Fecha a conexão antes de retornar
+        if conn:
+            conn.close()
+            
+        return final_result
             
     except Exception as e:
         st.error(f"❌ Erro na função get_user_search_history: {e}")
+        # Garante que a conexão seja fechada mesmo em caso de erro
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
         return []
     
 def find_or_create_ai_concept(user_query: str, user_id: str):
