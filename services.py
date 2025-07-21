@@ -218,7 +218,7 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
 
-# --- WIKI IA FUNCTIONS (SQLite Version) ---
+# --- WIKI IA FUNCTIONS ---
 
 def _generate_title_and_explanation(user_query: str):
     """
@@ -241,7 +241,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 ### 3. Análise 5W2H
 * **What (O quê):** O que é?
 * **Why (Por quê):** Por que ocorre/é importante?
-* **Who (Quem):** Quem afeta?
+* **Who (Quem)::** Quem afeta?
 * **Where (Onde):** Onde se manifesta?
 * **When (Quando):** Quando ocorre?
 * **How (Como):** Como é o manejo?
