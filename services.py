@@ -7,79 +7,28 @@ import uuid
 from datetime import datetime, timedelta
 import unicodedata
 import bcrypt
+from streamlit_supabase_connection import SupabaseConnection
 
 DB_FILE = 'medstudent.db'
 
 # --- GERENCIAMENTO DE CONEXÃO COM O BANCO DE DADOS ---
 @st.cache_resource
-def get_db_connection():
+def get_supabase_conn():
     """
-    Cria e retorna uma conexão com o banco de dados SQLite, reutilizando-a se já existir
-    na st.session_state para evitar o erro 'Cannot operate on a closed database'.
-    Garante que todas as tabelas necessárias para o aplicativo existam.
+    Cria e retorna uma conexão com o Supabase, reutilizando-a se já existir.
+    As credenciais (SUPABASE_URL, SUPABASE_KEY) são lidas de st.secrets.
     """
-    if 'db_conn' not in st.session_state:
+    if 'supabase_conn' not in st.session_state:
         try:
-            # check_same_thread=False é crucial para uso com Streamlit/threading
-            conn = sqlite3.connect(DB_FILE, check_same_thread=False)
-            
-            # Tabela para conceitos de IA
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS ai_concepts (
-                    id TEXT PRIMARY KEY,
-                    users TEXT NOT NULL, -- Referencia o user_id da tabela users
-                    title TEXT NOT NULL,
-                    explanation TEXT NOT NULL,
-                    created_at TEXT NOT NULL
-                )
-            """)
-            
-            # Tabela para usuários (schema baseado no users.csv e no seu código)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS users (
-                    user_id TEXT PRIMARY KEY,
-                    email TEXT UNIQUE NOT NULL,
-                    password TEXT NOT NULL,
-                    created_at TEXT NOT NULL,
-                    active BOOLEAN NOT NULL DEFAULT TRUE
-                )
-            """)
-
-            # Tabela para questões (schema baseado no questions.csv)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS questions (
-                    question_id TEXT PRIMARY KEY,
-                    enunciado TEXT NOT NULL,
-                    alternativas TEXT, -- Armazenado como JSON string
-                    comentarios TEXT, -- Armazenado como JSON string
-                    alternativa_correta TEXT,
-                    areas_principais TEXT, -- String separada por vírgulas
-                    subtopicos TEXT, -- String separada por vírgulas
-                    prova TEXT,
-                    createdAt TEXT
-                )
-            """)
-
-            # Tabela para respostas dos usuários (schema baseado no answers.csv)
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS answers (
-                    answer_id TEXT PRIMARY KEY,
-                    user_id TEXT NOT NULL,
-                    question_id TEXT NOT NULL,
-                    user_answer TEXT,
-                    is_correct TEXT NOT NULL, -- 'TRUE' ou 'FALSE'
-                    answered_at TEXT NOT NULL,
-                    FOREIGN KEY (user_id) REFERENCES users(user_id),
-                    FOREIGN KEY (question_id) REFERENCES questions(question_id)
-                )
-            """)
-            
-            conn.commit()
-            st.session_state.db_conn = conn
+            st.session_state.supabase_conn = st.connection(
+                "supabase", 
+                type=SupabaseConnection
+            )
         except Exception as e:
-            st.error(f"Erro ao conectar ou criar o banco de dados: {e}")
-            st.stop() # Para a execução se o banco não puder ser acessado
-    return st.session_state.db_conn
+            st.error(f"Erro ao conectar com o Supabase: {e}")
+            st.stop()
+    return st.session_state.supabase_conn
+
 
 # --- FUNÇÕES AUXILIARES ---
 
@@ -108,36 +57,47 @@ def get_gemini_model():
 def authenticate_or_register_user(email, password):
     try:
         email = email.strip().lower()
-        conn = get_db_connection()
-        query = "SELECT * FROM users WHERE email = ?"
-        user_record = pd.read_sql_query(query, conn, params=(email,))
+        conn = get_supabase_conn()
         
-        if user_record.empty:
+        # Verifica se o usuário já existe
+        response = conn.table("users").select("*").eq("email", email).execute()
+        
+        # Se não existe, cadastra um novo usuário
+        if not response.data:
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
             user_id = str(uuid.uuid4())
             created_at = datetime.now().isoformat()
-            cursor = conn.cursor()
-            cursor.execute(
-                "INSERT INTO users (email, user_id, created_at, password) VALUES (?, ?, ?, ?)",
-                (email, user_id, created_at, hashed_password)
-            )
-            conn.commit()
-            return {'status': 'success', 'message': 'Cadastro realizado com sucesso!', 'user_id': user_id}
+            
+            insert_response = conn.table("users").insert({
+                "email": email,
+                "user_id": user_id,
+                "created_at": created_at,
+                "password": hashed_password,
+                "active": True
+            }).execute()
 
-        user_id = user_record['user_id'].iloc[0]
-        stored_password_hash = user_record['password'].iloc[0]
+            if insert_response.data:
+                return {'status': 'success', 'message': 'Cadastro realizado com sucesso!', 'user_id': user_id}
+            else:
+                 raise Exception("Falha ao inserir usuário no banco de dados.")
 
-        if pd.isna(stored_password_hash) or stored_password_hash == '':
+        # Se o usuário existe, verifica a senha
+        user_record = response.data[0]
+        user_id = user_record['user_id']
+        stored_password_hash = user_record.get('password')
+
+        # Se não há senha cadastrada, define a senha
+        if not stored_password_hash:
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-            cursor = conn.cursor()
-            cursor.execute("UPDATE users SET password = ? WHERE email = ?", (hashed_password, email))
-            conn.commit()
+            conn.table("users").update({"password": hashed_password}).eq("email", email).execute()
             return {'status': 'success', 'message': 'Senha cadastrada com sucesso!', 'user_id': user_id}
-        
+
+        # Verifica se a senha fornecida corresponde à senha armazenada
         if bcrypt.checkpw(password.encode('utf-8'), str(stored_password_hash).encode('utf-8')):
             return {'status': 'success', 'message': 'Login realizado com sucesso!', 'user_id': user_id}
         else:
             return {'status': 'error', 'message': 'Senha incorreta. Tente novamente.', 'user_id': None}
+            
     except Exception as e:
         st.error(f"Ocorreu um erro durante a autenticação: {e}")
         return {'status': 'error', 'message': 'Erro de sistema. Tente novamente mais tarde.', 'user_id': None}
@@ -146,38 +106,51 @@ def authenticate_or_register_user(email, password):
 
 def save_answer(user_id, question_id, user_answer, is_correct):
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        query = "SELECT is_correct FROM answers WHERE user_id = ? AND question_id = ?"
-        params = (str(user_id), str(question_id))
-        existing_answer_df = pd.read_sql_query(query, conn, params=params)
+        conn = get_supabase_conn()
         timestamp = datetime.now().isoformat()
         is_correct_str = 'TRUE' if is_correct else 'FALSE'
-
-        if existing_answer_df.empty:
+        
+        # Verifica se já existe uma resposta para essa questão e usuário
+        response = conn.table("answers").select("answer_id, is_correct").eq("user_id", str(user_id)).eq("question_id", str(question_id)).execute()
+        
+        existing_answer = response.data
+        
+        if not existing_answer:
+            # Insere nova resposta
             answer_id = str(uuid.uuid4())
-            cursor.execute(
-                "INSERT INTO answers (answer_id, user_id, question_id, user_answer, is_correct, answered_at) VALUES (?, ?, ?, ?, ?, ?)",
-                (answer_id, str(user_id), str(question_id), user_answer, is_correct_str, timestamp)
-            )
+            conn.table("answers").insert({
+                "answer_id": answer_id,
+                "user_id": str(user_id),
+                "question_id": str(question_id),
+                "user_answer": user_answer,
+                "is_correct": is_correct_str,
+                "answered_at": timestamp
+            }).execute()
         else:
-            old_is_correct = str(existing_answer_df['is_correct'].iloc[0]).upper() == 'TRUE'
+            # Atualiza se a resposta anterior estava errada e a nova está correta
+            old_is_correct = str(existing_answer[0]['is_correct']).upper() == 'TRUE'
             if not old_is_correct and is_correct:
-                cursor.execute(
-                    "UPDATE answers SET user_answer = ?, is_correct = ?, answered_at = ? WHERE user_id = ? AND question_id = ?",
-                    (user_answer, is_correct_str, timestamp, str(user_id), str(question_id))
-                )
-        conn.commit()
+                conn.table("answers").update({
+                    "user_answer": user_answer,
+                    "is_correct": is_correct_str,
+                    "answered_at": timestamp
+                }).eq("user_id", str(user_id)).eq("question_id", str(question_id)).execute()
+                
     except Exception as e:
         st.error(f"Não foi possível salvar sua resposta: {e}")
 
 def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas'], specialty=None, provas=None, keywords=None):
     try:
-        conn = get_db_connection()
-        questions_df = pd.read_sql_query("SELECT * FROM questions", conn)
-        answers_df = pd.read_sql_query("SELECT question_id, is_correct FROM answers WHERE user_id = ?", conn, params=(str(user_id),))
-        if questions_df.empty: return []
+        conn = get_supabase_conn()
+        questions_response = conn.table("questions").select("*").execute()
+        answers_response = conn.table("answers").select("question_id, is_correct").eq("user_id", str(user_id)).execute()
         
+        questions_df = pd.DataFrame(questions_response.data)
+        answers_df = pd.DataFrame(answers_response.data)
+        
+        if questions_df.empty: return []
+
+        # O restante da lógica de filtragem em pandas permanece o mesmo
         list_of_pools = []
         if 'nao_respondidas' in status_filters:
             if not answers_df.empty:
@@ -186,6 +159,7 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
             else:
                 pool = questions_df.copy()
             list_of_pools.append(pool)
+        
         if not answers_df.empty and ('corretas' in status_filters or 'incorretas' in status_filters):
             answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
             if 'corretas' in status_filters:
@@ -214,9 +188,11 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         num_available = len(final_pool)
         sample_size = min(count, num_available)
         return final_pool.sample(n=sample_size, replace=False).to_dict('records')
+
     except Exception as e:
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
+
 
 # --- WIKI IA FUNCTIONS ---
 
@@ -280,78 +256,72 @@ Você é um médico especialista e educador, criando material de estudo para um(
         return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}. Verifique sua conexão e configurações do Gemini."}
 
 def _save_ai_concept(concept_data: dict, user_id: str):
-    """
-    Salva um novo conceito de IA no banco de dados.
-    """
+    """ Salva um novo conceito de IA no Supabase. """
     try:
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        concept_id = str(uuid.uuid4()) # Gera um ID único para o novo conceito
-        created_at = datetime.now().isoformat() # Timestamp da criação
-        cursor.execute(
-            """
-            INSERT INTO ai_concepts (id, users, title, explanation, created_at)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (concept_id, user_id, concept_data['title'], concept_data['explanation'], created_at)
-        )
-        conn.commit()
-        # Retorna o conceito salvo com o ID gerado (incluindo explicação para manter o padrão)
-        return {'id': concept_id, 'title': concept_data['title'], 'explanation': concept_data['explanation']}
+        conn = get_supabase_conn()
+        concept_id = str(uuid.uuid4())
+        created_at = datetime.now().isoformat()
+        
+        response = conn.table("ai_concepts").insert({
+            "id": concept_id,
+            "users": user_id,
+            "title": concept_data['title'],
+            "explanation": concept_data['explanation'],
+            "created_at": created_at
+        }).execute()
+        
+        if response.data:
+            return response.data[0]
+        return None
+        
     except Exception as e:
         st.error(f"Erro ao salvar o conceito no banco de dados: {e}")
         return None
 
 def get_user_search_history(user_id: str):
-    """
-    Busca o histórico de pesquisa de um usuário.
-    """
+    """ Busca o histórico de pesquisa de um usuário no Supabase. """
     try:
-        conn = get_db_connection()
-        # Ordena por created_at para mostrar os mais recentes primeiro no histórico
-        query = "SELECT id, title FROM ai_concepts WHERE users = ? ORDER BY created_at DESC"
-        user_concepts = pd.read_sql_query(query, conn, params=(user_id,))
-        if user_concepts.empty:
-            return []
-        return user_concepts.to_dict('records')
+        conn = get_supabase_conn()
+        response = conn.table("ai_concepts").select("id, title").eq("users", user_id).order("created_at", desc=True).execute()
+        return response.data if response.data else []
     except Exception as e:
         st.error(f"Erro ao buscar o histórico de conceitos: {e}")
         return []
 
 def get_concept_by_id(concept_id: str):
-    """
-    Busca um único conceito de IA pelo seu ID.
-    """
+    """ Busca um único conceito de IA pelo seu ID no Supabase. """
     try:
-        conn = get_db_connection()
-        query = "SELECT id, title, explanation FROM ai_concepts WHERE id = ?"
-        concept_df = pd.read_sql_query(query, conn, params=(concept_id,))
-        if concept_df.empty:
-            return None
-        return concept_df.to_dict('records')[0]
+        conn = get_supabase_conn()
+        response = conn.table("ai_concepts").select("id, title, explanation").eq("id", concept_id).limit(1).execute()
+        if response.data:
+            return response.data[0]
+        return None
     except Exception as e:
         st.error(f"Erro ao buscar o conceito por ID: {e}")
         return None
+
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
 @st.cache_data(ttl=600)
 def get_performance_data(user_id):
     try:
-        conn = get_db_connection()
-        query = """
-        SELECT a.*, q.enunciado, q.alternativas, q.comentarios, q.alternativa_correta,
-               q.areas_principais, q.subtopicos, q.prova
-        FROM answers a LEFT JOIN questions q ON a.question_id = q.question_id
-        WHERE a.user_id = ?
-        """
-        merged_df = pd.read_sql_query(query, conn, params=(str(user_id),))
+        conn = get_supabase_conn()
+        # Assumindo que a relação de FK 'answers.question_id' -> 'questions.question_id' existe no Supabase
+        # Isso permite um join mais eficiente
+        response = conn.table("answers").select("*, questions(*)").eq("user_id", str(user_id)).execute()
+        merged_df = pd.json_normalize(response.data, sep='_')
+
         if merged_df.empty: return None
 
+        # Renomear colunas para corresponder ao formato original
+        merged_df.rename(columns=lambda x: x.replace('questions_', ''), inplace=True)
+        
         merged_df['is_correct'] = merged_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
         merged_df['answered_at'] = pd.to_datetime(merged_df['answered_at'])
-        
-        all_answers_for_ranking = pd.read_sql_query("SELECT user_id, is_correct, answered_at FROM answers", conn)
+
+        all_answers_response = conn.table("answers").select("user_id, is_correct, answered_at").execute()
+        all_answers_for_ranking = pd.DataFrame(all_answers_response.data)
         all_answers_for_ranking['is_correct'] = all_answers_for_ranking['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
 
         merged_df['areas_principais'] = merged_df['areas_principais'].fillna('').str.split(',')
@@ -370,6 +340,7 @@ def get_performance_data(user_id):
     except Exception as e:
         st.warning(f"Não foi possível processar seus dados de performance: {e}")
         return None
+
 
 def calculate_metrics(df):
     """(Sem alterações) Calcula métricas básicas de um DataFrame de respostas."""
@@ -463,55 +434,60 @@ def get_ranking_data(all_answers_df, period_code, current_user_id):
 
 @st.cache_data(ttl=1)
 def get_user_answered_questions_details(user_id):
-    """Busca o histórico de um usuário no SQLite."""
+    """ Busca o histórico de um usuário no Supabase com join. """
     try:
-        conn = get_db_connection()
-        query = """
-        SELECT *
-        FROM answers a
-        LEFT JOIN questions q ON a.question_id = q.question_id
-        WHERE a.user_id = ?
-        ORDER BY a.answered_at DESC
-        """
-        merged_df = pd.read_sql_query(query, conn, params=(str(user_id),))
+        conn = get_supabase_conn()
+        # Join otimizado via Supabase
+        response = conn.table("answers").select("*, questions(*)").eq("user_id", str(user_id)).order("answered_at", desc=True).execute()
+        
+        merged_df = pd.json_normalize(response.data, sep='_')
         if merged_df.empty:
             return pd.DataFrame()
+        
+        merged_df.rename(columns=lambda x: x.replace('questions_', ''), inplace=True)
         merged_df['is_correct'] = merged_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
         return merged_df
+        
     except Exception as e:
         st.error(f"Erro ao buscar histórico de revisão: {e}")
         return pd.DataFrame()
 
 @st.cache_data(ttl=3600)
 def get_all_provas():
+    """Busca todas as provas únicas do Supabase."""
     try:
-        conn = get_db_connection()
-        df = pd.read_sql_query("SELECT DISTINCT prova FROM questions WHERE prova IS NOT NULL", conn)
+        conn = get_supabase_conn()
+        response = conn.table("questions").select("prova").neq("prova", "is.null").execute()
+        df = pd.DataFrame(response.data)
+        if df.empty: return []
         return sorted(list(df['prova'].unique()))
     except Exception as e:
-        st.warning(f"Não foi possível carregar la lista de provas: {e}")
+        st.warning(f"Não foi possível carregar a lista de provas: {e}")
         return []
 
 @st.cache_data(ttl=3600)
 def get_global_platform_stats():
+    """Calcula estatísticas globais usando dados do Supabase."""
     default_stats = {'total_students': 0, 'active_this_week': 0, 'answered_last_7_days': 0, 'accuracy_last_7_days': 0.0}
     try:
-        conn = get_db_connection()
-        users_df = pd.read_sql_query("SELECT count(user_id) as total_students FROM users", conn)
-        answers_df = pd.read_sql_query("SELECT user_id, is_correct, answered_at FROM answers", conn)
+        conn = get_supabase_conn()
+        # 'count='exact'' é a forma eficiente de contar no Supabase
+        users_response = conn.table("users").select("user_id", count='exact').execute()
+        answers_response = conn.table("answers").select("user_id, is_correct, answered_at").execute()
         
-        total_students = users_df['total_students'].iloc[0]
+        total_students = users_response.count
+        answers_df = pd.DataFrame(answers_response.data)
+
         if answers_df.empty:
             default_stats['total_students'] = total_students
             return default_stats
-            
+        
+        # O resto da lógica é em pandas e permanece igual
         answers_df['answered_at'] = pd.to_datetime(answers_df['answered_at'])
         answers_df['is_correct'] = answers_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
         
         now = datetime.now(answers_df['answered_at'].dt.tz)
-        start_of_week = now - timedelta(days=now.weekday())
-        start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
-        
+        start_of_week = (now - timedelta(days=now.weekday())).replace(hour=0, minute=0, second=0, microsecond=0)
         this_week_answers = answers_df[answers_df['answered_at'] >= start_of_week]
         active_this_week = this_week_answers['user_id'].nunique()
         
@@ -530,38 +506,23 @@ def get_global_platform_stats():
     
 @st.cache_data(ttl=3600)
 def get_all_concepts_with_areas():
-    """
-    Busca todos os subtópicos únicos e suas áreas principais associadas.
-    Retorna um DataFrame com as colunas ['subtopic', 'area'].
-    """
+    """Busca todos os subtópicos e áreas associadas do Supabase."""
     try:
-        conn = get_db_connection()
-        # Seleciona apenas as colunas necessárias
-        query = "SELECT areas_principais, subtopicos FROM questions"
-        df = pd.read_sql_query(query, conn)
+        conn = get_supabase_conn()
+        response = conn.table("questions").select("areas_principais, subtopicos").execute()
+        df = pd.DataFrame(response.data)
         
-        # Remove linhas onde os subtopicos são nulos
+        # O resto da lógica de processamento em pandas permanece igual
         df.dropna(subset=['subtopicos'], inplace=True)
-        
-        # Transforma as strings separadas por vírgula em listas
         df['subtopicos'] = df['subtopicos'].str.split(',')
         df['areas_principais'] = df['areas_principais'].fillna('').str.split(',')
-        
-        # "Explode" para ter uma linha por combinação de área/subtópico
-        df = df.explode('subtopicos')
-        df = df.explode('areas_principais')
-        
-        # Limpa os dados
+        df = df.explode('subtopicos').explode('areas_principais')
         df['subtopicos'] = df['subtopicos'].str.strip()
         df['areas_principais'] = df['areas_principais'].str.strip()
         df.dropna(subset=['subtopicos', 'areas_principais'], inplace=True)
         df = df[df['subtopicos'] != '']
         df = df[df['areas_principais'] != '']
-        
-        # Renomeia as colunas para um nome mais claro
         df.rename(columns={'subtopicos': 'concept', 'areas_principais': 'area'}, inplace=True)
-        
-        # Remove duplicatas e ordena
         return df.drop_duplicates().sort_values(by=['area', 'concept']).reset_index(drop=True)
         
     except Exception as e:
@@ -570,43 +531,42 @@ def get_all_concepts_with_areas():
 
 @st.cache_data(ttl=600)
 def get_subtopics_from_incorrect_answers(user_id):
-    """
-    Busca uma lista de subtópicos únicos de questões que um usuário específico errou.
-    """
+    """Busca subtópicos de respostas incorretas de um usuário no Supabase."""
     try:
-        conn = get_db_connection()
-        query = """
-        SELECT DISTINCT q.subtopicos
-        FROM answers a
-        JOIN questions q ON a.question_id = q.question_id
-        WHERE a.user_id = ? AND a.is_correct = 'FALSE'
-        """
-        df = pd.read_sql_query(query, conn, params=(str(user_id),))
+        conn = get_supabase_conn()
+        # Utiliza o join do Supabase para pegar os subtopicos das questões erradas
+        response = conn.table("answers").select("questions(subtopicos)").eq("user_id", str(user_id)).eq("is_correct", "FALSE").execute()
         
-        if df.empty or 'subtopicos' not in df.columns:
+        if not response.data:
             return []
             
-        # Processamento para extrair a lista única
-        subtopics = df['subtopicos'].dropna().str.split(',').explode()
-        unique_subtopics = subtopics.str.strip().unique().tolist()
+        # Extrai os dados aninhados
+        subtopics_list = [item['questions']['subtopicos'] for item in response.data if item.get('questions') and item['questions'].get('subtopicos')]
+        
+        # Processamento para obter a lista única
+        subtopics_series = pd.Series(subtopics_list).dropna().str.split(',').explode()
+        unique_subtopics = subtopics_series.str.strip().unique().tolist()
         return [topic for topic in unique_subtopics if topic]
         
     except Exception as e:
         st.warning(f"Não foi possível carregar os subtópicos de questões incorretas: {e}")
         return []
 
-    
 @st.cache_data(ttl=3600)
 def get_all_specialties():
-    """Busca todas as áreas principais únicas do SQLite."""
+    """Busca todas as especialidades únicas do Supabase."""
     try:
-        conn = get_db_connection()
-        df = pd.read_sql_query("SELECT areas_principais FROM questions", conn)
+        conn = get_supabase_conn()
+        response = conn.table("questions").select("areas_principais").execute()
+        df = pd.DataFrame(response.data)
+
         if df.empty or 'areas_principais' not in df.columns:
             return []
+            
         specialties = df['areas_principais'].dropna().str.split(',').explode()
         unique_specialties = sorted(list(specialties.str.strip().unique()))
         return [spec for spec in unique_specialties if spec]
+        
     except Exception as e:
         st.warning(f"Não foi possível carregar a lista de especialidades: {e}")
         return []
