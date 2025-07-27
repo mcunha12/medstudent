@@ -303,43 +303,81 @@ def get_concept_by_id(concept_id: str):
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
 
-@st.cache_data(ttl=600)
-def get_performance_data(user_id):
+@st.cache_data(ttl=1)
+def get_performance_data(user_id: str):
+    """
+    Busca e processa todos os dados de performance de um usuário.
+    """
     try:
         conn = get_supabase_conn()
-        # Assumindo que a relação de FK 'answers.question_id' -> 'questions.question_id' existe no Supabase
-        # Isso permite um join mais eficiente
-        response = conn.table("answers").select("*, questions(*)").eq("user_id", str(user_id)).execute()
-        merged_df = pd.json_normalize(response.data, sep='_')
 
-        if merged_df.empty: return None
+        # Busca as respostas do usuário e faz um "join" com a tabela de questões
+        response = conn.table("user_answers").select("*, questions(*)").eq("user_id", user_id).execute()
 
-        # Renomear colunas para corresponder ao formato original
-        merged_df.rename(columns=lambda x: x.replace('questions_', ''), inplace=True)
-        
-        merged_df['is_correct'] = merged_df['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
-        merged_df['answered_at'] = pd.to_datetime(merged_df['answered_at'])
+        if not response.data:
+            st.info("Ainda não há dados de performance para analisar.")
+            return None
 
-        all_answers_response = conn.table("answers").select("user_id, is_correct, answered_at").execute()
-        all_answers_for_ranking = pd.DataFrame(all_answers_response.data)
-        all_answers_for_ranking['is_correct'] = all_answers_for_ranking['is_correct'].apply(lambda x: str(x).upper() == 'TRUE')
+        # --- Processamento para evitar colunas duplicadas ---
+        flat_data = []
+        for row in response.data:
+            question_details = row.pop('questions', {})
+            
+            if not question_details:
+                continue
+            
+            # Remove a chave 'question_id' do dicionário aninhado para evitar duplicatas
+            if 'question_id' in question_details:
+                del question_details['question_id']
+            
+            row.update(question_details)
+            flat_data.append(row)
+        
+        if not flat_data:
+             return None
 
-        merged_df['areas_principais'] = merged_df['areas_principais'].fillna('').str.split(',')
-        merged_df['subtopicos'] = merged_df['subtopicos'].fillna('').str.split(',')
+        all_answers = pd.DataFrame(flat_data)
         
-        areas_df = merged_df.explode('areas_principais')
-        areas_df['areas_principais'] = areas_df['areas_principais'].str.strip()
-        
-        subtopicos_df = merged_df.explode('subtopicos')
-        subtopicos_df['subtopicos'] = subtopicos_df['subtopicos'].str.strip()
-        
+        # Converte a coluna de data para o formato datetime
+        if 'answered_at' in all_answers.columns:
+            all_answers['answered_at'] = pd.to_datetime(all_answers['answered_at'])
+        else:
+             all_answers['answered_at'] = pd.to_datetime(all_answers['created_at'])
+
+        # --- Criação dos DataFrames "explodidos" ---
+
+        # 1. Para as áreas principais (lógica de parsing integrada)
+        areas_df = all_answers[['question_id', 'is_correct', 'areas_principais']].copy()
+        areas_exploded = (
+            areas_df.dropna(subset=['areas_principais'])
+            .astype({'areas_principais': str})
+            .assign(areas_principais=lambda df_: df_['areas_principais'].str.replace(r'[\[\]"]', '', regex=True).str.split(','))
+            .explode('areas_principais')
+        )
+        areas_exploded['areas_principais'] = areas_exploded['areas_principais'].str.strip()
+        areas_exploded = areas_exploded[areas_exploded['areas_principais'].dropna().astype(bool)].copy()
+
+        # 2. Para os subtópicos
+        subtopicos_df = all_answers[['question_id', 'is_correct', 'subtopicos', 'answered_at']].copy()
+        subtopicos_exploded = (
+            subtopicos_df.dropna(subset=['subtopicos'])
+            .astype({'subtopicos': str})
+            .assign(subtopicos=lambda df_: df_['subtopicos'].str.split(','))
+            .explode('subtopicos')
+        )
+        subtopicos_exploded['subtopicos'] = subtopicos_exploded['subtopicos'].str.strip()
+        subtopicos_exploded = subtopicos_exploded[subtopicos_exploded['subtopicos'].dropna().astype(bool)].copy()
+
         return {
-            "all_answers": merged_df, "areas_exploded": areas_df, 
-            "subtopicos_exploded": subtopicos_df, "all_answers_for_ranking": all_answers_for_ranking
+            "all_answers": all_answers,
+            "all_answers_for_ranking": all_answers.copy(),
+            "areas_exploded": areas_exploded,
+            "subtopicos_exploded": subtopicos_exploded
         }
+
     except Exception as e:
-        st.warning(f"Não foi possível processar seus dados de performance: {e}")
-        return None
+        raise Exception(f"Não foi possível processar seus dados de performance: {e}")
+
 
 
 def calculate_metrics(df):
