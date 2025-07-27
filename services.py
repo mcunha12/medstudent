@@ -554,19 +554,39 @@ def get_subtopics_from_incorrect_answers(user_id):
 
 @st.cache_data(ttl=1)
 def get_all_specialties():
-    """Busca todas as especialidades únicas do Supabase."""
+    """Busca todas as especialidades únicas do Supabase, tratando múltiplos formatos."""
     try:
         conn = get_supabase_conn()
+        # Seleciona apenas a coluna necessária para otimizar a consulta
         response = conn.table("questions").select("areas_principais").execute()
+
+        # Retorna uma lista vazia se a consulta não retornar dados
+        if not response.data:
+            return []
+
         df = pd.DataFrame(response.data)
 
         if df.empty or 'areas_principais' not in df.columns:
             return []
-            
-        specialties = df['areas_principais'].dropna().str.split(',').explode()
-        unique_specialties = sorted(list(specialties.str.strip().unique()))
-        return [spec for spec in unique_specialties if spec]
+        
+        # Lógica de processamento com pandas:
+        specialties = (
+            df['areas_principais']
+            .dropna()
+            .astype(str)  # Garante que todos os valores sejam tratados como string
+            .str.replace(r'[\[\]"]', '', regex=True)  # Remove colchetes e aspas da string
+            .str.split(',')  # Divide as especialidades pela vírgula
+            .explode()       # Transforma cada item da lista em uma nova linha
+            .str.strip()     # Remove espaços em branco no início e no fim
+        )
+        
+        # Pega os valores únicos, remove strings vazias, converte para lista e ordena
+        unique_specialties = sorted(list(specialties[specialties != ''].unique()))
+        
+        return unique_specialties
         
     except Exception as e:
-        st.warning(f"Não foi possível carregar a lista de especialidades: {e}")
+        st.warning(f"Não foi possível carregar a lista de especialidades.")
+        # Para depuração, você pode descomentar a linha abaixo para ver o erro no console
+        # print(f"Erro ao buscar especialidades: {e}")
         return []
