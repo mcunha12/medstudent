@@ -19,7 +19,7 @@ if 'user_id' not in st.session_state or not st.session_state.user_id:
 st.title("🔎 Revisão de Questões Respondidas")
 st.markdown("---")
 
-# --- CARREGA OS DADOS DO HISTÓRICO ---
+# --- CARREGA E LIMPA OS DADOS DO HISTÓRICO ---
 with st.spinner("Carregando seu histórico de respostas..."):
     answered_df = get_user_answered_questions_details(st.session_state.user_id)
 
@@ -27,10 +27,21 @@ if answered_df.empty:
     st.info("Você ainda não respondeu nenhuma questão. Responda algumas no simulado para vê-las aqui!")
     st.stop()
 
+# --- CORREÇÃO: Limpeza dos dados para os filtros funcionarem corretamente ---
+if 'areas_principais' in answered_df.columns:
+    answered_df['areas_principais_cleaned'] = answered_df['areas_principais'].astype(str).str.replace(r'[\[\]"]', '', regex=True)
+else:
+    answered_df['areas_principais_cleaned'] = ''
+
+if 'prova' in answered_df.columns:
+    answered_df['prova_cleaned'] = answered_df['prova'].astype(str).str.replace(r'[\[\]"]', '', regex=True)
+else:
+    answered_df['prova_cleaned'] = ''
+
+
 # --- ÁREA DE FILTROS ---
 st.subheader("Filtros")
 
-# Campo de busca por palavra-chave
 search_query = st.text_input(
     "Buscar por palavra-chave:",
     placeholder="Ex: diabetes, insuficiência renal, penicilina..."
@@ -39,67 +50,73 @@ search_query = st.text_input(
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    # Filtro por Acerto/Erro
     status_filter = st.selectbox(
         "Filtrar por Status:",
         options=["Todas", "Corretas", "Incorretas"]
     )
 
 with col2:
-    # Filtro por Área
-    # Tratamento de erro para caso a coluna 'areas_principais' não exista ou esteja vazia
-    if 'areas_principais' in answered_df.columns and not answered_df['areas_principais'].dropna().empty:
-        unique_areas = sorted(list(answered_df['areas_principais'].dropna().str.split(',\s*').explode().str.strip().unique()))
-    else:
-        unique_areas = []
+    # Filtro por Área (usando a coluna limpa)
+    unique_areas = sorted(
+        answered_df['areas_principais_cleaned'].str.split(',')
+        .explode()
+        .str.strip()
+        .dropna()
+        .loc[lambda x: x != '']
+        .unique()
+        .tolist()
+    )
     area_filter = st.multiselect("Filtrar por Área:", options=unique_areas)
 
 with col3:
-    # Filtro por Prova
-    if 'prova' in answered_df.columns and not answered_df['prova'].dropna().empty:
-        unique_provas = sorted(list(answered_df['prova'].dropna().unique()))
-    else:
-        unique_provas = []
+    # Filtro por Prova (usando a coluna limpa)
+    unique_provas = sorted(
+        answered_df['prova_cleaned'].dropna().loc[lambda x: x != ''].unique().tolist()
+    )
     prova_filter = st.multiselect("Filtrar por Prova:", options=unique_provas)
 
 # --- APLICA A LÓGICA DE FILTRAGEM ---
 filtered_df = answered_df.copy()
 
-# 1. Aplica o filtro de busca por palavra-chave primeiro
+# 1. Filtro de busca por palavra-chave
 if search_query:
-    # Junta todas as colunas de texto em uma só para a busca
     searchable_text = filtered_df.apply(
-        lambda row: ' '.join(row[['enunciado', 'alternativas', 'comentarios', 'areas_principais', 'subtopicos', 'prova']].astype(str).fillna('')),
+        lambda row: ' '.join(row[['enunciado', 'alternativas', 'comentarios', 'areas_principais_cleaned', 'subtopicos', 'prova_cleaned']].astype(str).fillna('')),
         axis=1
     )
     filtered_df = filtered_df[searchable_text.str.contains(search_query, case=False, na=False)]
 
-# 2. Aplica os outros filtros no resultado da busca
+# 2. Filtros de status, área e prova
 if status_filter == "Corretas":
+    filtered_df['is_correct'] = (filtered_df['is_correct'].astype(str).str.lower() == 'true')
     filtered_df = filtered_df[filtered_df['is_correct'] == True]
 elif status_filter == "Incorretas":
+    filtered_df['is_correct'] = (filtered_df['is_correct'].astype(str).str.lower() == 'true')
     filtered_df = filtered_df[filtered_df['is_correct'] == False]
 
 if area_filter:
-    # Garante que a coluna existe antes de filtrar
-    if 'areas_principais' in filtered_df.columns:
-        filtered_df = filtered_df[filtered_df['areas_principais'].str.contains('|'.join(area_filter), case=False, na=False)]
+    # A filtragem agora usa a coluna limpa
+    filtered_df = filtered_df[filtered_df['areas_principais_cleaned'].str.contains('|'.join(area_filter), case=False, na=False)]
 
 if prova_filter:
-    # Garante que a coluna existe antes de filtrar
-    if 'prova' in filtered_df.columns:
-        filtered_df = filtered_df[filtered_df['prova'].isin(prova_filter)]
+    # A filtragem agora usa a coluna limpa
+    filtered_df = filtered_df[filtered_df['prova_cleaned'].isin(prova_filter)]
+
 
 st.markdown("---")
-
 # --- EXIBIÇÃO DA LISTAGEM ---
+# (O restante do código para exibir os resultados permanece o mesmo)
+
 st.subheader(f"Exibindo {len(filtered_df)} de {len(answered_df)} questões")
 
 if filtered_df.empty:
     st.warning("Nenhum resultado encontrado para os filtros selecionados.")
 else:
     for _, row in filtered_df.iterrows():
-        icon = '✅' if row.get('is_correct', False) else '❌'
+        # Converte 'is_correct' para booleano para o ícone
+        is_correct_bool = str(row.get('is_correct', 'false')).lower() == 'true'
+        icon = '✅' if is_correct_bool else '❌'
+        
         expander_title = f"{icon} **{row.get('prova', 'N/A')}** | {row.get('enunciado', '')[:100]}..."
 
         with st.expander(expander_title):
@@ -114,7 +131,6 @@ else:
             st.subheader("Alternativas e Comentários")
             
             try:
-                # Usar .get() com fallback para string JSON vazia evita erros
                 alternativas = json.loads(row.get('alternativas', '{}'))
                 comentarios = json.loads(row.get('comentarios', '{}'))
                 alternativa_correta = row.get('alternativa_correta', '')
