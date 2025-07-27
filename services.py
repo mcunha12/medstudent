@@ -302,72 +302,63 @@ def get_concept_by_id(concept_id: str):
 
 
 # --- PERFORMANCE ANALYSIS & OTHER FUNCTIONS (SQLite Version) ---
-
-@st.cache_data(ttl=1)
 def get_performance_data(user_id: str):
     """
-    Busca e processa todos os dados de performance de um usuário.
+    Busca e processa todos os dados de performance de um usuário de forma robusta.
     """
     try:
         conn = get_supabase_conn()
-
-        # Busca as respostas do usuário e faz um "join" com a tabela de questões
         response = conn.table("user_answers").select("*, questions(*)").eq("user_id", user_id).execute()
 
         if not response.data:
-            st.info("Ainda não há dados de performance para analisar.")
             return None
 
-        # --- Processamento para evitar colunas duplicadas ---
         flat_data = []
         for row in response.data:
             question_details = row.pop('questions', {})
-            
-            if not question_details:
-                continue
-            
-            # Remove a chave 'question_id' do dicionário aninhado para evitar duplicatas
-            if 'question_id' in question_details:
-                del question_details['question_id']
-            
-            row.update(question_details)
+            if question_details:
+                if 'question_id' in question_details:
+                    del question_details['question_id']
+                row.update(question_details)
             flat_data.append(row)
-        
+
         if not flat_data:
-             return None
+            return None
 
         all_answers = pd.DataFrame(flat_data)
         
-        # Converte a coluna de data para o formato datetime
+        # Converte a coluna de data para o formato datetime, com tratamento de erro
         if 'answered_at' in all_answers.columns:
-            all_answers['answered_at'] = pd.to_datetime(all_answers['answered_at'])
+            all_answers['answered_at'] = pd.to_datetime(all_answers['answered_at'], errors='coerce')
         else:
-             all_answers['answered_at'] = pd.to_datetime(all_answers['created_at'])
+            all_answers['answered_at'] = pd.to_datetime(all_answers['created_at'], errors='coerce')
 
-        # --- Criação dos DataFrames "explodidos" ---
+        all_answers.dropna(subset=['answered_at'], inplace=True) # Remove linhas onde a data não pôde ser convertida
 
-        # 1. Para as áreas principais (lógica de parsing integrada)
+        # --- Processamento robusto para 'areas_principais' ---
         areas_df = all_answers[['question_id', 'is_correct', 'areas_principais']].copy()
-        areas_exploded = (
-            areas_df.dropna(subset=['areas_principais'])
-            .astype({'areas_principais': str})
-            .assign(areas_principais=lambda df_: df_['areas_principais'].str.replace(r'[\[\]"]', '', regex=True).str.split(','))
-            .explode('areas_principais')
-        )
-        areas_exploded['areas_principais'] = areas_exploded['areas_principais'].str.strip()
-        areas_exploded = areas_exploded[areas_exploded['areas_principais'].dropna().astype(bool)].copy()
+        areas_df.dropna(subset=['areas_principais'], inplace=True)
+        areas_df['areas_list'] = areas_df['areas_principais'].astype(str).str.replace(r'[\[\]"]', '', regex=True).str.split(',')
+        areas_exploded = areas_df.explode('areas_list')
+        areas_exploded.rename(columns={'areas_list': 'areas_principais_cleaned'}, inplace=True)
+        areas_exploded['areas_principais_cleaned'] = areas_exploded['areas_principais_cleaned'].str.strip()
+        # Sobrescreve a coluna original com a limpa
+        areas_exploded['areas_principais'] = areas_exploded['areas_principais_cleaned']
+        areas_exploded = areas_exploded.drop(columns=['areas_principais_cleaned'])
+        areas_exploded = areas_exploded[areas_exploded['areas_principais'].astype(bool)] # Remove strings vazias
 
-        # 2. Para os subtópicos
+        # --- Processamento robusto para 'subtopicos' ---
         subtopicos_df = all_answers[['question_id', 'is_correct', 'subtopicos', 'answered_at']].copy()
-        subtopicos_exploded = (
-            subtopicos_df.dropna(subset=['subtopicos'])
-            .astype({'subtopicos': str})
-            .assign(subtopicos=lambda df_: df_['subtopicos'].str.split(','))
-            .explode('subtopicos')
-        )
-        subtopicos_exploded['subtopicos'] = subtopicos_exploded['subtopicos'].str.strip()
-        subtopicos_exploded = subtopicos_exploded[subtopicos_exploded['subtopicos'].dropna().astype(bool)].copy()
-
+        subtopicos_df.dropna(subset=['subtopicos'], inplace=True)
+        subtopicos_df['subtopicos_list'] = subtopicos_df['subtopicos'].astype(str).str.split(',')
+        subtopicos_exploded = subtopicos_df.explode('subtopicos_list')
+        subtopicos_exploded.rename(columns={'subtopicos_list': 'subtopicos_cleaned'}, inplace=True)
+        subtopicos_exploded['subtopicos_cleaned'] = subtopicos_exploded['subtopicos_cleaned'].str.strip()
+        # Sobrescreve a coluna original com a limpa
+        subtopicos_exploded['subtopicos'] = subtopicos_exploded['subtopicos_cleaned']
+        subtopicos_exploded = subtopicos_exploded.drop(columns=['subtopicos_cleaned'])
+        subtopicos_exploded = subtopicos_exploded[subtopicos_exploded['subtopicos'].astype(bool)] # Remove strings vazias
+        
         return {
             "all_answers": all_answers,
             "all_answers_for_ranking": all_answers.copy(),
@@ -376,9 +367,10 @@ def get_performance_data(user_id: str):
         }
 
     except Exception as e:
-        raise Exception(f"Não foi possível processar seus dados de performance: {e}")
-
-
+        # **AÇÃO PARA DEBUG**: Esta linha mostrará o erro real nos seus logs
+        print(f"ERRO ORIGINAL EM GET_PERFORMANCE_DATA: {e}")
+        # A linha abaixo é a que você vê na interface do Streamlit
+        raise Exception("Não foi possível processar seus dados de performance. Verifique os logs do app.")
 
 def calculate_metrics(df):
     """(Sem alterações) Calcula métricas básicas de um DataFrame de respostas."""
