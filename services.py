@@ -437,13 +437,34 @@ def get_temporal_performance(all_answers_df, period='W'):
     return summary
 
 def get_areas_performance(areas_exploded_df):
-    """(Sem alterações) Calcula a performance por área principal."""
-    if areas_exploded_df is None or areas_exploded_df.empty: return pd.DataFrame()
-    areas_summary = areas_exploded_df.groupby('areas_principais').agg(
-        total_respondidas=('question_id', 'count'), 
+    """
+    Calcula a performance por área de conhecimento, tratando os tipos de dados
+    de forma robusta.
+    """
+    if areas_exploded_df.empty:
+        return pd.DataFrame()
+
+    df = areas_exploded_df.copy()
+
+    # --- A CORREÇÃO FINAL ESTÁ AQUI ---
+    # Garante que a coluna 'is_correct' seja numérica (1 para True, 0 para False)
+    # antes de qualquer cálculo.
+    df['is_correct'] = (
+        df['is_correct'].astype(str).str.lower() == 'true'
+    ).astype(int)
+
+    # Agrupa por área para calcular as métricas
+    areas_summary = df.groupby('areas_principais').agg(
+        total_respondidas=('question_id', 'count'),
         total_acertos=('is_correct', 'sum')
     ).reset_index()
-    areas_summary['taxa_de_acerto'] = (areas_summary['total_acertos'] / areas_summary['total_respondidas'] * 100).fillna(0)
+    
+    # Calcula a taxa de acerto de forma segura
+    areas_summary['taxa_de_acerto'] = 0.0
+    mask = areas_summary['total_respondidas'] > 0
+    areas_summary.loc[mask, 'taxa_de_acerto'] = \
+        (areas_summary.loc[mask, 'total_acertos'] / areas_summary.loc[mask, 'total_respondidas']) * 100
+
     return areas_summary
 
 def get_subtopics_for_review(subtopicos_exploded_df, days=7):
