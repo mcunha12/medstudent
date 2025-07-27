@@ -308,11 +308,15 @@ def get_performance_data(user_id: str):
     """
     try:
         conn = get_supabase_conn()
-        response = conn.table("user_answers").select("*, questions(*)").eq("user_id", user_id).execute()
+        
+        # --- A CORREÇÃO ESTÁ AQUI ---
+        # Trocamos "user_answers" por "answers" para corresponder ao nome da tabela no DB
+        response = conn.table("answers").select("*, questions(*)").eq("user_id", user_id).execute()
 
         if not response.data:
             return None
 
+        # O restante do código de processamento permanece o mesmo
         flat_data = []
         for row in response.data:
             question_details = row.pop('questions', {})
@@ -327,37 +331,30 @@ def get_performance_data(user_id: str):
 
         all_answers = pd.DataFrame(flat_data)
         
-        # Converte a coluna de data para o formato datetime, com tratamento de erro
         if 'answered_at' in all_answers.columns:
             all_answers['answered_at'] = pd.to_datetime(all_answers['answered_at'], errors='coerce')
         else:
             all_answers['answered_at'] = pd.to_datetime(all_answers['created_at'], errors='coerce')
 
-        all_answers.dropna(subset=['answered_at'], inplace=True) # Remove linhas onde a data não pôde ser convertida
+        all_answers.dropna(subset=['answered_at'], inplace=True)
 
-        # --- Processamento robusto para 'areas_principais' ---
+        # Processamento de 'areas_principais'
         areas_df = all_answers[['question_id', 'is_correct', 'areas_principais']].copy()
         areas_df.dropna(subset=['areas_principais'], inplace=True)
         areas_df['areas_list'] = areas_df['areas_principais'].astype(str).str.replace(r'[\[\]"]', '', regex=True).str.split(',')
         areas_exploded = areas_df.explode('areas_list')
-        areas_exploded.rename(columns={'areas_list': 'areas_principais_cleaned'}, inplace=True)
-        areas_exploded['areas_principais_cleaned'] = areas_exploded['areas_principais_cleaned'].str.strip()
-        # Sobrescreve a coluna original com a limpa
-        areas_exploded['areas_principais'] = areas_exploded['areas_principais_cleaned']
-        areas_exploded = areas_exploded.drop(columns=['areas_principais_cleaned'])
-        areas_exploded = areas_exploded[areas_exploded['areas_principais'].astype(bool)] # Remove strings vazias
+        areas_exploded.rename(columns={'areas_list': 'areas_principais'}, inplace=True)
+        areas_exploded['areas_principais'] = areas_exploded['areas_principais'].str.strip()
+        areas_exploded = areas_exploded[areas_exploded['areas_principais'].astype(bool)]
 
-        # --- Processamento robusto para 'subtopicos' ---
+        # Processamento de 'subtopicos'
         subtopicos_df = all_answers[['question_id', 'is_correct', 'subtopicos', 'answered_at']].copy()
         subtopicos_df.dropna(subset=['subtopicos'], inplace=True)
         subtopicos_df['subtopicos_list'] = subtopicos_df['subtopicos'].astype(str).str.split(',')
         subtopicos_exploded = subtopicos_df.explode('subtopicos_list')
-        subtopicos_exploded.rename(columns={'subtopicos_list': 'subtopicos_cleaned'}, inplace=True)
-        subtopicos_exploded['subtopicos_cleaned'] = subtopicos_exploded['subtopicos_cleaned'].str.strip()
-        # Sobrescreve a coluna original com a limpa
-        subtopicos_exploded['subtopicos'] = subtopicos_exploded['subtopicos_cleaned']
-        subtopicos_exploded = subtopicos_exploded.drop(columns=['subtopicos_cleaned'])
-        subtopicos_exploded = subtopicos_exploded[subtopicos_exploded['subtopicos'].astype(bool)] # Remove strings vazias
+        subtopicos_exploded.rename(columns={'subtopicos_list': 'subtopicos'}, inplace=True)
+        subtopicos_exploded['subtopicos'] = subtopicos_exploded['subtopicos'].str.strip()
+        subtopicos_exploded = subtopicos_exploded[subtopicos_exploded['subtopicos'].astype(bool)]
         
         return {
             "all_answers": all_answers,
@@ -367,11 +364,8 @@ def get_performance_data(user_id: str):
         }
 
     except Exception as e:
-        # **AÇÃO PARA DEBUG**: Esta linha mostrará o erro real nos seus logs
-        print(f"ERRO ORIGINAL EM GET_PERFORMANCE_DATA: {e}")
-        # A linha abaixo é a que você vê na interface do Streamlit
+        print(f"ERRO EM GET_PERFORMANCE_DATA: {e}")
         raise Exception("Não foi possível processar seus dados de performance. Verifique os logs do app.")
-
 def calculate_metrics(df):
     """(Sem alterações) Calcula métricas básicas de um DataFrame de respostas."""
     if df is None or df.empty: return {"answered": 0, "correct": 0, "accuracy": 0.0}
