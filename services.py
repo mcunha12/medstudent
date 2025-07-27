@@ -7,7 +7,7 @@ import uuid
 from datetime import datetime, timedelta
 import unicodedata
 import bcrypt
-from streamlit_supabase_connection import SupabaseConnection
+from st_supabase_connection import SupabaseConnection
 
 DB_FILE = 'medstudent.db'
 
