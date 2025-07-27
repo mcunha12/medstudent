@@ -463,35 +463,69 @@ def get_subtopics_for_review(subtopicos_exploded_df, days=7):
     
     return recent_errors_df['subtopicos'].value_counts().nlargest(5).index.tolist()
 
-def get_ranking_data(all_answers_df, period_code, current_user_id):
-    """(Sem alterações) Calcula o ranking de performance de um usuário."""
-    if all_answers_df.empty: return None
+def get_ranking_data(all_answers_df, period='W', current_user_id=None):
+    """
+    Calcula a performance de todos os usuários para o ranking,
+    tratando corretamente os tipos de dados.
+    """
+    if all_answers_df.empty:
+        return {}
+
     df = all_answers_df.copy()
-    df['answered_at'] = pd.to_datetime(df['answered_at'])
-    now = datetime.now(df['answered_at'].dt.tz if df['answered_at'].dt.tz else None)
-    if period_code == 'D':
-        start_date = now.replace(hour=0, minute=0, second=0, microsecond=0)
-    elif period_code == 'W':
-        start_date = now - timedelta(days=now.weekday())
-        start_date = start_date.replace(hour=0, minute=0, second=0, microsecond=0)
-    else:
-        return None
-    recent_answers = df[df['answered_at'] >= start_date]
-    if recent_answers.empty: return None
-    performance = recent_answers.groupby('user_id').agg(
-        total_corretas=('is_correct', 'sum'),
-        total_respondidas=('is_correct', 'count')
+    
+    # Filtra os dados para o período selecionado
+    df['answered_at'] = pd.to_datetime(df['answered_at'], errors='coerce')
+    cutoff_date = datetime.now() - timedelta(days={'D': 1, 'W': 7, 'M': 30}[period[0]])
+    filtered_df = df[df['answered_at'] >= cutoff_date]
+
+    if filtered_df.empty:
+        return {'total_users': df['user_id'].nunique()}
+
+    # --- A CORREÇÃO ESTÁ AQUI ---
+    # Converte a coluna 'is_correct' de string ('TRUE') para inteiro (1/0)
+    filtered_df['is_correct'] = (
+        filtered_df['is_correct'].astype(str).str.lower() == 'true'
+    ).astype(int)
+
+    # Agrupa por usuário para calcular o ranking
+    performance = filtered_df.groupby('user_id').agg(
+        total_respondidas=('question_id', 'count'),
+        total_corretas=('is_correct', 'sum')
     ).reset_index()
-    performance['taxa_de_acerto'] = (performance['total_corretas'] / performance['total_respondidas']) * 100
-    ranked_users = performance.sort_values(by=['taxa_de_acerto', 'total_respondidas'], ascending=[False, False]).reset_index(drop=True)
-    ranked_users['rank'] = ranked_users.index + 1
-    user_rank_info = ranked_users[ranked_users['user_id'].astype(str) == str(current_user_id)]
+
+    # Calcula a taxa de acerto de forma segura
+    performance['taxa_de_acerto'] = 0.0
+    mask = performance['total_respondidas'] > 0
+    performance.loc[mask, 'taxa_de_acerto'] = \
+        (performance.loc[mask, 'total_corretas'] / performance.loc[mask, 'total_respondidas']) * 100
+
+    # Ordena para criar o ranking
+    ranked_performance = performance.sort_values(
+        by=['taxa_de_acerto', 'total_respondidas'],
+        ascending=[False, False]
+    ).reset_index(drop=True)
+    
+    ranked_performance['rank'] = ranked_performance.index + 1
+
+    # Encontra os dados do usuário atual
+    user_rank_info = ranked_performance[ranked_performance['user_id'] == current_user_id]
+
     if user_rank_info.empty:
-        return {'rank': None, 'total_users': len(ranked_users), 'percentile': None}
-    user_rank = int(user_rank_info['rank'].iloc[0])
-    total_users = len(ranked_users)
-    percentile = (user_rank / total_users) * 100
-    return {'rank': user_rank, 'total_users': total_users, 'percentile': percentile}
+        return {
+            'rank': None,
+            'percentile': None,
+            'total_users': len(ranked_performance)
+        }
+
+    user_rank = user_rank_info.iloc[0]
+    total_users = len(ranked_performance)
+    percentile = (1 - (user_rank['rank'] / total_users)) * 100 if total_users > 0 else 100
+
+    return {
+        'rank': int(user_rank['rank']),
+        'percentile': percentile,
+        'total_users': total_users
+    }
 
 @st.cache_data(ttl=1)
 def get_user_answered_questions_details(user_id):
