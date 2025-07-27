@@ -397,24 +397,26 @@ def get_time_window_metrics(all_answers_df, days=None):
 
 def get_temporal_performance(all_answers_df, period='W'):
     """
-    Calcula a performance temporal (questões respondidas e taxa de acerto).
-    Garante que os tipos de dados estejam corretos para cálculos aritméticos.
+    Calcula a performance temporal, tratando corretamente os tipos de dados
+    da coluna 'is_correct'.
     """
     if all_answers_df.empty:
         return pd.DataFrame()
 
-    # Cria uma cópia para evitar o SettingWithCopyWarning
     df = all_answers_df.copy()
     
-    # Garante que a coluna de data é do tipo datetime
     df['answered_at'] = pd.to_datetime(df['answered_at'], errors='coerce')
     df.dropna(subset=['answered_at'], inplace=True)
 
-    # Garante que a coluna 'is_correct' seja numérica (1 para True, 0 para False)
-    # Esta é uma etapa crucial para a agregação 'sum()' funcionar corretamente.
-    df['is_correct'] = df['is_correct'].astype(int)
+    # --- A CORREÇÃO ESTÁ AQUI ---
+    # 1. Garante que a coluna é do tipo string e converte para minúsculas.
+    # 2. Compara com a string 'true' para criar uma coluna booleana (True/False).
+    # 3. Converte a coluna booleana para inteiros (1/0).
+    df['is_correct'] = (
+        df['is_correct'].astype(str).str.lower() == 'true'
+    ).astype(int)
 
-    # Agrupa por período (Semana 'W' ou Dia 'D')
+    # Agrupa os dados por período
     summary = df.set_index('answered_at').resample(period).agg(
         questoes_respondidas=('question_id', 'count'),
         acertos=('is_correct', 'sum')
@@ -422,14 +424,12 @@ def get_temporal_performance(all_answers_df, period='W'):
 
     summary.rename(columns={'answered_at': 'periodo'}, inplace=True)
     
-    # **A CORREÇÃO ESTÁ AQUI**
-    # Converte explicitamente as colunas para numérico, tratando possíveis erros.
+    # Converte colunas de resultado para numérico para segurança
     summary['acertos'] = pd.to_numeric(summary['acertos'], errors='coerce').fillna(0)
     summary['questoes_respondidas'] = pd.to_numeric(summary['questoes_respondidas'], errors='coerce').fillna(0)
 
-    # Calcula a taxa de acerto, evitando divisão por zero
+    # Calcula a taxa de acerto de forma segura
     summary['taxa_de_acerto'] = 0.0
-    # Cria uma máscara para aplicar a divisão apenas onde for seguro
     mask = summary['questoes_respondidas'] > 0
     summary.loc[mask, 'taxa_de_acerto'] = \
         (summary.loc[mask, 'acertos'] / summary.loc[mask, 'questoes_respondidas']) * 100
