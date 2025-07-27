@@ -288,7 +288,7 @@ def get_user_search_history(user_id: str):
         # --- A CORREÇÃO ESTÁ AQUI ---
         # A coluna para filtrar o usuário foi alterada de 'users' para 'user_id'
         response = conn.table("ai_concepts") \
-            .select("id, concept_title, created_at") \
+            .select("id, title, created_at") \
             .eq("user_id", user_id) \
             .order("created_at", desc=True) \
             .limit(10) \
