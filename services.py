@@ -594,15 +594,34 @@ def get_user_answered_questions_details(user_id):
 
 @st.cache_data(ttl=1)
 def get_all_provas():
-    """Busca todas as provas únicas do Supabase."""
+    """Busca todos os nomes de provas únicos do Supabase, tratando múltiplos formatos."""
     try:
         conn = get_supabase_conn()
-        response = conn.table("questions").select("prova").neq("prova", "is.null").execute()
+        response = conn.table("questions").select("prova").execute()
+
+        if not response.data:
+            return []
+
         df = pd.DataFrame(response.data)
-        if df.empty: return []
-        return sorted(list(df['prova'].unique()))
+
+        if df.empty or 'prova' not in df.columns:
+            return []
+
+        # Lógica de limpeza e extração de valores únicos
+        provas = (
+            df['prova']
+            .dropna()
+            .astype(str)
+            .str.replace(r'[\[\]"]', '', regex=True) # Remove caracteres indesejados
+            .str.strip()
+        )
+        
+        unique_provas = sorted(list(provas[provas != ''].unique()))
+        
+        return unique_provas
+        
     except Exception as e:
-        st.warning(f"Não foi possível carregar a lista de provas: {e}")
+        st.warning("Não foi possível carregar a lista de provas.")
         return []
 
 @st.cache_data(ttl=1)
@@ -646,50 +665,66 @@ def get_global_platform_stats():
     
 @st.cache_data(ttl=1)
 def get_all_concepts_with_areas():
-    """Busca todos os subtópicos e áreas associadas do Supabase."""
+    """
+    Busca todos os conceitos e suas áreas de conhecimento, tratando os formatos.
+    (Função criada com base na necessidade)
+    """
     try:
+        # Supondo que você tenha uma tabela 'concepts'
         conn = get_supabase_conn()
-        response = conn.table("questions").select("areas_principais, subtopicos").execute()
+        response = conn.table("concepts").select("concept_title, areas_principais").execute()
+
+        if not response.data:
+            return pd.DataFrame()
+
         df = pd.DataFrame(response.data)
         
-        # O resto da lógica de processamento em pandas permanece igual
-        df.dropna(subset=['subtopicos'], inplace=True)
-        df['subtopicos'] = df['subtopicos'].str.split(',')
-        df['areas_principais'] = df['areas_principais'].fillna('').str.split(',')
-        df = df.explode('subtopicos').explode('areas_principais')
-        df['subtopicos'] = df['subtopicos'].str.strip()
-        df['areas_principais'] = df['areas_principais'].str.strip()
-        df.dropna(subset=['subtopicos', 'areas_principais'], inplace=True)
-        df = df[df['subtopicos'] != '']
-        df = df[df['areas_principais'] != '']
-        df.rename(columns={'subtopicos': 'concept', 'areas_principais': 'area'}, inplace=True)
-        return df.drop_duplicates().sort_values(by=['area', 'concept']).reset_index(drop=True)
+        if df.empty or 'areas_principais' not in df.columns:
+            return pd.DataFrame()
+
+        # Aplica a limpeza na coluna de áreas
+        df['areas_principais'] = df['areas_principais'].astype(str).str.replace(r'[\[\]"]', '', regex=True)
         
+        return df
+
     except Exception as e:
-        st.warning(f"Não foi possível carregar a lista de conceitos com áreas: {e}")
-        return pd.DataFrame(columns=['concept', 'area'])
+        st.warning("Não foi possível carregar os conceitos e suas áreas.")
+        return pd.DataFrame()
 
 @st.cache_data(ttl=1)
-def get_subtopics_from_incorrect_answers(user_id):
-    """Busca subtópicos de respostas incorretas de um usuário no Supabase."""
+def get_subtopics_from_incorrect_answers(user_id: str):
+    """
+    Busca subtópicos de questões que o usuário errou, tratando os formatos da coluna.
+    """
     try:
         conn = get_supabase_conn()
-        # Utiliza o join do Supabase para pegar os subtopicos das questões erradas
-        response = conn.table("answers").select("questions(subtopicos)").eq("user_id", str(user_id)).eq("is_correct", "FALSE").execute()
         
+        # Busca apenas as respostas incorretas do usuário com os detalhes das questões
+        response = conn.table("answers") \
+            .select("is_correct, questions(subtopicos)") \
+            .eq("user_id", user_id) \
+            .eq("is_correct", False) \
+            .execute()
+
         if not response.data:
             return []
-            
-        # Extrai os dados aninhados
-        subtopics_list = [item['questions']['subtopicos'] for item in response.data if item.get('questions') and item['questions'].get('subtopicos')]
+
+        # Extrai e achata os dados dos subtópicos
+        subtopics_list = []
+        for row in response.data:
+            question_data = row.get('questions')
+            if question_data and 'subtopicos' in question_data and question_data['subtopicos']:
+                # Aplica a limpeza aqui
+                subtopicos_str = str(question_data['subtopicos']).replace('[', '').replace(']', '').replace('"', '')
+                subtopics_list.extend([s.strip() for s in subtopicos_str.split(',')])
+
+        # Retorna uma lista de subtópicos únicos e não vazios
+        unique_subtopics = sorted(list(set(filter(None, subtopics_list))))
         
-        # Processamento para obter a lista única
-        subtopics_series = pd.Series(subtopics_list).dropna().str.split(',').explode()
-        unique_subtopics = subtopics_series.str.strip().unique().tolist()
-        return [topic for topic in unique_subtopics if topic]
-        
+        return unique_subtopics
+
     except Exception as e:
-        st.warning(f"Não foi possível carregar os subtópicos de questões incorretas: {e}")
+        st.warning("Não foi possível carregar os subtópicos para revisão.")
         return []
 
 @st.cache_data(ttl=1)
