@@ -279,13 +279,26 @@ def _save_ai_concept(concept_data: dict, user_id: str):
         return None
 
 def get_user_search_history(user_id: str):
-    """ Busca o histórico de pesquisa de um usuário no Supabase. """
+    """
+    Busca o histórico de conceitos pesquisados por um usuário.
+    """
     try:
         conn = get_supabase_conn()
-        response = conn.table("ai_concepts").select("id, title").eq("users", user_id).order("created_at", desc=True).execute()
-        return response.data if response.data else []
+        
+        # --- A CORREÇÃO ESTÁ AQUI ---
+        # A coluna para filtrar o usuário foi alterada de 'users' para 'user_id'
+        response = conn.table("ai_concepts") \
+            .select("id, concept_title, created_at") \
+            .eq("user_id", user_id) \
+            .order("created_at", desc=True) \
+            .limit(10) \
+            .execute()
+            
+        return response.data
+        
     except Exception as e:
-        st.error(f"Erro ao buscar o histórico de conceitos: {e}")
+        # A mensagem de erro agora é mais informativa e usa st.warning
+        st.warning(f"Não foi possível carregar seu histórico de conceitos: {e}")
         return []
 
 def get_concept_by_id(concept_id: str):
