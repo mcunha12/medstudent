@@ -396,15 +396,44 @@ def get_time_window_metrics(all_answers_df, days=None):
     return calculate_metrics(window_df)
 
 def get_temporal_performance(all_answers_df, period='W'):
-    """(Sem alterações) Agrega a performance por período (Semana 'W' ou Dia 'D')."""
-    if all_answers_df is None or all_answers_df.empty: return pd.DataFrame()
+    """
+    Calcula a performance temporal (questões respondidas e taxa de acerto).
+    Garante que os tipos de dados estejam corretos para cálculos aritméticos.
+    """
+    if all_answers_df.empty:
+        return pd.DataFrame()
+
+    # Cria uma cópia para evitar o SettingWithCopyWarning
     df = all_answers_df.copy()
-    df['periodo'] = df['answered_at'].dt.to_period(period).dt.start_time
-    summary = df.groupby('periodo').agg(
-        questoes_respondidas=('question_id', 'count'), 
+    
+    # Garante que a coluna de data é do tipo datetime
+    df['answered_at'] = pd.to_datetime(df['answered_at'], errors='coerce')
+    df.dropna(subset=['answered_at'], inplace=True)
+
+    # Garante que a coluna 'is_correct' seja numérica (1 para True, 0 para False)
+    # Esta é uma etapa crucial para a agregação 'sum()' funcionar corretamente.
+    df['is_correct'] = df['is_correct'].astype(int)
+
+    # Agrupa por período (Semana 'W' ou Dia 'D')
+    summary = df.set_index('answered_at').resample(period).agg(
+        questoes_respondidas=('question_id', 'count'),
         acertos=('is_correct', 'sum')
     ).reset_index()
-    summary['taxa_de_acerto'] = (summary['acertos'] / summary['questoes_respondidas'] * 100).fillna(0)
+
+    summary.rename(columns={'answered_at': 'periodo'}, inplace=True)
+    
+    # **A CORREÇÃO ESTÁ AQUI**
+    # Converte explicitamente as colunas para numérico, tratando possíveis erros.
+    summary['acertos'] = pd.to_numeric(summary['acertos'], errors='coerce').fillna(0)
+    summary['questoes_respondidas'] = pd.to_numeric(summary['questoes_respondidas'], errors='coerce').fillna(0)
+
+    # Calcula a taxa de acerto, evitando divisão por zero
+    summary['taxa_de_acerto'] = 0.0
+    # Cria uma máscara para aplicar a divisão apenas onde for seguro
+    mask = summary['questoes_respondidas'] > 0
+    summary.loc[mask, 'taxa_de_acerto'] = \
+        (summary.loc[mask, 'acertos'] / summary.loc[mask, 'questoes_respondidas']) * 100
+
     return summary
 
 def get_areas_performance(areas_exploded_df):
