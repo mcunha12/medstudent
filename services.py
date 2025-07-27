@@ -309,14 +309,13 @@ def get_performance_data(user_id: str):
     try:
         conn = get_supabase_conn()
         
-        # --- A CORREÇÃO ESTÁ AQUI ---
-        # Trocamos "user_answers" por "answers" para corresponder ao nome da tabela no DB
+        # Busca na tabela 'answers' e junta com 'questions'
         response = conn.table("answers").select("*, questions(*)").eq("user_id", user_id).execute()
 
         if not response.data:
             return None
 
-        # O restante do código de processamento permanece o mesmo
+        # Processamento seguro para evitar colunas duplicadas
         flat_data = []
         for row in response.data:
             question_details = row.pop('questions', {})
@@ -331,28 +330,33 @@ def get_performance_data(user_id: str):
 
         all_answers = pd.DataFrame(flat_data)
         
+        # Converte coluna de data com tratamento de erro
         if 'answered_at' in all_answers.columns:
             all_answers['answered_at'] = pd.to_datetime(all_answers['answered_at'], errors='coerce')
         else:
             all_answers['answered_at'] = pd.to_datetime(all_answers['created_at'], errors='coerce')
-
+        
         all_answers.dropna(subset=['answered_at'], inplace=True)
 
-        # Processamento de 'areas_principais'
+        # --- CORREÇÃO: Processamento robusto de 'areas_principais' ---
         areas_df = all_answers[['question_id', 'is_correct', 'areas_principais']].copy()
         areas_df.dropna(subset=['areas_principais'], inplace=True)
         areas_df['areas_list'] = areas_df['areas_principais'].astype(str).str.replace(r'[\[\]"]', '', regex=True).str.split(',')
+        
         areas_exploded = areas_df.explode('areas_list')
-        areas_exploded.rename(columns={'areas_list': 'areas_principais'}, inplace=True)
+        areas_exploded = areas_exploded.drop(columns=['areas_principais']) # Remove a coluna original
+        areas_exploded.rename(columns={'areas_list': 'areas_principais'}, inplace=True) # Renomeia para o nome final
         areas_exploded['areas_principais'] = areas_exploded['areas_principais'].str.strip()
         areas_exploded = areas_exploded[areas_exploded['areas_principais'].astype(bool)]
 
-        # Processamento de 'subtopicos'
+        # --- CORREÇÃO: Processamento robusto de 'subtopicos' ---
         subtopicos_df = all_answers[['question_id', 'is_correct', 'subtopicos', 'answered_at']].copy()
         subtopicos_df.dropna(subset=['subtopicos'], inplace=True)
         subtopicos_df['subtopicos_list'] = subtopicos_df['subtopicos'].astype(str).str.split(',')
+        
         subtopicos_exploded = subtopicos_df.explode('subtopicos_list')
-        subtopicos_exploded.rename(columns={'subtopicos_list': 'subtopicos'}, inplace=True)
+        subtopicos_exploded = subtopicos_exploded.drop(columns=['subtopicos']) # Remove a coluna original
+        subtopicos_exploded.rename(columns={'subtopicos_list': 'subtopicos'}, inplace=True) # Renomeia para o nome final
         subtopicos_exploded['subtopicos'] = subtopicos_exploded['subtopicos'].str.strip()
         subtopicos_exploded = subtopicos_exploded[subtopicos_exploded['subtopicos'].astype(bool)]
         
@@ -362,6 +366,10 @@ def get_performance_data(user_id: str):
             "areas_exploded": areas_exploded,
             "subtopicos_exploded": subtopicos_exploded
         }
+
+    except Exception as e:
+        print(f"ERRO EM GET_PERFORMANCE_DATA: {e}")
+        raise Exception("Não foi possível processar seus dados de performance. Verifique os logs do app.")
 
     except Exception as e:
         print(f"ERRO EM GET_PERFORMANCE_DATA: {e}")
