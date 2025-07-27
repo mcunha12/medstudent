@@ -12,7 +12,7 @@ st.set_page_config(
 
 
 
-st.title("📊 Meu Perfil de Performance")
+st.title("📊 Meu Perfil")
 st.markdown("---")
 
 # --- VERIFICA LOGIN E CARREGA DADOS ---

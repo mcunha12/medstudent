@@ -16,7 +16,7 @@ if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
     st.stop()
 
-st.title("🔎 Revisão de Questões Respondidas")
+st.title("🔎 Revisão de Questões")
 st.markdown("---")
 
 # --- CARREGA E LIMPA OS DADOS DO HISTÓRICO ---

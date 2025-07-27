@@ -95,7 +95,6 @@ if submit_button:
         st.stop()
 
     # Cálculo da dose
-    st.subheader("Resultado do Cálculo")
     total_mg_dose = weight * dosage_mgkg
     dose_ml = total_mg_dose / concentration
     st.markdown(f"""
