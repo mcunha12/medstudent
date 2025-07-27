@@ -22,6 +22,7 @@ plotly = "^5.18.0"
 toml = "^0.10.2"
 bcrypt = "^4.3.0"
 st-supabase-connection = "^2.1.0"
+dotenv = "^0.9.9"
 
 [build-system]
 requires = ["poetry-core"]

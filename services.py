@@ -452,7 +452,7 @@ def get_user_answered_questions_details(user_id):
         st.error(f"Erro ao buscar histórico de revisão: {e}")
         return pd.DataFrame()
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1)
 def get_all_provas():
     """Busca todas as provas únicas do Supabase."""
     try:
@@ -465,7 +465,7 @@ def get_all_provas():
         st.warning(f"Não foi possível carregar a lista de provas: {e}")
         return []
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1)
 def get_global_platform_stats():
     """Calcula estatísticas globais usando dados do Supabase."""
     default_stats = {'total_students': 0, 'active_this_week': 0, 'answered_last_7_days': 0, 'accuracy_last_7_days': 0.0}
@@ -504,7 +504,7 @@ def get_global_platform_stats():
         print(f"Erro ao calcular estatísticas globais: {e}")
         return default_stats
     
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1)
 def get_all_concepts_with_areas():
     """Busca todos os subtópicos e áreas associadas do Supabase."""
     try:
@@ -529,7 +529,7 @@ def get_all_concepts_with_areas():
         st.warning(f"Não foi possível carregar a lista de conceitos com áreas: {e}")
         return pd.DataFrame(columns=['concept', 'area'])
 
-@st.cache_data(ttl=600)
+@st.cache_data(ttl=1)
 def get_subtopics_from_incorrect_answers(user_id):
     """Busca subtópicos de respostas incorretas de um usuário no Supabase."""
     try:
@@ -552,7 +552,7 @@ def get_subtopics_from_incorrect_answers(user_id):
         st.warning(f"Não foi possível carregar os subtópicos de questões incorretas: {e}")
         return []
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1)
 def get_all_specialties():
     """Busca todas as especialidades únicas do Supabase."""
     try:
