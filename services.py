@@ -374,26 +374,50 @@ def get_performance_data(user_id: str):
     except Exception as e:
         print(f"ERRO EM GET_PERFORMANCE_DATA: {e}")
         raise Exception("Não foi possível processar seus dados de performance. Verifique os logs do app.")
+
 def calculate_metrics(df):
-    """(Sem alterações) Calcula métricas básicas de um DataFrame de respostas."""
-    if df is None or df.empty: return {"answered": 0, "correct": 0, "accuracy": 0.0}
+    """
+    Calculates performance metrics from a DataFrame, ensuring correct data types.
+    This is a helper function for get_time_window_metrics.
+    """
+    if df.empty:
+        return {'answered': 0, 'correct': 0, 'accuracy': 0.0}
+
+    # --- THE CORRECTION IS HERE ---
+    # Securely convert 'is_correct' from string ('TRUE') to integer (1)
+    df['is_correct'] = (
+        df['is_correct'].astype(str).str.lower() == 'true'
+    ).astype(int)
+
     answered = len(df)
     correct = df['is_correct'].sum()
     accuracy = (correct / answered * 100) if answered > 0 else 0.0
-    return {"answered": answered, "correct": correct, "accuracy": accuracy}
+    
+    return {
+        'answered': answered,
+        'correct': int(correct),
+        'accuracy': accuracy
+    }
 
 def get_time_window_metrics(all_answers_df, days=None):
-    """(Sem alterações) Calcula métricas para uma janela de tempo específica."""
-    if all_answers_df is None: return calculate_metrics(None)
-    if days is None: return calculate_metrics(all_answers_df)
-    
-    if all_answers_df['answered_at'].dt.tz:
-        cutoff_date = datetime.now(all_answers_df['answered_at'].dt.tz) - timedelta(days=days)
-    else:
-        cutoff_date = datetime.now() - timedelta(days=days)
+    """
+    Calculates performance metrics for a specific time window (e.g., last 7 days).
+    """
+    if all_answers_df.empty:
+        return {'answered': 0, 'correct': 0, 'accuracy': 0.0}
 
-    window_df = all_answers_df[all_answers_df['answered_at'] >= cutoff_date]
-    return calculate_metrics(window_df)
+    # Create a copy to ensure the original DataFrame is not modified
+    df = all_answers_df.copy()
+
+    if days is None:
+        return calculate_metrics(df)
+    
+    # Filter DataFrame for the specified time window
+    df['answered_at'] = pd.to_datetime(df['answered_at'], errors='coerce')
+    cutoff_date = datetime.now() - timedelta(days=days)
+    filtered_df = df[df['answered_at'] >= cutoff_date]
+    
+    return calculate_metrics(filtered_df)
 
 def get_temporal_performance(all_answers_df, period='W'):
     """
