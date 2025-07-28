@@ -1,2 +1,11 @@
 [client]
 toolbarMode = "minimal"
+
+[global]
+css = """
+<style>
+div[data-testid="stSidebarContent"] > div:first-child > section {
+    display: none !important;
+}
+</style>
+"""
