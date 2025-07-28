@@ -1,11 +1,36 @@
-[client]
-toolbarMode = "minimal"
+[theme]
+# Você pode manter suas configurações de tema aqui, se tiver.
+# Exemplo:
+# base = "light"
+# primaryColor = "#F63366"
 
+# Adiciona o CSS personalizado para esconder o perfil e os botões
 [global]
 css = """
 <style>
+/* Esconde o container do perfil do criador */
 div[data-testid="stSidebarContent"] > div:first-child > section {
     display: none !important;
+}
+
+/* Esconde o avatar do criador no topo da página (se ele estiver lá) */
+div[data-testid="stAppViewContainer"] ._profileContainer_gzau3_53 { /* Use a classe fornecida, pode ser mais específica */
+    display: none !important;
+}
+
+/* Esconde os botões "Fork" e "About" no cabeçalho */
+div[data-testid="stToolbarActions"] {
+    display: none !important;
+}
+
+/* Se a barra de ferramentas inteira precisar sumir */
+div[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+/* Remove qualquer padding/margem que possa sobrar onde os elementos estavam */
+[data-testid="stAppViewContainer"] > div:first-child > div {
+    padding-top: 0 !important;
 }
 </style>
 """
