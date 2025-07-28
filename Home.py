@@ -1,6 +1,14 @@
 import streamlit as st
 import re
+import google.generativeai as genai
 from services import authenticate_or_register_user, get_global_platform_stats
+
+# Carregue sua chave da API a partir dos segredos do Streamlit
+# (Assumindo que está em um arquivo secrets.toml na seção [google_ai])
+GOOGLE_API_KEY = st.secrets["google_ai"]["api_key"]
+
+# Configure a biblioteca genai com sua chave
+genai.configure(api_key=GOOGLE_API_KEY)
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
