@@ -261,17 +261,19 @@ def _generate_title_and_explanation(user_query: str):
     """
     Usa a IA para gerar um título otimizado e uma explicação detalhada.
     """
+# PROMPT ATUALIZADO: Regra explícita para o título.
     prompt = f"""
-Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina. Sua principal característica é a objetividade e a aderência estrita a formatos. Você vai direto ao ponto.
+Você é um médico especialista e educador, criando material de estudo. Sua principal característica é a objetividade e a aderência estrita a formatos.
 
 **Tópico da Pesquisa do Usuário:** "{user_query}"
 
 **REGRAS CRÍTICAS E OBRIGATÓRIAS:**
-1.  **SEM TEXTO EXTRA:** Sua resposta DEVE começar IMEDIATAMENTE com a tag `<title>`. Não inclua NENHUMA saudação, introdução, preâmbulo, justificativa ou qualquer texto antes da tag `<title>`.
-2.  **FORMATO ESTRITO:** Siga o formato delimitado pelas tags `<title>` e `<explanation>` sem desvios.
+1.  **TÍTULO EXATO:** O conteúdo dentro da tag `<title>` DEVE ser o conceito principal da pesquisa. Não adicione subtítulos, guias ou qualquer texto descritivo. Por exemplo, se a pesquisa for "fisiopatologia da sepse", o título DEVE ser "Fisiopatologia da Sepse".
+2.  **SEM TEXTO EXTRA:** Sua resposta DEVE começar IMEDIATAMENTE com a tag `<title>`. Não inclua NENHUMA saudação, introdução ou qualquer texto antes da tag `<title>`.
+3.  **FORMATO ESTRITO:** Siga o formato delimitado pelas tags `<title>` e `<explanation>` sem desvios.
 
 **Formato da Resposta:**
-<title>Seu Título Otimizado Aqui</title>
+<title>O Conceito Principal da Pesquisa</title>
 <explanation>
 ### 1. Definição Rápida
 * **Conceito:** [Definição concisa do tópico em uma ou duas frases.]
@@ -299,7 +301,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 ### 6. Referências
 [Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's, diretrizes de sociedades médicas).]
 </explanation>
-"""    
+"""
     try:
         model = get_gemini_model()
         response = model.generate_content(prompt)
