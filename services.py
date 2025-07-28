@@ -150,7 +150,7 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         
         if questions_df.empty: return []
 
-        # O restante da lógica de filtragem em pandas permanece o mesmo
+        # Lógica de filtragem por status (não respondidas, corretas, incorretas)
         list_of_pools = []
         if 'nao_respondidas' in status_filters:
             if not answers_df.empty:
@@ -173,25 +173,159 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         initial_pool = pd.concat(list_of_pools).drop_duplicates(subset=['question_id']).reset_index(drop=True)
         if initial_pool.empty: return []
         
+        # Aplicação dos filtros de conteúdo (especialidade, provas, palavras-chave)
         final_pool = initial_pool.copy()
         if specialty and specialty != "Todas":
             final_pool = final_pool[final_pool['areas_principais'].str.contains(specialty, na=False, case=False)]
+        
+        # --- LÓGICA ATUALIZADA PARA PROVAS ---
         if provas:
-            final_pool = final_pool[final_pool['prova'].isin(provas)]
+            # Cria uma lista de provas que inclui as selecionadas e suas versões "-ai"
+            provas_with_ai = list(provas) + [f"{p}-ai" for p in provas]
+            final_pool = final_pool[final_pool['prova'].isin(provas_with_ai)]
+
         if keywords:
             searchable_text = final_pool.apply(lambda row: normalize_for_search(' '.join(row.values.astype(str))), axis=1)
             normalized_keywords = [normalize_for_search(kw) for kw in keywords]
             keyword_regex = '|'.join(normalized_keywords)
             final_pool = final_pool[searchable_text.str.contains(keyword_regex, na=False)]
         
-        if final_pool.empty: return []
-        num_available = len(final_pool)
-        sample_size = min(count, num_available)
-        return final_pool.sample(n=sample_size, replace=False).to_dict('records')
+        # --- NOVA LÓGICA DE GERAÇÃO DE QUESTÕES POR IA ---
+        num_found = len(final_pool)
+        questions_to_return = []
+
+        if num_found >= count:
+            # Se encontramos questões suficientes, apenas amostramos e retornamos
+            questions_to_return = final_pool.sample(n=count, replace=False).to_dict('records')
+        else:
+            # Se encontramos menos que o necessário, usamos as encontradas e geramos o resto
+            questions_to_return.extend(final_pool.to_dict('records'))
+            num_to_generate = count - num_found
+            
+            # Precisamos de pelo menos uma questão "semente" para gerar novas
+            if not final_pool.empty:
+                st.info(f"Encontramos {num_found} questões. Gerando mais {num_to_generate} com IA para completar seu simulado...")
+                
+                generated_count = 0
+                for i in range(num_to_generate):
+                    # Escolhe uma questão aleatória do pool encontrado para ser a "semente"
+                    seed_question = final_pool.sample(n=1).iloc[0].to_dict()
+                    
+                    print(f"Gerando questão {i+1}/{num_to_generate} com base em: {seed_question['prova']}")
+                    new_question = _generate_ai_question_based_on_seed(seed_question)
+                    
+                    if new_question:
+                        # Salva a nova questão no banco para uso futuro
+                        if _save_new_question(new_question):
+                           questions_to_return.append(new_question)
+                           generated_count += 1
+                        else:
+                           print("Não foi possível salvar a questão gerada, não será adicionada ao simulado.")
+                
+                if generated_count > 0:
+                    st.toast(f"{generated_count} novas questões foram geradas pela IA e salvas!", icon="✨")
+
+        return questions_to_return
 
     except Exception as e:
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
+
+def _save_new_question(new_question_data: dict):
+    """
+    Salva uma nova questão gerada pela IA no banco de dados.
+    """
+    try:
+        conn = get_supabase_conn()
+        response = conn.table("questions").insert(new_question_data).execute()
+        if response.data:
+            print(f"Nova questão de IA salva com sucesso: {new_question_data.get('question_id')}")
+            return True
+        else:
+            print(f"Falha ao salvar a nova questão. Resposta: {response}")
+            return False
+    except Exception as e:
+        st.error(f"Erro ao salvar nova questão no DB: {e}")
+        return False
+    
+def _generate_ai_question_based_on_seed(seed_question: dict):
+    """
+    Usa o Gemini para gerar uma nova questão com base nos sub-tópicos de uma questão existente.
+    """
+    model = get_gemini_model()
+    
+    # Extrai os dados da questão "semente"
+    subtopics = seed_question.get('subtopicos', 'Tópicos gerais de medicina')
+    main_areas = seed_question.get('areas_principais', 'Clínica Médica')
+    original_prova = seed_question.get('prova', 'Indefinida')
+
+    # Prompt cuidadosamente desenhado para garantir consistência e qualidade
+    prompt = f"""
+Você é um especialista em elaboração de questões para provas de residência médica no Brasil.
+Sua tarefa é criar uma questão de múltipla escolha (A, B, C, D) TOTALMENTE NOVA E ORIGINAL, que seja desafiadora, clinicamente relevante e baseada nos seguintes temas.
+
+**Temas de Base:** {subtopics}
+**Grande Área:** {main_areas}
+**Baseado na Prova:** {original_prova}
+
+**REGRAS CRÍTICAS PARA A RESPOSTA:**
+1.  **Formato JSON Estrito:** Sua resposta DEVE ser um único objeto JSON válido, sem nenhum texto, comentário ou formatação de markdown (como ```json) antes ou depois.
+2.  **Estrutura do JSON:** O JSON deve ter EXATAMENTE as seguintes chaves:
+    - `enunciado`: (String) O enunciado da questão, incluindo o caso clínico se aplicável.
+    - `alternativas`: (Objeto JSON) Com quatro chaves "A", "B", "C", "D". O valor de cada chave é o texto da alternativa.
+    - `alternativa_correta`: (String) A letra da alternativa correta (e.g., "C").
+    - `comentarios`: (Objeto JSON) Com quatro chaves "A", "B", "C", "D". O valor de cada chave é uma explicação DETALHADA e tecnicamente precisa do porquê a alternativa está correta ou incorreta.
+
+**Exemplo de formato da saída:**
+{{
+  "enunciado": "Paciente de 45 anos, previamente hígido, chega ao pronto-socorro com febre alta, tosse produtiva e dor pleurítica...",
+  "alternativas": {{
+    "A": "Iniciar imediatamente antibioticoterapia com Ceftriaxona e Azitromicina.",
+    "B": "Realizar tomografia de tórax antes de qualquer intervenção.",
+    "C": "Coletar hemoculturas e iniciar Oseltamivir.",
+    "D": "Administrar apenas sintomáticos e observar por 24 horas."
+  }},
+  "alternativa_correta": "A",
+  "comentarios": {{
+    "A": "CORRETO. O quadro é altamente sugestivo de Pneumonia Adquirida na Comunidade (PAC) grave, e as diretrizes recomendam a antibioticoterapia empírica imediata com a combinação de um beta-lactâmico e um macrolídeo.",
+    "B": "INCORRETO. A tomografia pode ser útil, mas não deve atrasar o início do tratamento em um paciente potencialmente grave.",
+    "C": "INCORRETO. Embora a coleta de culturas seja importante, Oseltamivir é para influenza e não cobre as principais bactérias causadoras de PAC.",
+    "D": "INCORRETO. Dada a gravidade dos sintomas, a conduta expectante é inadequada e perigosa."
+  }}
+}}
+
+**Agora, crie a nova questão.**
+"""
+    try:
+        response = model.generate_content(prompt)
+        # Limpa e carrega a resposta JSON
+        json_response = json.loads(response.text.strip())
+        
+        # Monta o objeto completo da questão para salvar no DB
+        new_question_id = str(uuid.uuid4())
+        prova_ai_name = f"{original_prova}-ai"
+
+        full_question_data = {
+            "question_id": new_question_id,
+            "enunciado": json_response['enunciado'],
+            "alternativas": json.dumps(json_response['alternativas']), # Salva como string JSON
+            "alternativa_correta": json_response['alternativa_correta'],
+            "comentarios": json.dumps(json_response['comentarios']), # Salva como string JSON
+            "areas_principais": main_areas,
+            "subtopicos": subtopics,
+            "prova": prova_ai_name,
+            "ano": datetime.now().year,
+            "fonte": "IA-MedStudent-Tutor" # Identifica a origem da questão
+        }
+        return full_question_data
+        
+    except (json.JSONDecodeError, KeyError) as e:
+        print(f"Erro ao gerar ou processar questão da IA: {e}")
+        print(f"Resposta recebida da IA: {response.text}")
+        return None
+    except Exception as e:
+        print(f"Erro inesperado na geração de questão pela IA: {e}")
+        return None
 
 # --- WIKI IA FUNCTIONS ---
 
@@ -727,7 +861,7 @@ def get_user_answered_questions_details(user_id):
 
 @st.cache_data(ttl=1)
 def get_all_provas():
-    """Busca todos os nomes de provas únicos do Supabase, tratando múltiplos formatos."""
+    """Busca todos os nomes de provas únicos do Supabase, ocultando as geradas por IA."""
     try:
         conn = get_supabase_conn()
         response = conn.table("questions").select("prova").execute()
@@ -740,21 +874,25 @@ def get_all_provas():
         if df.empty or 'prova' not in df.columns:
             return []
 
-        # Lógica de limpeza e extração de valores únicos
         provas = (
             df['prova']
             .dropna()
             .astype(str)
-            .str.replace(r'[\[\]"]', '', regex=True) # Remove caracteres indesejados
+            .str.replace(r'[\[\]"]', '', regex=True)
             .str.strip()
         )
         
-        unique_provas = sorted(list(provas[provas != ''].unique()))
+        unique_provas_raw = sorted(list(provas[provas != ''].unique()))
         
-        return unique_provas
+        # --- NOVA LÓGICA PARA OCULTAR PROVAS DE IA ---
+        # Filtra a lista para remover qualquer prova que termine com "-ai"
+        unique_provas_cleaned = [p for p in unique_provas_raw if not p.endswith('-ai')]
+        
+        return unique_provas_cleaned
         
     except Exception as e:
         st.warning("Não foi possível carregar a lista de provas.")
+        print(f"Erro em get_all_provas: {e}")
         return []
 
 @st.cache_data(ttl=1)
