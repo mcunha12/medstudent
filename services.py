@@ -262,12 +262,15 @@ def _generate_title_and_explanation(user_query: str):
     Usa a IA para gerar um título otimizado e uma explicação detalhada.
     """
     prompt = f"""
-Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
+Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina. Sua principal característica é a objetividade e a aderência estrita a formatos. Você vai direto ao ponto.
+
 **Tópico da Pesquisa do Usuário:** "{user_query}"
-**Sua Tarefa (em uma única resposta):**
-1.  **Gerar um Título Otimizado:** Primeiro, crie um título claro, conciso e otimizado para busca sobre o tópico principal. O título deve ser autoexplicativo e focado apenas no conceito a ser explicado.
-2.  **Gerar a Explicação:** Depois do título, gere uma explicação completa e aprofundada, seguindo a estrutura de formatação Markdown abaixo.
-**Formato OBRIGATÓRIO da sua resposta:**
+
+**REGRAS CRÍTICAS E OBRIGATÓRIAS:**
+1.  **SEM TEXTO EXTRA:** Sua resposta DEVE começar IMEDIATAMENTE com a tag `<title>`. Não inclua NENHUMA saudação, introdução, preâmbulo, justificativa ou qualquer texto antes da tag `<title>`.
+2.  **FORMATO ESTRITO:** Siga o formato delimitado pelas tags `<title>` e `<explanation>` sem desvios.
+
+**Formato da Resposta:**
 <title>Seu Título Otimizado Aqui</title>
 <explanation>
 ### 1. Definição Rápida
@@ -278,7 +281,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 ### 3. Entendendo a aplicação e ocorrência
 * **What (O quê):** O que é?
 * **Why (Por quê):** Por que ocorre/é importante?
-* **Who (Quem)::** Quem afeta?
+* **Who (Quem):** Quem afeta?
 * **Where (Onde):** Onde se manifesta?
 * **When (Quando):** Quando ocorre?
 * **How (Como):** Como é o manejo?
@@ -296,7 +299,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 ### 6. Referências
 [Cite de forma indireta 2-3 fontes de alta qualidade (ex: UpToDate, Harrison's, diretrizes de sociedades médicas).]
 </explanation>
-"""
+"""    
     try:
         model = get_gemini_model()
         response = model.generate_content(prompt)
