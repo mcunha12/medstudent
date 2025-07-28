@@ -317,28 +317,36 @@ Você é um médico especialista e educador, criando material de estudo para um(
         return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}. Verifique sua conexão e configurações do Gemini."}
 
 def _save_ai_concept(concept_data: dict, user_id: str):
-    """ Salva um novo conceito, agora com o 'user_ids' como um array. """
+    """ 
+    Salva um novo conceito. TEMPORARIAMENTE MODIFICADO para não salvar o embedding.
+    """
     try:
         conn = get_supabase_conn()
         concept_id = str(uuid.uuid4())
-        created_at = datetime.now().isoformat()
         
-        # Gera o embedding ANTES de salvar
-        text_to_embed = f"Título: {concept_data['title']}\n\nExplicação: {concept_data['explanation']}"
-        embedding_result = genai.embed_content(
-            model="models/embedding-001",
-            content=text_to_embed,
-            task_type="RETRIEVAL_DOCUMENT"
-        )
+        # --- GERAÇÃO DE EMBEDDING DESATIVADA TEMPORARIAMENTE ---
+        # # Gera o embedding ANTES de salvar
+        # text_to_embed = f"Título: {concept_data['title']}\n\nExplicação: {concept_data['explanation']}"
+        # embedding_result = genai.embed_content(
+        #     model="models/embedding-001",
+        #     content=text_to_embed,
+        #     task_type="RETRIEVAL_DOCUMENT"
+        # )
+        # --- FIM DA GERAÇÃO DESATIVADA ---
         
-        response = conn.table("ai_concepts").insert({
+        insert_payload = {
             "id": concept_id,
-            "user_ids": [user_id],  # Salva como um array com o primeiro usuário
+            "user_ids": [user_id],
             "title": concept_data['title'],
             "explanation": concept_data['explanation'],
-            "created_at": created_at,
-            "embedding": embedding_result['embedding'] # Salva o embedding
-        }).execute()
+            # A linha do embedding foi removida do payload
+            # "embedding": embedding_result['embedding'] 
+        }
+
+        # Defina um valor padrão para created_at no Supabase para não precisar enviar
+        # Se não tiver definido, adicione "created_at": datetime.now().isoformat()
+        
+        response = conn.table("ai_concepts").insert(insert_payload).execute()
         
         if response.data:
             return response.data[0]
@@ -349,35 +357,41 @@ def _save_ai_concept(concept_data: dict, user_id: str):
     
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
-    Orquestra o fluxo e retorna um dicionário com o resultado e uma mensagem.
+    Orquestra o fluxo. TEMPORARIAMENTE MODIFICADO para sempre criar um novo conceito.
     """
-    # 1. Extrai o conceito-chave da query
+    # 1. Extrai o conceito-chave da query (isso continua útil)
     core_concept = _extract_concept_from_query(user_query)
     
-    # 2. Gera um embedding para a busca
-    query_embedding = genai.embed_content(
-        model="models/embedding-001",
-        content=core_concept,
-        task_type="RETRIEVAL_QUERY"
-    )['embedding']
+    # --- LÓGICA DE BUSCA DESATIVADA TEMPORARIAMENTE ---
+    # # 2. Gera um embedding para a busca
+    # query_embedding = genai.embed_content(
+    #     model="models/embedding-001",
+    #     content=core_concept,
+    #     task_type="RETRIEVAL_QUERY" 
+    # )['embedding']
     
-    # 3. Busca por um conceito similar existente
-    similar_concept = _find_similar_concept(query_embedding)
+    # # 3. Busca por um conceito similar existente
+    # similar_concept = _find_similar_concept(query_embedding)
+    
+    # Forçamos a não encontrar nenhum conceito similar para sempre criar um novo
+    similar_concept = None
+    # --- FIM DA LÓGICA DESATIVADA ---
 
-    # 4. Decide o que fazer e retorna o resultado para a UI
+    # 4. A lógica de decisão agora sempre irá para o 'else'
     if similar_concept:
+        # Este bloco de código nunca será executado enquanto a busca estiver desativada
         _add_user_to_concept(similar_concept['id'], user_id)
-        # Retorna o conceito encontrado e uma mensagem para o toast
         return {
             "concept": similar_concept, 
             "message": "Encontramos um conceito similar já existente!", 
             "status": "found"
         }
     else:
-        # Gera um novo conceito
+        # Este bloco agora será sempre o caminho seguido
         new_concept_data = _generate_title_and_explanation(core_concept)
 
         if new_concept_data and new_concept_data['title'] != 'Erro':
+            # A função _save_ai_concept também será ajustada
             saved_concept = _save_ai_concept(new_concept_data, user_id)
             return {
                 "concept": saved_concept, 
