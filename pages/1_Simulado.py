@@ -1,8 +1,19 @@
+# Arquivo: simulado.py (versão completa e atualizada)
+
 import streamlit as st
 import json
 import pandas as pd
 import math
-from services import get_simulado_questions, save_answer, get_all_specialties, get_all_provas, normalize_for_search
+# Importe as novas funções de serviço necessárias
+from services import (
+    get_simulado_questions, 
+    save_answer, 
+    get_all_specialties, 
+    get_all_provas, 
+    normalize_for_search,
+    _generate_ai_question_based_on_seed,  # <-- Importar
+    _save_new_question                    # <-- Importar
+)
 
 # --- CONFIGURAÇÃO DA PÁGINA ---
 st.set_page_config(
@@ -13,9 +24,15 @@ st.set_page_config(
 
 # --- Funções Auxiliares da Página ---
 def reset_simulado_state():
-    """Função auxiliar para limpar o estado do simulado e voltar à tela de configuração."""
+    """Limpa o estado do simulado para voltar à tela de configuração."""
     st.session_state.simulado_stage = 'config'
-    for key in ['simulado_questions', 'simulado_answers', 'current_question_index', 'answer_submitted']:
+    # Limpa todas as chaves relacionadas ao simulado
+    keys_to_clear = [
+        'db_questions', 'ai_questions_generated', 'seed_pool', 
+        'simulado_answers', 'current_question_index', 'answer_submitted',
+        'num_db_questions', 'total_questions_target'
+    ]
+    for key in keys_to_clear:
         if key in st.session_state:
             del st.session_state[key]
     st.rerun()
@@ -24,12 +41,10 @@ def render_question(question_data):
     """Renderiza a interface de uma única questão."""
     st.write(question_data.get('enunciado', ''))
     
-    # --- CORREÇÃO: Carregamento robusto de JSON ---
     alternativas_str = question_data.get('alternativas')
-    alternativas = json.loads(alternativas_str) if alternativas_str and alternativas_str.strip() else {}
+    alternativas = json.loads(alternativas_str) if alternativas_str and isinstance(alternativas_str, str) and alternativas_str.strip() else {}
     
     selected_answer = None
-    # O loop 'for' já garante que apenas alternativas existentes sejam renderizadas
     for key, value in alternativas.items():
         if st.button(f"{key}: {value}", key=f"ans_{key}", use_container_width=True):
             selected_answer = key
@@ -49,14 +64,12 @@ def render_question(question_data):
         st.rerun()
 
 def render_feedback(question_data):
-    """Renderiza o feedback (comentários) após uma resposta."""
-    # --- CORREÇÃO: Carregamento robusto de JSON ---
+    """Renderiza o feedback após uma resposta."""
     comentarios_str = question_data.get('comentarios')
-    comentarios = json.loads(comentarios_str) if comentarios_str and comentarios_str.strip() else {}
+    comentarios = json.loads(comentarios_str) if comentarios_str and isinstance(comentarios_str, str) and comentarios_str.strip() else {}
     user_answer = st.session_state.simulado_answers[-1]['user_answer']
     
     st.subheader("Comentários das Alternativas")
-    # O loop 'for' já garante que apenas comentários existentes sejam renderizados
     for key, comment in comentarios.items():
         if key == question_data['alternativa_correta']:
             st.success(f"**{key} (Correta):** {comment}")
@@ -65,7 +78,10 @@ def render_feedback(question_data):
         else:
             st.info(f"**{key}:** {comment}")
 
-    is_last_question = (st.session_state.current_question_index == len(st.session_state.simulado_questions) - 1)
+    current_total_questions = st.session_state.num_db_questions + len(st.session_state.ai_questions_generated)
+    is_last_question = (st.session_state.current_question_index == st.session_state.total_questions_target - 1) or \
+                       (st.session_state.current_question_index == current_total_questions - 1 and current_total_questions < st.session_state.total_questions_target)
+
     button_text = "Ver Resultado Final" if is_last_question else "Próxima Questão"
     
     if st.button(button_text, type="primary", use_container_width=True):
@@ -73,7 +89,26 @@ def render_feedback(question_data):
         if is_last_question:
             st.session_state.simulado_stage = 'results'
         else:
+            # --- NOVA LÓGICA DE GERAÇÃO "JUST-IN-TIME" ---
             st.session_state.current_question_index += 1
+            next_index = st.session_state.current_question_index
+            num_db = st.session_state.num_db_questions
+            num_generated = len(st.session_state.ai_questions_generated)
+            
+            # Precisamos gerar uma nova questão?
+            if next_index >= num_db and (num_db + num_generated) < st.session_state.total_questions_target:
+                with st.spinner("Preparando a próxima questão com IA..."):
+                    seed_pool = st.session_state.seed_pool
+                    if not seed_pool.empty:
+                        seed_question = seed_pool.sample(n=1).iloc[0].to_dict()
+                        new_question = _generate_ai_question_based_on_seed(seed_question)
+                        
+                        if new_question and _save_new_question(new_question):
+                            st.session_state.ai_questions_generated.append(new_question)
+                            st.toast("Questão gerada pela IA!", icon="✨")
+                        else:
+                            st.error("Falha ao gerar a próxima questão. Finalizando o simulado.")
+                            st.session_state.simulado_stage = 'results' # Termina o simulado se a IA falhar
         st.rerun()
 
 def render_results():
@@ -81,12 +116,15 @@ def render_results():
     st.balloons()
     st.title("Resultado do Simulado")
 
-    total_questions = len(st.session_state.simulado_answers)
+    # Combina as questões do DB e da IA para a revisão
+    all_questions_in_simulado = st.session_state.db_questions + st.session_state.ai_questions_generated
+
+    total_questions_answered = len(st.session_state.simulado_answers)
     correct_answers = sum(1 for ans in st.session_state.simulado_answers if ans['is_correct'])
-    accuracy = (correct_answers / total_questions * 100) if total_questions > 0 else 0
+    accuracy = (correct_answers / total_questions_answered * 100) if total_questions_answered > 0 else 0
 
     col1, col2, col3 = st.columns(3)
-    col1.metric("Questões Respondidas", f"{total_questions}")
+    col1.metric("Questões Respondidas", f"{total_questions_answered}")
     col2.metric("Acertos", f"{correct_answers}")
     col3.metric("Taxa de Acerto", f"{accuracy:.1f}%")
 
@@ -95,7 +133,7 @@ def render_results():
 
     answers_map = {ans['question_id']: ans for ans in st.session_state.simulado_answers}
 
-    for question in st.session_state.simulado_questions:
+    for question in all_questions_in_simulado:
         q_id = question['question_id']
         user_answer_data = answers_map.get(q_id)
 
@@ -108,11 +146,10 @@ def render_results():
                 st.markdown("---")
                 st.write(question.get('enunciado', ''))
                 
-                # --- CORREÇÃO: Carregamento robusto de JSON ---
                 alternativas_str = question.get('alternativas')
-                alternativas = json.loads(alternativas_str) if alternativas_str and alternativas_str.strip() else {}
+                alternativas = json.loads(alternativas_str) if alternativas_str and isinstance(alternativas_str, str) and alternativas_str.strip() else {}
                 comentarios_str = question.get('comentarios')
-                comentarios = json.loads(comentarios_str) if comentarios_str and comentarios_str.strip() else {}
+                comentarios = json.loads(comentarios_str) if comentarios_str and isinstance(comentarios_str, str) and comentarios_str.strip() else {}
                 
                 for key, value in alternativas.items():
                     full_text = f"**{key}:** {value}"
@@ -128,7 +165,6 @@ def render_results():
         reset_simulado_state()
 
 # --- LÓGICA PRINCIPAL DA PÁGINA ---
-# (O resto do arquivo permanece o mesmo)
 if 'user_id' not in st.session_state or not st.session_state.user_id:
     st.warning("Por favor, faça o login na Home para acessar o simulado.")
     st.page_link("Home.py", label="Voltar para a Home", icon="🏠")
@@ -141,10 +177,12 @@ if 'answer_submitted' not in st.session_state:
 if 'keywords' not in st.session_state:
     st.session_state.keywords = []
 
+# --- Estágio de Configuração ---
 if st.session_state.simulado_stage == 'config':
     st.title("📝 Simulador de Provas")
     st.markdown("Selecione os filtros abaixo e clique em 'Gerar Simulado' para começar a praticar.")
     with st.container(border=True):
+        # ... (O código dos filtros permanece o mesmo) ...
         st.subheader("Filtros do Simulado")
         st.markdown("**Buscar em:**")
         filter_cols = st.columns(3)
@@ -178,44 +216,63 @@ if st.session_state.simulado_stage == 'config':
                 st.session_state.keywords = []
                 st.rerun()
         st.markdown("---")
-        st.info("O simulado será gerado com **20 questões** selecionadas aleatoriamente com base nos seus filtros.")
+        
+        TOTAL_QUESTOES_SIMULADO = 20
+        st.info(f"O simulado buscará questões existentes e, se necessário, gerará novas com IA até atingir **{TOTAL_QUESTOES_SIMULADO} questões**.")
         
         if st.button("Gerar Simulado", type="primary", use_container_width=True):
             selected_status_values = []
             if status_nao_respondidas: selected_status_values.append("nao_respondidas")
             if status_corretas: selected_status_values.append("corretas")
             if status_incorretas: selected_status_values.append("incorretas")
+            
             if not selected_status_values:
                 st.warning("Por favor, selecione pelo menos um status de questão para buscar.")
             else:
-                with st.spinner("Preparando seu simulado..."):
-                    questions = get_simulado_questions(
-                        user_id=st.session_state.user_id, count=20,
-                        status_filters=selected_status_values, specialty=selected_specialty,
-                        provas=selected_provas, keywords=st.session_state.keywords
+                with st.spinner("Buscando questões no banco de dados..."):
+                    response = get_simulado_questions(
+                        user_id=st.session_state.user_id, status_filters=selected_status_values,
+                        specialty=selected_specialty, provas=selected_provas, keywords=st.session_state.keywords
                     )
-                if questions and len(questions) > 0:
-                    st.session_state.simulado_questions = questions
+                
+                if response and response['found_questions']:
+                    # Configura o estado para o início do simulado
+                    st.session_state.db_questions = response['found_questions']
+                    st.session_state.seed_pool = response['seed_pool']
+                    st.session_state.ai_questions_generated = []
                     st.session_state.simulado_answers = []
                     st.session_state.current_question_index = 0
+                    st.session_state.num_db_questions = len(response['found_questions'])
+                    st.session_state.total_questions_target = TOTAL_QUESTOES_SIMULADO
                     st.session_state.simulado_stage = 'in_progress'
                     st.rerun()
                 else:
                     st.error("Nenhuma questão encontrada com os filtros selecionados. Tente usar filtros menos restritivos.")
 
+# --- Estágio "Em Progresso" ---
 elif st.session_state.simulado_stage == 'in_progress':
-    total_questions = len(st.session_state.simulado_questions)
+    all_available_questions = st.session_state.db_questions + st.session_state.ai_questions_generated
     current_index = st.session_state.current_question_index
-    current_question_data = st.session_state.simulado_questions[current_index]
-    st.title(f"Questão {current_index + 1} de {total_questions}")
+    
+    if current_index >= len(all_available_questions):
+         st.session_state.simulado_stage = 'results'
+         st.rerun()
+
+    current_question_data = all_available_questions[current_index]
+    total_target = st.session_state.total_questions_target
+    
+    st.title(f"Questão {current_index + 1} de {total_target}")
     if st.button("✖️ Cancelar e Gerar Novo Simulado", type="secondary"):
         reset_simulado_state()
-    st.progress((current_index + 1) / total_questions)
+    
+    st.progress((current_index + 1) / total_target)
     st.markdown("---")
+    
     if st.session_state.answer_submitted:
         render_feedback(current_question_data)
     else:
         render_question(current_question_data)
 
+# --- Estágio de Resultados ---
 elif st.session_state.simulado_stage == 'results':
     render_results()

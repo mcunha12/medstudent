@@ -139,7 +139,12 @@ def save_answer(user_id, question_id, user_answer, is_correct):
     except Exception as e:
         st.error(f"Não foi possível salvar sua resposta: {e}")
 
-def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas'], specialty=None, provas=None, keywords=None):
+def get_simulado_questions(user_id, status_filters=['nao_respondidas'], specialty=None, provas=None, keywords=None):
+    """
+    Busca questões no banco de dados com base nos filtros.
+    Retorna um dicionário contendo as questões encontradas e o DataFrame do pool de sementes.
+    A geração por IA foi REMOVIDA desta função.
+    """
     try:
         conn = get_supabase_conn()
         questions_response = conn.table("questions").select("*").execute()
@@ -148,7 +153,8 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         questions_df = pd.DataFrame(questions_response.data)
         answers_df = pd.DataFrame(answers_response.data)
         
-        if questions_df.empty: return []
+        if questions_df.empty:
+            return {'found_questions': [], 'seed_pool': pd.DataFrame()}
 
         # Lógica de filtragem por status (não respondidas, corretas, incorretas)
         list_of_pools = []
@@ -169,18 +175,19 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
                 incorrect_ids = answers_df[answers_df['is_correct'] == False]['question_id'].unique().tolist()
                 list_of_pools.append(questions_df[questions_df['question_id'].isin(incorrect_ids)])
         
-        if not list_of_pools: return []
+        if not list_of_pools:
+            return {'found_questions': [], 'seed_pool': pd.DataFrame()}
+            
         initial_pool = pd.concat(list_of_pools).drop_duplicates(subset=['question_id']).reset_index(drop=True)
-        if initial_pool.empty: return []
+        if initial_pool.empty:
+            return {'found_questions': [], 'seed_pool': pd.DataFrame()}
         
-        # Aplicação dos filtros de conteúdo (especialidade, provas, palavras-chave)
+        # Aplicação dos filtros de conteúdo
         final_pool = initial_pool.copy()
         if specialty and specialty != "Todas":
             final_pool = final_pool[final_pool['areas_principais'].str.contains(specialty, na=False, case=False)]
         
-        # --- LÓGICA ATUALIZADA PARA PROVAS ---
         if provas:
-            # Cria uma lista de provas que inclui as selecionadas e suas versões "-ai"
             provas_with_ai = list(provas) + [f"{p}-ai" for p in provas]
             final_pool = final_pool[final_pool['prova'].isin(provas_with_ai)]
 
@@ -190,46 +197,15 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
             keyword_regex = '|'.join(normalized_keywords)
             final_pool = final_pool[searchable_text.str.contains(keyword_regex, na=False)]
         
-        # --- NOVA LÓGICA DE GERAÇÃO DE QUESTÕES POR IA ---
-        num_found = len(final_pool)
-        questions_to_return = []
-
-        if num_found >= count:
-            # Se encontramos questões suficientes, apenas amostramos e retornamos
-            questions_to_return = final_pool.sample(n=count, replace=False).to_dict('records')
-        else:
-            # Se encontramos menos que o necessário, usamos as encontradas e geramos o resto
-            questions_to_return.extend(final_pool.to_dict('records'))
-            num_to_generate = count - num_found
-            
-            # Precisamos de pelo menos uma questão "semente" para gerar novas
-            if not final_pool.empty:
-                st.info(f"Encontramos {num_found} questões. Gerando mais {num_to_generate} com IA para completar seu simulado...")
-                
-                generated_count = 0
-                for i in range(num_to_generate):
-                    # Escolhe uma questão aleatória do pool encontrado para ser a "semente"
-                    seed_question = final_pool.sample(n=1).iloc[0].to_dict()
-                    
-                    print(f"Gerando questão {i+1}/{num_to_generate} com base em: {seed_question['prova']}")
-                    new_question = _generate_ai_question_based_on_seed(seed_question)
-                    
-                    if new_question:
-                        # Salva a nova questão no banco para uso futuro
-                        if _save_new_question(new_question):
-                           questions_to_return.append(new_question)
-                           generated_count += 1
-                        else:
-                           print("Não foi possível salvar a questão gerada, não será adicionada ao simulado.")
-                
-                if generated_count > 0:
-                    st.toast(f"{generated_count} novas questões foram geradas pela IA e salvas!", icon="✨")
-
-        return questions_to_return
+        # Retorna as questões encontradas e o pool para ser usado como semente
+        return {
+            'found_questions': final_pool.to_dict('records'),
+            'seed_pool': final_pool
+        }
 
     except Exception as e:
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
-        return []
+        return {'found_questions': [], 'seed_pool': pd.DataFrame()}
 
 def _save_new_question(new_question_data: dict):
     """
