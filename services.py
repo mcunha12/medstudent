@@ -46,7 +46,7 @@ def get_gemini_model():
     if _gemini_model is None:
         try:
             genai.configure(api_key=st.secrets.google_ai.api_key)
-            _gemini_model = genai.GenerativeModel('gemini-1.5-flash')
+            _gemini_model = genai.GenerativeModel('gemini-2.5-pro')
         except Exception as e:
             st.error(f"Falha na conexão com a API do Gemini: {e}")
             st.stop()
@@ -193,8 +193,69 @@ def get_simulado_questions(user_id, count=20, status_filters=['nao_respondidas']
         st.warning(f"Não foi possível buscar as questões do simulado: {e}")
         return []
 
-
 # --- WIKI IA FUNCTIONS ---
+
+def _extract_concept_from_query(user_query: str) -> str:
+    """Usa a IA para identificar o conceito médico central em uma pergunta."""
+    if len(user_query.split()) < 5: # Se for uma query curta, provavelmente já é o conceito
+        return user_query
+
+    prompt = f"""
+    Analise a seguinte pergunta de um estudante de medicina e extraia o tópico ou conceito médico central.
+    Sua resposta deve ser APENAS o nome do conceito, de forma concisa e direta.
+
+    Exemplos:
+    - Pergunta: "Qual o melhor tratamento para insuficiência cardíaca com fração de ejeção reduzida?" -> Resposta: "Tratamento da Insuficiência Cardíaca com Fração de Ejeção Reduzida"
+    - Pergunta: "Como diagnosticar endocardite infecciosa?" -> Resposta: "Diagnóstico de Endocardite Infecciosa"
+    - Pergunta: "fisiopatologia da cetoacidose diabética" -> Resposta: "Fisiopatologia da Cetoacidose Diabética"
+
+    Pergunta para analisar: "{user_query}"
+    """
+    try:
+        model = get_gemini_model(model_name="gemini-1.5-flash-latest") # Modelo rápido para tarefas simples
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception:
+        # Em caso de erro, apenas usa a query original
+        return user_query
+
+
+# --- NOVA FUNÇÃO ---
+def _find_similar_concept(embedding: list[float]):
+    """Busca por um conceito similar no DB usando a função RPC."""
+    try:
+        conn = get_supabase_conn()
+        # Chama a função SQL que criamos, passando o embedding e um limiar de similaridade
+        SIMILARITY_THRESHOLD = 0.9
+        response = conn.rpc('match_concepts', {
+            'query_embedding': embedding,
+            'match_threshold': SIMILARITY_THRESHOLD,
+            'match_count': 1
+        }).execute()
+        
+        if response.data:
+            return response.data[0]
+        return None
+    except Exception as e:
+        print(f"Erro ao buscar conceito similar: {e}")
+        return None
+
+# --- NOVA FUNÇÃO ---
+def _add_user_to_concept(concept_id: str, user_id: str):
+    """Adiciona um user_id ao array de um conceito existente."""
+    try:
+        conn = get_supabase_conn()
+        # Usa a função array_append do postgres para evitar race conditions
+        response = conn.from_("ai_concepts").select("user_ids").eq("id", concept_id).single().execute()
+        
+        existing_users = response.data['user_ids'] or []
+        if user_id not in existing_users:
+            existing_users.append(user_id)
+            conn.from_("ai_concepts").update({"user_ids": existing_users}).eq("id", concept_id).execute()
+        return True
+    except Exception as e:
+        print(f"Erro ao adicionar usuário ao conceito: {e}")
+        return False
 
 def _generate_title_and_explanation(user_query: str):
     """
@@ -214,7 +275,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 * **Relevância Clínica:** [Breve explicação de por que este conceito é crucial na prática médica e em provas de residência.]
 ### 2. Aprofundamento Técnico e Integração
 [Desenvolva o conceito de forma detalhada. Conecte-o com a fisiopatologia, farmacologia, semiologia, etc. Discuta diagnóstico, tratamento (com posologias comuns), prognóstico e complicações.]
-### 3. Análise 5W2H
+### 3. Entendendo a aplicação e ocorrência
 * **What (O quê):** O que é?
 * **Why (Por quê):** Por que ocorre/é importante?
 * **Who (Quem)::** Quem afeta?
@@ -222,7 +283,7 @@ Você é um médico especialista e educador, criando material de estudo para um(
 * **When (Quando):** Quando ocorre?
 * **How (Como):** Como é o manejo?
 * **How Much (Quanto custa):** Qual o impacto?
-### 4. Análise dos 5 Porquês
+### 4. Investigação de causa-raiz
 [Aplique a técnica dos 5 Porquês para explorar a causa raiz do problema.]
 * **1. Por que...?**
     * Porque...
@@ -256,49 +317,81 @@ Você é um médico especialista e educador, criando material de estudo para um(
         return {'title': 'Erro', 'explanation': f"**Erro ao contatar a IA:** {e}. Verifique sua conexão e configurações do Gemini."}
 
 def _save_ai_concept(concept_data: dict, user_id: str):
-    """ Salva um novo conceito de IA no Supabase. """
+    """ Salva um novo conceito, agora com o 'user_ids' como um array. """
     try:
         conn = get_supabase_conn()
         concept_id = str(uuid.uuid4())
         created_at = datetime.now().isoformat()
         
+        # Gera o embedding ANTES de salvar
+        text_to_embed = f"Título: {concept_data['title']}\n\nExplicação: {concept_data['explanation']}"
+        embedding_result = genai.embed_content(
+            model="models/embedding-001",
+            content=text_to_embed,
+            task_type="RETRIEVAL_DOCUMENT"
+        )
+        
         response = conn.table("ai_concepts").insert({
             "id": concept_id,
-            "user_id": user_id,
+            "user_ids": [user_id],  # Salva como um array com o primeiro usuário
             "title": concept_data['title'],
             "explanation": concept_data['explanation'],
-            "created_at": created_at
+            "created_at": created_at,
+            "embedding": embedding_result['embedding'] # Salva o embedding
         }).execute()
         
         if response.data:
             return response.data[0]
         return None
-        
     except Exception as e:
         st.error(f"Erro ao salvar o conceito no banco de dados: {e}")
         return None
+    
+def find_or_create_ai_concept(user_query: str, user_id: str):
+    """
+    Orquestra todo o fluxo: busca por similaridade ou cria um novo conceito.
+    """
+    # 1. Extrai o conceito-chave da query
+    core_concept = _extract_concept_from_query(user_query)
+    st.info(f"Buscando pelo conceito: **{core_concept}**")
+
+    # 2. Gera um embedding para a busca
+    query_embedding = genai.embed_content(
+        model="models/embedding-001",
+        content=core_concept,
+        task_type="RETRIEVAL_QUERY" # Usa 'RETRIEVAL_QUERY' para buscas!
+    )['embedding']
+    
+    # 3. Busca por um conceito similar existente
+    with st.spinner("Buscando em nossa base de conhecimento..."):
+        similar_concept = _find_similar_concept(query_embedding)
+
+    # 4. Decide o que fazer
+    if similar_concept:
+        st.toast("Encontramos um conceito similar já existente!", icon="💡")
+        _add_user_to_concept(similar_concept['id'], user_id)
+        return similar_concept # Retorna o conceito encontrado
+    else:
+        st.toast("Nenhum conceito similar encontrado. Gerando um novo para você...", icon="🧠")
+        with st.spinner("Aguarde, a IA está criando uma explicação detalhada..."):
+            new_concept_data = _generate_title_and_explanation(core_concept) # _generate_title_and_explanation permanece a mesma
+
+        if new_concept_data and new_concept_data['title'] != 'Erro':
+            saved_concept = _save_ai_concept(new_concept_data, user_id)
+            return saved_concept
+        else:
+            return {'title': 'Erro', 'explanation': new_concept_data.get('explanation', 'A IA não conseguiu gerar uma resposta.')}
+
 
 def get_user_search_history(user_id: str):
-    """
-    Busca o histórico de conceitos pesquisados por um usuário.
-    """
+    """Busca conceitos onde o user_id está no array 'user_ids'."""
     try:
         conn = get_supabase_conn()
-        
-        # --- A CORREÇÃO ESTÁ AQUI ---
-        # A coluna para filtrar o usuário foi alterada de 'users' para 'user_id'
-        response = conn.table("ai_concepts") \
-            .select("id, title, created_at") \
-            .eq("user_id", user_id) \
-            .order("created_at", desc=True) \
-            .limit(10) \
-            .execute()
-            
+        # O operador 'cs' significa 'contains' (contém) para arrays
+        response = conn.table("ai_concepts").select("id, title").filter("user_ids", "cs", f"{{{user_id}}}").order("created_at", desc=True).limit(10).execute()
         return response.data
-        
     except Exception as e:
-        # A mensagem de erro agora é mais informativa e usa st.warning
-        st.warning(f"Não foi possível carregar seu histórico de conceitos: {e}")
+        print(f"Erro ao buscar histórico: {e}")
         return []
 
 def get_concept_by_id(concept_id: str):

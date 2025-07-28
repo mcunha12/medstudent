@@ -1,6 +1,6 @@
 import streamlit as st
 # Importa as funções de geração e salvamento diretamente, removendo find_or_create_ai_concept
-from services import _generate_title_and_explanation, _save_ai_concept, get_user_search_history, get_concept_by_id
+from services import find_or_create_ai_concept, get_user_search_history, get_concept_by_id
 
 st.set_page_config(
     layout="centered",
@@ -34,23 +34,15 @@ with st.form(key="search_form", clear_on_submit=True):
 
 # Processa a busca quando o formulário é enviado
 if submitted and search_query:
-    # Lógica modificada: Sempre gera um novo conceito e o salva
-    st.toast("Gerando novo conceito com IA...", icon="🧠")
-    with st.spinner("Aguarde, a IA está trabalhando..."):
-        new_concept_data = _generate_title_and_explanation(search_query)
+    # A lógica agora é UMA chamada de função
+    concept_result = find_or_create_ai_concept(search_query, USER_ID)
 
-    if new_concept_data and 'title' in new_concept_data and 'explanation' in new_concept_data and new_concept_data['title'] != 'Erro':
-        saved_concept = _save_ai_concept(new_concept_data, USER_ID)
-        if saved_concept:
-            st.toast("Novo conceito gerado e salvo!", icon="✅")
-            st.session_state.current_concept = saved_concept
-        else:
-            st.error("Falha ao salvar o novo conceito.")
-            st.session_state.current_concept = {'title': 'Erro', 'explanation': 'Falha ao salvar o novo conceito.'}
+    if concept_result and concept_result.get('title') != 'Erro':
+        st.session_state.current_concept = concept_result
+        st.rerun() # Atualiza a página para exibir o resultado
     else:
-        st.error("A IA não conseguiu gerar o conteúdo para sua busca. Tente refinar a pergunta.")
-        st.session_state.current_concept = {'title': 'Erro', 'explanation': new_concept_data.get('explanation', 'A IA não conseguiu gerar uma resposta.')}
-
+        st.error("Ocorreu uma falha ao processar sua solicitação.")
+        st.session_state.current_concept = concept_result # Mostra a mensagem de erro específica
 # --- EXIBIÇÃO DO CONCEITO ATUAL ---
 if st.session_state.current_concept:
     concept = st.session_state.current_concept
