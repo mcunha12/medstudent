@@ -226,7 +226,7 @@ def _find_similar_concept(embedding: list[float]):
     try:
         conn = get_supabase_conn()
         # Chama a função SQL que criamos, passando o embedding e um limiar de similaridade
-        SIMILARITY_THRESHOLD = 0.9
+        SIMILARITY_THRESHOLD = 0.8
         response = conn.rpc('match_concepts', {
             'query_embedding': embedding,
             'match_threshold': SIMILARITY_THRESHOLD,
