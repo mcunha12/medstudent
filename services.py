@@ -349,39 +349,47 @@ def _save_ai_concept(concept_data: dict, user_id: str):
     
 def find_or_create_ai_concept(user_query: str, user_id: str):
     """
-    Orquestra todo o fluxo: busca por similaridade ou cria um novo conceito.
+    Orquestra o fluxo e retorna um dicionário com o resultado e uma mensagem.
     """
     # 1. Extrai o conceito-chave da query
     core_concept = _extract_concept_from_query(user_query)
-    st.info(f"Buscando pelo conceito: **{core_concept}**")
-
+    
     # 2. Gera um embedding para a busca
     query_embedding = genai.embed_content(
         model="models/embedding-001",
         content=core_concept,
-        task_type="RETRIEVAL_QUERY" # Usa 'RETRIEVAL_QUERY' para buscas!
+        task_type="RETRIEVAL_QUERY"
     )['embedding']
     
     # 3. Busca por um conceito similar existente
-    with st.spinner("Buscando em nossa base de conhecimento..."):
-        similar_concept = _find_similar_concept(query_embedding)
+    similar_concept = _find_similar_concept(query_embedding)
 
-    # 4. Decide o que fazer
+    # 4. Decide o que fazer e retorna o resultado para a UI
     if similar_concept:
-        st.toast("Encontramos um conceito similar já existente!", icon="💡")
         _add_user_to_concept(similar_concept['id'], user_id)
-        return similar_concept # Retorna o conceito encontrado
+        # Retorna o conceito encontrado e uma mensagem para o toast
+        return {
+            "concept": similar_concept, 
+            "message": "Encontramos um conceito similar já existente!", 
+            "status": "found"
+        }
     else:
-        st.toast("Nenhum conceito similar encontrado. Gerando um novo para você...", icon="🧠")
-        with st.spinner("Aguarde, a IA está criando uma explicação detalhada..."):
-            new_concept_data = _generate_title_and_explanation(core_concept) # _generate_title_and_explanation permanece a mesma
+        # Gera um novo conceito
+        new_concept_data = _generate_title_and_explanation(core_concept)
 
         if new_concept_data and new_concept_data['title'] != 'Erro':
             saved_concept = _save_ai_concept(new_concept_data, user_id)
-            return saved_concept
+            return {
+                "concept": saved_concept, 
+                "message": "Novo conceito gerado e salvo com sucesso!", 
+                "status": "created"
+            }
         else:
-            return {'title': 'Erro', 'explanation': new_concept_data.get('explanation', 'A IA não conseguiu gerar uma resposta.')}
-
+            return {
+                "concept": None, 
+                "message": "A IA não conseguiu gerar uma resposta.", 
+                "status": "error"
+            }
 
 def get_user_search_history(user_id: str):
     """Busca conceitos onde o user_id está no array 'user_ids'."""

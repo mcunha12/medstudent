@@ -34,15 +34,22 @@ with st.form(key="search_form", clear_on_submit=True):
 
 # Processa a busca quando o formulário é enviado
 if submitted and search_query:
-    # A lógica agora é UMA chamada de função
-    concept_result = find_or_create_ai_concept(search_query, USER_ID)
+    # A UI mostra os spinners e as mensagens
+    with st.spinner("Analisando sua busca e buscando em nossa base..."):
+        # A chamada para a função agora é limpa, sem elementos de UI
+        result = find_or_create_ai_concept(search_query, USER_ID)
 
-    if concept_result and concept_result.get('title') != 'Erro':
-        st.session_state.current_concept = concept_result
-        st.rerun() # Atualiza a página para exibir o resultado
+    # Verifica a resposta do serviço e exibe os feedbacks corretos
+    if result and result.get("status") != "error":
+        st.toast(result.get("message"), icon="💡")
+        st.session_state.current_concept = result.get("concept")
     else:
-        st.error("Ocorreu uma falha ao processar sua solicitação.")
-        st.session_state.current_concept = concept_result # Mostra a mensagem de erro específica
+        # Se deu erro, exibe a mensagem de erro retornada pelo serviço
+        st.error(result.get("message", "Ocorreu um erro desconhecido."))
+        st.session_state.current_concept = None
+    
+    st.rerun() # Atualiza a página para mostrar o resultado ou limpar
+    
 # --- EXIBIÇÃO DO CONCEITO ATUAL ---
 if st.session_state.current_concept:
     concept = st.session_state.current_concept
