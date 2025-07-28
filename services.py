@@ -406,14 +406,14 @@ def find_or_create_ai_concept(user_query: str, user_id: str):
             }
 
 def get_user_search_history(user_id: str):
-    """Busca conceitos onde o user_id está no array 'user_ids'."""
+    """Busca TODOS os campos de conceitos onde o user_id está no array 'user_ids'."""
     try:
         conn = get_supabase_conn()
-        # O operador 'cs' significa 'contains' (contém) para arrays
-        response = conn.table("ai_concepts").select("id, title").filter("user_ids", "cs", f"{{{user_id}}}").order("created_at", desc=True).limit(10).execute()
+        # O '*' seleciona todas as colunas da tabela
+        response = conn.table("ai_concepts").select("*").filter("user_ids", "cs", f"{{{user_id}}}").order("created_at", desc=True).limit(100).execute() # Aumentei o limite
         return response.data
     except Exception as e:
-        print(f"Erro ao buscar histórico: {e}")
+        print(f"Erro ao buscar histórico completo: {e}")
         return []
 
 def get_concept_by_id(concept_id: str):
