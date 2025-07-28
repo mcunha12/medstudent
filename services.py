@@ -265,7 +265,7 @@ def _generate_title_and_explanation(user_query: str):
 Você é um médico especialista e educador, criando material de estudo para um(a) estudante de medicina em preparação para a residência.
 **Tópico da Pesquisa do Usuário:** "{user_query}"
 **Sua Tarefa (em uma única resposta):**
-1.  **Gerar um Título Otimizado:** Primeiro, crie um título claro, conciso e otimizado para busca sobre o tópico principal. O título deve ser autoexplicativo.
+1.  **Gerar um Título Otimizado:** Primeiro, crie um título claro, conciso e otimizado para busca sobre o tópico principal. O título deve ser autoexplicativo e focado apenas no conceito a ser explicado.
 2.  **Gerar a Explicação:** Depois do título, gere uma explicação completa e aprofundada, seguindo a estrutura de formatação Markdown abaixo.
 **Formato OBRIGATÓRIO da sua resposta:**
 <title>Seu Título Otimizado Aqui</title>
