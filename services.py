@@ -264,7 +264,7 @@ def _save_ai_concept(concept_data: dict, user_id: str):
         
         response = conn.table("ai_concepts").insert({
             "id": concept_id,
-            "users": user_id,
+            "user_id": user_id,
             "title": concept_data['title'],
             "explanation": concept_data['explanation'],
             "created_at": created_at
