@@ -17,6 +17,17 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
+st.markdown(
+    """
+    <style>
+    div[data-testid="stSidebarContent"] > div:first-child > section {
+        display: none !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
 # --- LÓGICA DE LOGIN E UI ---
 if 'user_id' not in st.session_state:
     st.session_state.user_id = None
